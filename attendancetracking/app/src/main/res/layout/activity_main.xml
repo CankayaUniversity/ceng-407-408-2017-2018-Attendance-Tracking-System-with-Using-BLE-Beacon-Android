@@ -11,7 +11,7 @@
 
     <Button
         android:id="@+id/login_button"
-        style="@style/Widget.AppCompat.Button"
+        style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="160dp"
         android:layout_height="37dp"
         android:layout_alignParentEnd="true"
@@ -23,12 +23,13 @@
 
     <Button
         android:id="@+id/register_button"
+        style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="160dp"
         android:layout_height="37dp"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="114dp"
-        android:layout_marginEnd="16dp"
-        android:layout_toStartOf="@+id/login_button"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/textView"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="97dp"
         android:text="regıstratıon"
         tools:layout_editor_absoluteX="27dp"
         tools:layout_editor_absoluteY="358dp" />
@@ -40,7 +41,7 @@
 
         android:layout_below="@+id/imageView"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="34dp"
+        android:layout_marginTop="47dp"
         android:fontFamily="sans-serif"
         android:text="Welcome to Attendance Tracking System"
         android:textAlignment="center"
