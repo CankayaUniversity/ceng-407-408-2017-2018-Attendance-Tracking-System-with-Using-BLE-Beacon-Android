@@ -3,7 +3,7 @@ package seniorproject.attendancetrackingsystem;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.renderscript.ScriptGroup;
+
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -27,10 +27,10 @@ public class BackgroundWorker extends AsyncTask<String,Void,String>{
     @Override
     protected String doInBackground(String... params) {
         String type = params[0];
-        String loginURL = "http://127.0.0.1/attendancetracking/login.php";
-        if(type.equals("login")){
+        String loginURL = "http://attendancesystem.xyz/attendancetracking/login.php";
+        if(type.equals("studentLogin")){
             try{
-                String username = params[1];
+                String studentID = params[1];
                 String password = params[2];
                 URL url = new URL(loginURL);
                 HttpURLConnection httpURLConnection = (HttpURLConnection)url.openConnection();
@@ -39,14 +39,14 @@ public class BackgroundWorker extends AsyncTask<String,Void,String>{
                 httpURLConnection.setDoInput(true);
                 OutputStream outputStream = httpURLConnection.getOutputStream();
 
-
                 BufferedWriter bufferedWriter = new BufferedWriter(
                         new OutputStreamWriter(outputStream,"UTF-8"));
-                String post_data = URLEncoder.encode("username","UTF-8" )
-                        + "="+URLEncoder.encode(username,"UTF-8") +"&"
+                String post_data = URLEncoder.encode("studentID","UTF-8" )
+                        + "="+URLEncoder.encode(studentID,"UTF-8") +"&"
                         + URLEncoder.encode("password","UTF-8" )+"="
-                        + URLEncoder.encode(password,"UTF-8");
-
+                        + URLEncoder.encode(password,"UTF-8") + "&"
+                        + URLEncoder.encode("type","UTF-8" )+"="
+                        + URLEncoder.encode(type,"UTF-8");
 
                 bufferedWriter.write(post_data);
                 bufferedWriter.flush();
@@ -54,18 +54,13 @@ public class BackgroundWorker extends AsyncTask<String,Void,String>{
                 outputStream.close();
 
                 InputStream inputStream = httpURLConnection.getInputStream();
-
-
-
                 BufferedReader bufferedReader = new BufferedReader(
                         new InputStreamReader(inputStream, "iso-8859-1"));
                 String result = "";
                 String line = "";
                 while((line = bufferedReader.readLine()) != null){
                     result += line;
-
                 }
-
                 bufferedReader.close();
                 inputStream.close();
                 httpURLConnection.disconnect();
