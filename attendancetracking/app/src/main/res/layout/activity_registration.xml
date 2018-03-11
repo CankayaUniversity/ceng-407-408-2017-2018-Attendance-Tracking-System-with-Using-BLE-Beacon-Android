@@ -83,7 +83,7 @@
                 android:inputType="textPassword" />
 
             <EditText
-                android:id="@+id/student_e-mail"
+                android:id="@+id/student_e_mail"
                 android:layout_width="390dp"
                 android:layout_height="40dp"
                 android:layout_alignStart="@+id/student_password"
@@ -97,8 +97,8 @@
                 android:id="@+id/student_name"
                 android:layout_width="390dp"
                 android:layout_height="40dp"
-                android:layout_alignStart="@+id/student_e-mail"
-                android:layout_below="@+id/student_e-mail"
+                android:layout_alignStart="@+id/student_e_mail"
+                android:layout_below="@+id/student_e_mail"
                 android:layout_marginTop="18dp"
                 android:ems="10"
                 android:hint="Name"
@@ -117,7 +117,7 @@
                 android:inputType="textPersonName" />
 
             <EditText
-                android:id="@+id/lecturer_e-mail"
+                android:id="@+id/lecturer_e_mail"
                 android:layout_width="390dp"
                 android:layout_height="40dp"
                 android:layout_alignBaseline="@+id/student_schoolID"
@@ -142,9 +142,9 @@
                 android:id="@+id/lecturer_name"
                 android:layout_width="390dp"
                 android:layout_height="40dp"
-                android:layout_alignBaseline="@+id/student_e-mail"
-                android:layout_alignBottom="@+id/student_e-mail"
-                android:layout_alignStart="@+id/student_e-mail"
+                android:layout_alignBaseline="@+id/student_e_mail"
+                android:layout_alignBottom="@+id/student_e_mail"
+                android:layout_alignStart="@+id/student_e_mail"
                 android:ems="10"
                 android:hint="Name"
                 android:inputType="textPersonName" />
