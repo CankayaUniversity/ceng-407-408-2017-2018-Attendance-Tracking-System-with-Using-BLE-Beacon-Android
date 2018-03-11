@@ -1,107 +1,178 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="seniorproject.attendancetrackingsystem.RegistrationActivity">
 
-    <RadioGroup
-        android:id="@+id/radioGroup1"
-        android:layout_width="400dp"
-        android:layout_height="match_parent"
-        android:layout_marginEnd="5dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="10dp"
-        android:orientation="horizontal"
-        android:paddingBottom="15dp"
-        android:paddingLeft="5dp"
-        android:paddingStart="1dp"
-        android:weightSum="2">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:fillViewport="true">
 
-        <RadioButton
-            android:id="@+id/radio_button_lecturer"
-            style="@style/Widget.AppCompat.CompoundButton.RadioButton"
-            android:layout_width="wrap_content"
-            android:layout_height="35dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:text="Lecturer Registration"
-            android:textSize="11.5dp" />
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/back"
+        android:visibility="visible"
+        tools:context="seniorproject.attendancetrackingsystem.RegistrationActivity">
 
-        <RadioButton
-            android:id="@+id/radio_button_student"
-            style="@style/Widget.AppCompat.CompoundButton.RadioButton"
-            android:layout_width="155dp"
-            android:layout_height="35dp"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentTop="true"
-            android:text="Student Registration"
-            android:textSize="11.5dp" />
-    </RadioGroup>
+        <RadioGroup
+            android:id="@+id/radioGroup1"
+            android:layout_width="400dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal"
+            android:paddingBottom="15dp"
+            android:paddingLeft="5dp"
+            android:paddingStart="1dp"
+            android:weightSum="2">
 
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/relativeLayout"
-            android:layout_marginTop="30dp">
-
-    <TextView
-        android:id="@+id/text_view_e-mail"
-        android:layout_width="400dp"
-        android:layout_height="35dp"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/text_view_school"
-        android:layout_marginTop="10dp"
-        android:layout_weight="1"
-        android:text="E-mail"
-        android:textSize="15sp" />
-
-    <TextView
-        android:id="@+id/text_view_password"
-        android:layout_width="400dp"
-        android:layout_height="35dp"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/text_view_e-mail"
-        android:layout_marginTop="11dp"
-        android:layout_weight="1"
-        android:text="Password"
-        android:textSize="15sp" />
-
-            <TextView
-                android:id="@+id/text_view_school"
-                android:layout_width="400dp"
+            <RadioButton
+                android:id="@+id/radio_button_lecturer"
+                style="@style/Widget.AppCompat.CompoundButton.RadioButton"
+                android:layout_width="194dp"
                 android:layout_height="35dp"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
-                android:layout_marginTop="54dp"
+                android:text="Lecturer Registration"
+                android:textSize="11.5dp" />
+
+            <RadioButton
+                android:id="@+id/radio_button_student"
+                style="@style/Widget.AppCompat.CompoundButton.RadioButton"
+                android:layout_width="237dp"
+                android:layout_height="35dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true"
+                android:text="Student Registration"
+                android:textSize="11.5dp" />
+        </RadioGroup>
+
+        <RelativeLayout
+            android:id="@+id/relativeLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentStart="true"
+            android:layout_alignTop="@+id/radioGroup1"
+            android:layout_marginTop="62dp"
+            android:visibility="visible">
+
+
+            <EditText
+                android:id="@+id/student_schoolID"
+                android:layout_width="390dp"
+                android:layout_height="40dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="11dp"
+                android:layout_marginTop="46dp"
                 android:layout_weight="1"
-                android:text="School ID"
-                android:textSize="15sp" />
+                android:ems="10"
+                android:hint="School ID"
+                android:inputType="textPersonName" />
 
-    <TextView
-        android:id="@+id/text_view_name"
-        android:layout_width="400dp"
-        android:layout_height="35dp"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/text_view_password"
-        android:layout_marginTop="17dp"
-        android:layout_weight="1"
-        android:text="Name"
-        android:textSize="15sp" />
+            <EditText
+                android:id="@+id/student_password"
+                android:layout_width="390dp"
+                android:layout_height="40dp"
+                android:layout_alignStart="@+id/student_schoolID"
+                android:layout_below="@+id/student_schoolID"
+                android:layout_marginTop="16dp"
+                android:ems="10"
+                android:hint="Password"
+                android:inputType="textPassword" />
 
-    <TextView
-        android:id="@+id/text_view_surname"
-        android:layout_width="400dp"
-        android:layout_height="35dp"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/text_view_name"
-        android:layout_marginTop="14dp"
-        android:layout_weight="1"
-        android:text="Surname"
-        android:textSize="15sp" />
+            <EditText
+                android:id="@+id/student_e-mail"
+                android:layout_width="390dp"
+                android:layout_height="40dp"
+                android:layout_alignStart="@+id/student_password"
+                android:layout_below="@+id/student_password"
+                android:layout_marginTop="18dp"
+                android:ems="10"
+                android:hint="E-mail"
+                android:inputType="textPersonName" />
+
+            <EditText
+                android:id="@+id/student_name"
+                android:layout_width="390dp"
+                android:layout_height="40dp"
+                android:layout_alignStart="@+id/student_e-mail"
+                android:layout_below="@+id/student_e-mail"
+                android:layout_marginTop="18dp"
+                android:ems="10"
+                android:hint="Name"
+                android:inputType="textPersonName" />
+
+            <EditText
+                android:id="@+id/student_surname"
+                android:layout_width="390dp"
+                android:layout_height="40dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignStart="@+id/student_name"
+                android:layout_below="@+id/student_name"
+                android:layout_marginTop="18dp"
+                android:ems="10"
+                android:hint="Surname"
+                android:inputType="textPersonName" />
+
+            <EditText
+                android:id="@+id/lecturer_e-mail"
+                android:layout_width="390dp"
+                android:layout_height="40dp"
+                android:layout_alignBaseline="@+id/student_schoolID"
+                android:layout_alignBottom="@+id/student_schoolID"
+                android:layout_alignStart="@+id/student_schoolID"
+                android:ems="10"
+                android:hint="E-mail"
+                android:inputType="textPersonName" />
+
+            <EditText
+                android:id="@+id/lecturer_password"
+                android:layout_width="390dp"
+                android:layout_height="40dp"
+                android:layout_alignBaseline="@+id/student_password"
+                android:layout_alignBottom="@+id/student_password"
+                android:layout_alignStart="@+id/student_password"
+                android:ems="10"
+                android:hint="Password"
+                android:inputType="textPassword" />
+
+            <EditText
+                android:id="@+id/lecturer_name"
+                android:layout_width="390dp"
+                android:layout_height="40dp"
+                android:layout_alignBaseline="@+id/student_e-mail"
+                android:layout_alignBottom="@+id/student_e-mail"
+                android:layout_alignStart="@+id/student_e-mail"
+                android:ems="10"
+                android:hint="Name"
+                android:inputType="textPersonName" />
+
+            <EditText
+                android:id="@+id/lecturer_surname"
+                android:layout_width="390dp"
+                android:layout_height="40dp"
+                android:layout_alignBaseline="@+id/student_name"
+                android:layout_alignBottom="@+id/student_name"
+                android:layout_alignStart="@+id/student_name"
+                android:ems="10"
+                android:hint="Surname"
+                android:inputType="textPersonName" />
+
+
         </RelativeLayout>
 
+        <Button
+            android:id="@+id/register_button"
+            style="@android:style/Widget.Holo.Button.Borderless"
+            android:layout_width="150dp"
+            android:layout_height="45dp"
+            android:layout_below="@+id/relativeLayout"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="34dp"
+            android:text="Register" />
 
-</RelativeLayout>
+
+    </RelativeLayout>
+</ScrollView>
