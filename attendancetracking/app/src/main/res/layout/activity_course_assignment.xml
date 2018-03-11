@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="seniorproject.attendancetrackingsystem.CourseAssignment">
+
+
+    <TextView
+        android:id="@+id/courseName"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:text="Select Course : " />
+
+    <Spinner
+        android:id="@+id/courseSelect"
+        android:layout_width="70dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="110dp"
+        android:prompt="@id/courseSelect"/>
+
+    <TextView
+        android:id="@+id/sectionNum"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="60dp"
+        android:text="Select Section : " />
+
+    <Spinner
+        android:id="@+id/section"
+        android:layout_width="200dp"
+        android:layout_marginTop="60dp"
+        android:layout_marginLeft="110dp"
+        android:layout_height="40dp"/>
+
+
+    <Button
+        android:id="@+id/submitCourseAssignment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="130dp"
+        android:layout_marginLeft="110dp"
+        android:text="Save" />
+
+
+</RelativeLayout>
