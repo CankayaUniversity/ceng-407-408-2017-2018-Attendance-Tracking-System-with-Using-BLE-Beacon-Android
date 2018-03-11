@@ -21,5 +21,4 @@
         <activity android:name=".LoginLecturerActivity" />
         <activity android:name=".MainLoginActivity"/>
     </application>
-
 </manifest>
