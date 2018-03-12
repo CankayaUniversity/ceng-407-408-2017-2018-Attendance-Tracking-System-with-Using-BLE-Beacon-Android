@@ -2,6 +2,7 @@ package seniorproject.attendancetrackingsystem;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 
 
@@ -21,16 +22,17 @@ import java.net.URLEncoder;
 public class BackgroundWorker extends AsyncTask<String,Void,String>{
     Context context;
     AlertDialog alertDialog;
+    String type;
     BackgroundWorker(Context ctx){
         context = ctx;
     }
     @Override
     protected String doInBackground(String... params) {
-        String type = params[0];
+        type = params[0];
         String loginURL = "http://attendancesystem.xyz/attendancetracking/login.php";
-        if(type.equals("studentLogin")){
+        if(type.equals("studentLogin") || type.equals("lecturerLogin")){
             try{
-                String studentID = params[1];
+                String username = params[1];
                 String password = params[2];
                 URL url = new URL(loginURL);
                 HttpURLConnection httpURLConnection = (HttpURLConnection)url.openConnection();
@@ -42,7 +44,7 @@ public class BackgroundWorker extends AsyncTask<String,Void,String>{
                 BufferedWriter bufferedWriter = new BufferedWriter(
                         new OutputStreamWriter(outputStream,"UTF-8"));
                 String post_data = URLEncoder.encode("studentID","UTF-8" )
-                        + "="+URLEncoder.encode(studentID,"UTF-8") +"&"
+                        + "="+URLEncoder.encode(username,"UTF-8") +"&"
                         + URLEncoder.encode("password","UTF-8" )+"="
                         + URLEncoder.encode(password,"UTF-8") + "&"
                         + URLEncoder.encode("type","UTF-8" )+"="
@@ -76,14 +78,22 @@ public class BackgroundWorker extends AsyncTask<String,Void,String>{
 
     @Override
     protected void onPreExecute(){
-        alertDialog = new AlertDialog.Builder(context).create();
-        alertDialog.setTitle("Login Status");
+        // Connection tests will be here
     }
 
     @Override
     protected void onPostExecute(String result) {
-        alertDialog.setMessage(result);
-        alertDialog.show();
+        if(result.equals("Error")) {
+            alertDialog = new AlertDialog.Builder(context).create();
+            alertDialog.setTitle("Login Status");
+            alertDialog.setMessage(result);
+            alertDialog.show();
+        }
+        else {
+            Intent newIntent = new Intent(context,WelcomePage.class);
+            newIntent.putExtra("type", type);
+            context.startActivity(newIntent);
+        }
     }
 
     @Override
