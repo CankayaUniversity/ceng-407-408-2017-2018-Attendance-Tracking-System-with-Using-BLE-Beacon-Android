@@ -43,7 +43,7 @@ public class BackgroundWorker extends AsyncTask<String,Void,String>{
 
                 BufferedWriter bufferedWriter = new BufferedWriter(
                         new OutputStreamWriter(outputStream,"UTF-8"));
-                String post_data = URLEncoder.encode("studentID","UTF-8" )
+                String post_data = URLEncoder.encode("username","UTF-8" )
                         + "="+URLEncoder.encode(username,"UTF-8") +"&"
                         + URLEncoder.encode("password","UTF-8" )+"="
                         + URLEncoder.encode(password,"UTF-8") + "&"
