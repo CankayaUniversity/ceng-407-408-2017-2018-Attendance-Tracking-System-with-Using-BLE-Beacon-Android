@@ -6,19 +6,6 @@ import android.content.Intent;
 import android.os.AsyncTask;
 
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
-
-
 public class BackgroundWorker extends AsyncTask<String,Void,String>{
     Context context;
     AlertDialog alertDialog;
@@ -29,51 +16,13 @@ public class BackgroundWorker extends AsyncTask<String,Void,String>{
     @Override
     protected String doInBackground(String... params) {
         type = params[0];
-        String loginURL = "http://attendancesystem.xyz/attendancetracking/login.php";
-        if(type.equals("studentLogin") || type.equals("lecturerLogin")){
-            try{
-                String username = params[1];
-                String password = params[2];
-                URL url = new URL(loginURL);
-                HttpURLConnection httpURLConnection = (HttpURLConnection)url.openConnection();
-                httpURLConnection.setRequestMethod("POST");
-                httpURLConnection.setDoOutput(true);
-                httpURLConnection.setDoInput(true);
-                OutputStream outputStream = httpURLConnection.getOutputStream();
 
-                BufferedWriter bufferedWriter = new BufferedWriter(
-                        new OutputStreamWriter(outputStream,"UTF-8"));
-                String post_data = URLEncoder.encode("username","UTF-8" )
-                        + "="+URLEncoder.encode(username,"UTF-8") +"&"
-                        + URLEncoder.encode("password","UTF-8" )+"="
-                        + URLEncoder.encode(password,"UTF-8") + "&"
-                        + URLEncoder.encode("type","UTF-8" )+"="
-                        + URLEncoder.encode(type,"UTF-8");
+        DataManager DM = new DataManager(params);
+        DM.sendData("POST");
+        String result = DM.getResult();
+        DM.disconnect();
 
-                bufferedWriter.write(post_data);
-                bufferedWriter.flush();
-                bufferedWriter.close();
-                outputStream.close();
-
-                InputStream inputStream = httpURLConnection.getInputStream();
-                BufferedReader bufferedReader = new BufferedReader(
-                        new InputStreamReader(inputStream, "iso-8859-1"));
-                String result = "";
-                String line = "";
-                while((line = bufferedReader.readLine()) != null){
-                    result += line;
-                }
-                bufferedReader.close();
-                inputStream.close();
-                httpURLConnection.disconnect();
-                return result;
-            } catch (MalformedURLException e){
-                e.printStackTrace();
-            } catch (IOException e){
-                e.printStackTrace();
-            }
-        }
-        return null;
+        return result;
     }
 
     @Override
@@ -83,16 +32,21 @@ public class BackgroundWorker extends AsyncTask<String,Void,String>{
 
     @Override
     protected void onPostExecute(String result) {
-        if(result.equals("Error")) {
+
+
+        if(result.contains("Successful")) {
+            Intent newIntent = new Intent(context,WelcomePage.class);
+            newIntent.putExtra("type", type);
+            if(type.equals("studentLogin") || type.equals("lecturerLogin"))
+                newIntent.putExtra("username",result.substring(11,result.length()));
+            context.startActivity(newIntent);
+
+        }
+        else {
             alertDialog = new AlertDialog.Builder(context).create();
             alertDialog.setTitle("Login Status");
             alertDialog.setMessage(result);
             alertDialog.show();
-        }
-        else {
-            Intent newIntent = new Intent(context,WelcomePage.class);
-            newIntent.putExtra("type", type);
-            context.startActivity(newIntent);
         }
     }
 

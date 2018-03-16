@@ -20,7 +20,7 @@ public class LoginStudentActivity extends AppCompatActivity {
         String password = ET_Password.getText().toString();
         if(!studentID.isEmpty() && !password.isEmpty()) {
             BackgroundWorker backgroundWorker = new BackgroundWorker(this);
-            backgroundWorker.execute("studentLogin", studentID, password);
+            backgroundWorker.execute("studentLogin", "username",studentID,"password", password);
         }
     }
 }

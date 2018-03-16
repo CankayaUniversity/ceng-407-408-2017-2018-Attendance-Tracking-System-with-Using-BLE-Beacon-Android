@@ -20,7 +20,7 @@ public class LoginLecturerActivity extends AppCompatActivity {
         String password = ET_Password.getText().toString();
         if(!mail.isEmpty() && !password.isEmpty()){
             BackgroundWorker backgroundWorker = new BackgroundWorker(this);
-            backgroundWorker.execute("lecturerLogin", mail, password);
+            backgroundWorker.execute("lecturerLogin","username", mail,"password", password);
         }
     }
 }
