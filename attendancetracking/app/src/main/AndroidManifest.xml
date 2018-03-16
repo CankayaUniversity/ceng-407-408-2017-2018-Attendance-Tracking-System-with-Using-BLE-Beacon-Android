@@ -3,7 +3,7 @@
     package="seniorproject.attendancetrackingsystem">
 
     <uses-permission android:name="android.permission.INTERNET" />
-
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -27,7 +27,7 @@
             android:label="@string/title_activity_welcome_page"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".CourseAssignment"
-            android:label="@string/app_name"></activity>
+            android:label="@string/app_name"/>
     </application>
 
 </manifest>

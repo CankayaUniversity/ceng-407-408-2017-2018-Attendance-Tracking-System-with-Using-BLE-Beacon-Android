@@ -3,6 +3,8 @@ package seniorproject.attendancetrackingsystem;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 
 
@@ -27,7 +29,19 @@ public class BackgroundWorker extends AsyncTask<String,Void,String>{
 
     @Override
     protected void onPreExecute(){
-        // Connection tests will be here
+
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+
+        if(activeNetworkInfo == null || !activeNetworkInfo.isConnected()) {
+            alertDialog = new AlertDialog.Builder(context).create();
+            alertDialog.setTitle("Network Connection");
+            alertDialog.setMessage("This application requires internet connection!");
+            alertDialog.show();
+            cancel(true);
+        }
+
     }
 
     @Override
