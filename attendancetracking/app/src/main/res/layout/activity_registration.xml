@@ -32,21 +32,21 @@
                 android:id="@+id/radio_button_lecturer"
                 style="@style/Widget.AppCompat.CompoundButton.RadioButton"
                 android:layout_width="194dp"
-                android:layout_height="35dp"
+                android:layout_height="88dp"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
                 android:text="Lecturer Registration"
-                android:textSize="11.5dp" />
+                android:textSize="16sp" />
 
             <RadioButton
                 android:id="@+id/radio_button_student"
                 style="@style/Widget.AppCompat.CompoundButton.RadioButton"
                 android:layout_width="237dp"
-                android:layout_height="35dp"
+                android:layout_height="85dp"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentTop="true"
                 android:text="Student Registration"
-                android:textSize="11.5dp" />
+                android:textSize="16sp" />
         </RadioGroup>
 
         <RelativeLayout
@@ -169,6 +169,14 @@
                 android:hint="Surname"
                 android:inputType="textPersonName"
                 android:tag="l" />
+
+            <Spinner
+                android:id="@+id/lecturer_courses"
+                android:layout_width="390dp"
+                android:layout_height="40dp"
+                android:layout_alignParentBottom="true"
+                android:layout_alignStart="@+id/student_surname"
+                android:tag="l"/>
 
 
         </RelativeLayout>
