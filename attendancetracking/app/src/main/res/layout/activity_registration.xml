@@ -7,6 +7,7 @@
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/generalRelative"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/back"
@@ -49,7 +50,7 @@
         </RadioGroup>
 
         <RelativeLayout
-            android:id="@+id/relativeLayout"
+            android:id="@+id/EditViewRelative"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_alignParentStart="true"
@@ -69,7 +70,8 @@
                 android:layout_weight="1"
                 android:ems="10"
                 android:hint="School ID"
-                android:inputType="textPersonName" />
+                android:inputType="textPersonName"
+                android:tag="s" />
 
             <EditText
                 android:id="@+id/student_password"
@@ -80,7 +82,8 @@
                 android:layout_marginTop="16dp"
                 android:ems="10"
                 android:hint="Password"
-                android:inputType="textPassword" />
+                android:inputType="textPassword"
+                android:tag="s" />
 
             <EditText
                 android:id="@+id/student_e_mail"
@@ -91,7 +94,8 @@
                 android:layout_marginTop="18dp"
                 android:ems="10"
                 android:hint="E-mail"
-                android:inputType="textPersonName" />
+                android:inputType="textPersonName"
+                android:tag="s" />
 
             <EditText
                 android:id="@+id/student_name"
@@ -102,7 +106,8 @@
                 android:layout_marginTop="18dp"
                 android:ems="10"
                 android:hint="Name"
-                android:inputType="textPersonName" />
+                android:inputType="textPersonName"
+                android:tag="s" />
 
             <EditText
                 android:id="@+id/student_surname"
@@ -114,7 +119,8 @@
                 android:layout_marginTop="18dp"
                 android:ems="10"
                 android:hint="Surname"
-                android:inputType="textPersonName" />
+                android:inputType="textPersonName"
+                android:tag="s" />
 
             <EditText
                 android:id="@+id/lecturer_e_mail"
@@ -125,7 +131,8 @@
                 android:layout_alignStart="@+id/student_schoolID"
                 android:ems="10"
                 android:hint="E-mail"
-                android:inputType="textPersonName" />
+                android:inputType="textPersonName"
+                android:tag="l" />
 
             <EditText
                 android:id="@+id/lecturer_password"
@@ -136,7 +143,8 @@
                 android:layout_alignStart="@+id/student_password"
                 android:ems="10"
                 android:hint="Password"
-                android:inputType="textPassword" />
+                android:inputType="textPassword"
+                android:tag="l" />
 
             <EditText
                 android:id="@+id/lecturer_name"
@@ -147,7 +155,8 @@
                 android:layout_alignStart="@+id/student_e_mail"
                 android:ems="10"
                 android:hint="Name"
-                android:inputType="textPersonName" />
+                android:inputType="textPersonName"
+                android:tag="l" />
 
             <EditText
                 android:id="@+id/lecturer_surname"
@@ -158,7 +167,8 @@
                 android:layout_alignStart="@+id/student_name"
                 android:ems="10"
                 android:hint="Surname"
-                android:inputType="textPersonName" />
+                android:inputType="textPersonName"
+                android:tag="l" />
 
 
         </RelativeLayout>
@@ -168,10 +178,11 @@
             style="@android:style/Widget.Holo.Button.Borderless"
             android:layout_width="150dp"
             android:layout_height="45dp"
-            android:layout_below="@+id/relativeLayout"
+            android:layout_below="@+id/EditViewRelative"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="34dp"
-            android:text="Register" />
+            android:text="Register"
+            android:onClick="onRegister"/>
 
 
     </RelativeLayout>

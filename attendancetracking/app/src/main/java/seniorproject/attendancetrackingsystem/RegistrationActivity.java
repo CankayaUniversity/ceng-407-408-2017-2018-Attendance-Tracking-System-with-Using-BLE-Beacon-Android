@@ -2,130 +2,105 @@ package seniorproject.attendancetrackingsystem;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Patterns;
 import android.view.View;
-import android.widget.Button;
-import android.widget.RadioButton;
+import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.RadioGroup;
-import android.widget.TextView;
 
+import com.basgeekball.awesomevalidation.AwesomeValidation;
+import com.basgeekball.awesomevalidation.ValidationStyle;
 
 
 public class RegistrationActivity extends AppCompatActivity {
-
+    private EditText studentSchoolID, studentEmail, studentPassword, studentName, studentSurname,
+    lecturerEmail, lecturerPassword, lecturerName, lecturerSurname;
+    private RadioGroup radioGroup;
+    private AwesomeValidation awesomeValidation;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
 
-        final TextView _student_schoolID = (TextView) findViewById(R.id.student_schoolID);
-        final TextView _student_e_mail   = (TextView) findViewById(R.id.student_e_mail);
-        final TextView _student_password = (TextView) findViewById(R.id.student_password);
-        final TextView _student_name     = (TextView) findViewById(R.id.student_name);
-        final TextView _student_surname  = (TextView) findViewById(R.id.student_surname);
+        awesomeValidation = new AwesomeValidation(ValidationStyle.BASIC);
 
-        final TextView _lecturer_e_mail = (TextView) findViewById(R.id.lecturer_e_mail);
-        final TextView _lecturer_password = (TextView) findViewById(R.id.lecturer_password);
-        final TextView _lecturer_name = (TextView) findViewById(R.id.lecturer_name);
-        final TextView _lecturer_surname = (TextView) findViewById(R.id.lecturer_surname);
+        studentSchoolID = (EditText) findViewById(R.id.student_schoolID);
+        studentEmail = (EditText) findViewById(R.id.student_e_mail);
+        studentPassword = (EditText) findViewById(R.id.student_password);
+        studentName = (EditText) findViewById(R.id.student_name);
+        studentSurname = (EditText) findViewById(R.id.student_surname);
+        lecturerEmail = (EditText) findViewById(R.id.lecturer_e_mail);
+        lecturerPassword = (EditText) findViewById(R.id.lecturer_password);
+        lecturerName = (EditText) findViewById(R.id.lecturer_name);
+        lecturerSurname = (EditText) findViewById(R.id.lecturer_surname);
+        radioGroup = (RadioGroup) findViewById(R.id.radioGroup1);
 
-        final Button   _register_button = (Button) findViewById(R.id.register_button);
-
-        final RadioGroup radioGroup = (RadioGroup) findViewById(R.id.radioGroup1);
-
+        changeVisibilities((ViewGroup)findViewById(R.id.EditViewRelative),0);
         radioGroup.clearCheck();
+        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if(checkedId == R.id.radio_button_student)
+                    changeVisibilities((ViewGroup)findViewById(R.id.EditViewRelative),1);
+                if(checkedId == R.id.radio_button_lecturer)
+                    changeVisibilities((ViewGroup)findViewById(R.id.EditViewRelative),2);
+            }
+        });
+    }
+    private void changeVisibilities(ViewGroup viewGroup, int p){
+        if(p == 0) {
+            for (int i = 0; i < viewGroup.getChildCount(); i++) {
+                if (viewGroup.getChildAt(i) instanceof EditText)
+                    ((EditText) viewGroup.getChildAt(i)).setVisibility(View.INVISIBLE);
+            }
+        }
+        else if(p == 1){
+            awesomeValidation.clear();
+            awesomeValidation.addValidation(this, R.id.student_schoolID,
+                    "^20[0-9]{7}$",R.string.studentIDerror);
+            awesomeValidation.addValidation(this, R.id.student_e_mail,
+                    Patterns.EMAIL_ADDRESS, R.string.emailerror);
+            awesomeValidation.addValidation(this, R.id.student_name,
+                    "^[a-zA-Z]+$", R.string.nameerror);
+            awesomeValidation.addValidation(this, R.id.student_surname,
+                    "^[a-zA-Z]+$", R.string.surnameerror);
+            awesomeValidation.addValidation(this, R.id.student_password,
+                    "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!_*.-]).{6,}$",
+                    R.string.passworderror);
+            for (int i = 0; i < viewGroup.getChildCount(); i++){
+                if(viewGroup.getChildAt(i) instanceof  EditText)
+                    if(viewGroup.getChildAt(i).getTag().equals("l")) {
+                        ((EditText) viewGroup.getChildAt(i)).setVisibility(View.INVISIBLE);
+                    }else {
+                        ((EditText) viewGroup.getChildAt(i)).setVisibility(View.VISIBLE);
+                    }
+            }
+        }
+        else if(p == 2){
+            awesomeValidation.clear();
+            awesomeValidation.addValidation(this, R.id.lecturer_e_mail,
+                    Patterns.EMAIL_ADDRESS, R.string.emailerror);
+            awesomeValidation.addValidation(this, R.id.lecturer_name,
+                    "^[a-zA-Z]+$", R.string.nameerror);
+            awesomeValidation.addValidation(this, R.id.lecturer_surname,
+                    "^[a-zA-Z]+$", R.string.surnameerror);
+            awesomeValidation.addValidation(this, R.id.lecturer_password,
+                    "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!_*.-]).{6,}$",
+                    R.string.passworderror);
+            for (int i = 0; i < viewGroup.getChildCount(); i++){
+                if(viewGroup.getChildAt(i) instanceof  EditText)
+                    if(viewGroup.getChildAt(i).getTag().equals("s")) {
+                        ((EditText) viewGroup.getChildAt(i)).setVisibility(View.INVISIBLE);
+                    }else {
+                        ((EditText) viewGroup.getChildAt(i)).setVisibility(View.VISIBLE);
+                    }
+            }
+        }
+    }
 
-        _student_schoolID.setVisibility(View.INVISIBLE);
-        _student_e_mail.setVisibility(View.INVISIBLE);
-        _student_password.setVisibility(View.INVISIBLE);
-        _student_name.setVisibility(View.INVISIBLE);
-        _student_surname.setVisibility(View.INVISIBLE);
-
-        _lecturer_e_mail.setVisibility(View.INVISIBLE);
-        _lecturer_password.setVisibility(View.INVISIBLE);
-        _lecturer_name.setVisibility(View.INVISIBLE);
-        _lecturer_surname.setVisibility(View.INVISIBLE);
-
-       radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-           @Override
-           public void onCheckedChanged(RadioGroup group, int checkedId) {
-
-               if(checkedId == R.id.radio_button_lecturer)
-               {
-                   _student_schoolID.setVisibility(View.INVISIBLE);
-                   _student_schoolID.setText("");
-                   _student_e_mail.setVisibility(View.INVISIBLE);
-                   _student_e_mail.setText("");
-                   _student_password.setVisibility(View.INVISIBLE);
-                   _student_password.setText("");
-                   _student_name.setVisibility(View.INVISIBLE);
-                   _student_name.setText("");
-                   _student_surname.setVisibility(View.INVISIBLE);
-                   _student_surname.setText("");
-
-
-                   _lecturer_e_mail.setVisibility(View.VISIBLE);
-                   _lecturer_e_mail.setText("");
-                   _lecturer_password.setVisibility(View.VISIBLE);
-                   _lecturer_password.setText("");
-                   _lecturer_name.setVisibility(View.VISIBLE);
-                   _lecturer_name.setText("");
-                   _lecturer_surname.setVisibility(View.VISIBLE);
-                   _lecturer_surname.setText("");
-
-               }
-
-               else if(checkedId == R.id.radio_button_student)
-               {
-                   _lecturer_e_mail.setVisibility(View.INVISIBLE);
-                   _lecturer_e_mail.setText("");
-                   _lecturer_password.setVisibility(View.INVISIBLE);
-                   _lecturer_password.setText("");
-                   _lecturer_name.setVisibility(View.INVISIBLE);
-                   _lecturer_name.setText("");
-                   _lecturer_surname.setVisibility(View.INVISIBLE);
-                   _lecturer_surname.setText("");
-
-                   _student_schoolID.setVisibility(View.VISIBLE);
-                   _student_schoolID.setText("");
-                   _student_e_mail.setVisibility(View.VISIBLE);
-                   _student_e_mail.setText("");
-                   _student_password.setVisibility(View.VISIBLE);
-                   _student_password.setText("");
-                   _student_name.setVisibility(View.VISIBLE);
-                   _student_name.setText("");
-                   _student_surname.setVisibility(View.VISIBLE);
-                   _student_surname.setText("");
-               }
-
-           }
-       });
-
-       _register_button.setOnClickListener(new View.OnClickListener() {
-           @Override
-           public void onClick(View v) {
-
-               RadioButton lecturerButton = (RadioButton) findViewById(R.id.radio_button_lecturer);
-               RadioButton studentButton  = (RadioButton) findViewById(R.id.radio_button_student);
-
-               if(lecturerButton.isActivated())
-               {
-                   String lecturerEmail = (String)_lecturer_e_mail.getText();
-                   String lecturerPassword = (String) _lecturer_password.getText();
-                   String lecturerName = (String) _lecturer_name.getText();
-                   String lecturerSurname = (String) _lecturer_surname.getText();
-               }
-
-               else if(studentButton.isActivated())
-               {
-                   String studentEmail = (String)_student_e_mail.getText();
-                   String studentPassword = (String) _student_password.getText();
-                   String studentName = (String) _student_name.getText();
-                   String studentSurname = (String) _student_surname.getText();
-                   String studentID = (String) _student_schoolID.getText();
-               }
-
-
-           }
-       });
+    public void onRegister(View view){
+        if(awesomeValidation.validate()){
+            //BackgroundWorker will work here
+        }
     }
 }

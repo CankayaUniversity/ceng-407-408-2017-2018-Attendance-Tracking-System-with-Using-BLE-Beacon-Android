@@ -6,7 +6,11 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
-
-
-
+    <string name="emailerror">Enter a valid e-mail address</string>
+    <string name="studentIDerror">Enter a valid student ID number</string>
+    <string name="nameerror">Enter a valid name</string>
+    <string name="surnameerror">Enter a valid surname</string>
+    <string name="passworderror">Password should be at least 6 characters. \n
+        Password should contains at least 1 uppercase letter \n
+        1 digit and 1 special character (. - _ ! *)</string>
 </resources>
