@@ -2,21 +2,27 @@ package seniorproject.attendancetrackingsystem;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Patterns;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.RadioGroup;
 
+import com.basgeekball.awesomevalidation.AwesomeValidation;
+import com.basgeekball.awesomevalidation.ValidationStyle;
 
 
 public class RegistrationActivity extends AppCompatActivity {
     private EditText studentSchoolID, studentEmail, studentPassword, studentName, studentSurname,
     lecturerEmail, lecturerPassword, lecturerName, lecturerSurname;
     private RadioGroup radioGroup;
+    private AwesomeValidation awesomeValidation;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
+
+        awesomeValidation = new AwesomeValidation(ValidationStyle.BASIC);
 
         studentSchoolID = (EditText) findViewById(R.id.student_schoolID);
         studentEmail = (EditText) findViewById(R.id.student_e_mail);
@@ -49,6 +55,18 @@ public class RegistrationActivity extends AppCompatActivity {
             }
         }
         else if(p == 1){
+            awesomeValidation.clear();
+            awesomeValidation.addValidation(this, R.id.student_schoolID,
+                    "^20[0-9]{7}$",R.string.studentIDerror);
+            awesomeValidation.addValidation(this, R.id.student_e_mail,
+                    Patterns.EMAIL_ADDRESS, R.string.emailerror);
+            awesomeValidation.addValidation(this, R.id.student_name,
+                    "^[a-zA-Z]+$", R.string.nameerror);
+            awesomeValidation.addValidation(this, R.id.student_surname,
+                    "^[a-zA-Z]+$", R.string.surnameerror);
+            awesomeValidation.addValidation(this, R.id.student_password,
+                    "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!_*.-]).{6,}$",
+                    R.string.passworderror);
             for (int i = 0; i < viewGroup.getChildCount(); i++){
                 if(viewGroup.getChildAt(i) instanceof  EditText)
                     if(viewGroup.getChildAt(i).getTag().equals("l")) {
@@ -59,6 +77,16 @@ public class RegistrationActivity extends AppCompatActivity {
             }
         }
         else if(p == 2){
+            awesomeValidation.clear();
+            awesomeValidation.addValidation(this, R.id.lecturer_e_mail,
+                    Patterns.EMAIL_ADDRESS, R.string.emailerror);
+            awesomeValidation.addValidation(this, R.id.lecturer_name,
+                    "^[a-zA-Z]+$", R.string.nameerror);
+            awesomeValidation.addValidation(this, R.id.lecturer_surname,
+                    "^[a-zA-Z]+$", R.string.surnameerror);
+            awesomeValidation.addValidation(this, R.id.lecturer_password,
+                    "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!_*.-]).{6,}$",
+                    R.string.passworderror);
             for (int i = 0; i < viewGroup.getChildCount(); i++){
                 if(viewGroup.getChildAt(i) instanceof  EditText)
                     if(viewGroup.getChildAt(i).getTag().equals("s")) {
@@ -67,6 +95,12 @@ public class RegistrationActivity extends AppCompatActivity {
                         ((EditText) viewGroup.getChildAt(i)).setVisibility(View.VISIBLE);
                     }
             }
+        }
+    }
+
+    public void onRegister(View view){
+        if(awesomeValidation.validate()){
+            //BackgroundWorker will work here
         }
     }
 }

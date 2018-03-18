@@ -25,13 +25,15 @@ public class LoginStudentActivity extends AppCompatActivity {
     }
 
     public void OnLogin(View view){
-        if(awesomeValidation.validate()) {
+        if(awesomeValidation.validate() && !ET_Password.getText().toString().isEmpty()) {
             String studentID = ET_StudentID.getText().toString();
             String password = ET_Password.getText().toString();
             if (!studentID.isEmpty() && !password.isEmpty()) {
                 BackgroundWorker backgroundWorker = new BackgroundWorker(this);
                 backgroundWorker.execute("studentLogin", "username", studentID, "password", password);
             }
+            else if(ET_Password.getText().toString().isEmpty())
+                ET_Password.setError("Enter your password");
         }
     }
 }

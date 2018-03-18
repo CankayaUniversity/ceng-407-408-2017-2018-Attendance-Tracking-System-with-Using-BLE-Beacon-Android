@@ -181,7 +181,8 @@
             android:layout_below="@+id/EditViewRelative"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="34dp"
-            android:text="Register" />
+            android:text="Register"
+            android:onClick="onRegister"/>
 
 
     </RelativeLayout>

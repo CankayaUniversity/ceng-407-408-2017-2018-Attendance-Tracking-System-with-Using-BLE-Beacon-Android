@@ -27,11 +27,13 @@ public class LoginLecturerActivity extends AppCompatActivity {
     }
 
     public void OnLogin(View view){
-        if(awesomeValidation.validate()) {
+        if(awesomeValidation.validate() && !ET_Password.getText().toString().isEmpty()) {
             String mail = ET_Mail.getText().toString();
             String password = ET_Password.getText().toString();
                 BackgroundWorker backgroundWorker = new BackgroundWorker(this);
                 backgroundWorker.execute("lecturerLogin", "username", mail, "password", password);
         }
+        else if(ET_Password.getText().toString().isEmpty())
+            ET_Password.setError("Enter your password");
     }
 }
