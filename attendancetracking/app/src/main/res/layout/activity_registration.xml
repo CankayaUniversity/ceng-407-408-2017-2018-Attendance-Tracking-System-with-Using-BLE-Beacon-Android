@@ -94,7 +94,7 @@
                 android:layout_marginTop="18dp"
                 android:ems="10"
                 android:hint="E-mail"
-                android:inputType="textPersonName"
+                android:inputType="textEmailAddress"
                 android:tag="s" />
 
             <EditText
@@ -131,7 +131,7 @@
                 android:layout_alignStart="@+id/student_schoolID"
                 android:ems="10"
                 android:hint="E-mail"
-                android:inputType="textPersonName"
+                android:inputType="textEmailAddress"
                 android:tag="l" />
 
             <EditText

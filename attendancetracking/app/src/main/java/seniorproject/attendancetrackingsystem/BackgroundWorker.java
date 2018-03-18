@@ -6,15 +6,18 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.widget.Toast;
 
 
-public class BackgroundWorker extends AsyncTask<String,Void,String>{
-    Context context;
-    AlertDialog alertDialog;
-    String type;
-    BackgroundWorker(Context ctx){
+public class BackgroundWorker extends AsyncTask<String, Void, String> {
+    private Context context;
+    private AlertDialog alertDialog;
+    private String type;
+
+    BackgroundWorker(Context ctx) {
         context = ctx;
     }
+
     @Override
     protected String doInBackground(String... params) {
         type = params[0];
@@ -28,13 +31,13 @@ public class BackgroundWorker extends AsyncTask<String,Void,String>{
     }
 
     @Override
-    protected void onPreExecute(){
+    protected void onPreExecute() {
 
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
 
-        if(activeNetworkInfo == null || !activeNetworkInfo.isConnected()) {
+        if (activeNetworkInfo == null || !activeNetworkInfo.isConnected()) {
             alertDialog = new AlertDialog.Builder(context).create();
             alertDialog.setTitle("Network Connection");
             alertDialog.setMessage("This application requires internet connection!");
@@ -46,20 +49,34 @@ public class BackgroundWorker extends AsyncTask<String,Void,String>{
 
     @Override
     protected void onPostExecute(String result) {
-
-
-        if(result.contains("Successful")) {
-            Intent newIntent = new Intent(context,WelcomePage.class);
-            newIntent.putExtra("type", type);
-            if(type.equals("studentLogin") || type.equals("lecturerLogin"))
-                newIntent.putExtra("username",result.substring(11,result.length()));
-            context.startActivity(newIntent);
-
-        }
-        else {
+        if (result != null && result.contains("Successful")) {
+            Intent newIntent;
+            switch (type) {
+                case "studentLogin":
+                case "lecturerLogin":
+                    newIntent = new Intent(context, WelcomePage.class);
+                    newIntent.putExtra("username", result.substring(11, result.length()));
+                    if (type == "studentLogin")
+                        newIntent.putExtra("userType", "student");
+                    else if (type == "lecturerLogin")
+                        newIntent.putExtra("usertype", "lecturer");
+                    context.startActivity(newIntent);
+                    break;
+                case "studentRegister":
+                case "lecturerRegister":
+                    Toast.makeText(context, "Register Successful", Toast.LENGTH_SHORT);
+                    newIntent = new Intent(context, MainActivity.class);
+                    newIntent.putExtra("message", "Registration is successful");
+                    context.startActivity(newIntent);
+                    break;
+            }
+        } else {
             alertDialog = new AlertDialog.Builder(context).create();
-            alertDialog.setTitle("Login Status");
-            alertDialog.setMessage(result);
+            if (type == "studentLogin" || type == "lecturerLogin")
+                alertDialog.setTitle("Login Status");
+            else if (type == "studentRegister" || type == "lecturerRegister")
+                alertDialog.setTitle("Registration Status");
+            alertDialog.setMessage("An error has been occurred while doing your action!");
             alertDialog.show();
         }
     }
