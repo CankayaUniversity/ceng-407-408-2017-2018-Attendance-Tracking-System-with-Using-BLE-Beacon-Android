@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.util.Patterns;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.RadioGroup;
@@ -18,7 +17,6 @@ import com.basgeekball.awesomevalidation.ValidationStyle;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 
 public class RegistrationActivity extends AppCompatActivity {
@@ -27,7 +25,7 @@ public class RegistrationActivity extends AppCompatActivity {
     private RadioGroup radioGroup;
     private AwesomeValidation awesomeValidation;
     private Spinner departmentList;
-    private ArrayList<String> departments = new ArrayList<String>();
+    private ArrayList<String> departments;
     private String lecturerDepartment;
     private AlertDialog alertDialog;
     private Context context;
@@ -49,7 +47,7 @@ public class RegistrationActivity extends AppCompatActivity {
         lecturerSurname = (EditText) findViewById(R.id.lecturer_surname);
         radioGroup = (RadioGroup) findViewById(R.id.radioGroup1);
         departmentList = (Spinner) findViewById(R.id.lecturer_courses);
-
+        departments = new ArrayList<String>();
 
         departments.add("MATH");
         departments.add("PSY");
@@ -78,35 +76,13 @@ public class RegistrationActivity extends AppCompatActivity {
 
         Collections.sort(departments);
 
-        departments.add(0,"Choose your department");
+        departments.add(0, "Choose your department");
 
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, departments);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         departmentList.setAdapter(adapter);
-        departmentList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()   {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-                alertDialog = new AlertDialog.Builder(context).create();
-
-                if(position == 0)
-                {
-                    alertDialog.setMessage("Please select your department!");
-                }
-                else
-                {
-                    lecturerDepartment = parent.getItemAtPosition(position).toString();
-                }
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
 
 
         changeVisibilities((ViewGroup) findViewById(R.id.EditViewRelative), 0);
@@ -128,7 +104,7 @@ public class RegistrationActivity extends AppCompatActivity {
             for (int i = 0; i < viewGroup.getChildCount(); i++) {
                 if (viewGroup.getChildAt(i) instanceof EditText)
                     ((EditText) viewGroup.getChildAt(i)).setVisibility(View.INVISIBLE);
-                else if(viewGroup.getChildAt(i) instanceof Spinner)
+                else if (viewGroup.getChildAt(i) instanceof Spinner)
                     ((Spinner) viewGroup.getChildAt(i)).setVisibility(View.INVISIBLE);
             }
         } else if (p == 1) {
@@ -151,8 +127,7 @@ public class RegistrationActivity extends AppCompatActivity {
                     } else {
                         ((EditText) viewGroup.getChildAt(i)).setVisibility(View.VISIBLE);
                     }
-                }
-                else if(viewGroup.getChildAt(i) instanceof Spinner)
+                } else if (viewGroup.getChildAt(i) instanceof Spinner)
                     ((Spinner) viewGroup.getChildAt(i)).setVisibility(View.INVISIBLE);
             }
         } else if (p == 2) {
@@ -174,13 +149,11 @@ public class RegistrationActivity extends AppCompatActivity {
                     } else {
                         ((EditText) viewGroup.getChildAt(i)).setVisibility(View.VISIBLE);
                     }
-                }
-                else if(viewGroup.getChildAt(i) instanceof Spinner) {
+                } else if (viewGroup.getChildAt(i) instanceof Spinner) {
 
-                    if(viewGroup.getChildAt(i).getTag().equals("s")) {
+                    if (viewGroup.getChildAt(i).getTag().equals("s")) {
                         ((Spinner) viewGroup.getChildAt(i)).setVisibility(View.INVISIBLE);
-                    }
-                    else {
+                    } else {
                         ((Spinner) viewGroup.getChildAt(i)).setVisibility(View.VISIBLE);
                     }
                 }
