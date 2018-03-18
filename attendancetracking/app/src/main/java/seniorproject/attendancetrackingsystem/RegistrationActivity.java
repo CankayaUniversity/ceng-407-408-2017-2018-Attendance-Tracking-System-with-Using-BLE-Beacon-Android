@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.util.Patterns;
 import android.view.View;
 import android.view.ViewGroup;
@@ -131,7 +132,6 @@ public class RegistrationActivity extends AppCompatActivity {
                     ((Spinner) viewGroup.getChildAt(i)).setVisibility(View.INVISIBLE);
             }
         } else if (p == 2) {
-
             awesomeValidation.clear();
             awesomeValidation.addValidation(this, R.id.lecturer_e_mail,
                     Patterns.EMAIL_ADDRESS, R.string.emailerror);
@@ -157,8 +157,6 @@ public class RegistrationActivity extends AppCompatActivity {
                         ((Spinner) viewGroup.getChildAt(i)).setVisibility(View.VISIBLE);
                     }
                 }
-
-
             }
         }
     }
@@ -171,10 +169,20 @@ public class RegistrationActivity extends AppCompatActivity {
                 String mail = studentEmail.getText().toString();
                 String name = studentName.getText().toString();
                 String surname = studentSurname.getText().toString();
+                String phoneNumber = "";
+                try {
+                    TelephonyManager telephonyManager =
+                            (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+                    phoneNumber = telephonyManager.getLine1Number().toString();
+
+                } catch (SecurityException e) {
+                    e.printStackTrace();
+                }
 
                 BackgroundWorker backgroundWorker = new BackgroundWorker(this);
                 backgroundWorker.execute("studentRegister", "schoolID", schoolID, "password",
-                        password, "mail", mail, "name", name, "surname", surname);
+                        password, "mail", mail, "name", name, "surname", surname,
+                        "phoneNumber", phoneNumber);
             } else if (radioGroup.getCheckedRadioButtonId() == R.id.radio_button_lecturer) {
                 String mail = lecturerEmail.getText().toString();
                 String password = lecturerPassword.getText().toString();
