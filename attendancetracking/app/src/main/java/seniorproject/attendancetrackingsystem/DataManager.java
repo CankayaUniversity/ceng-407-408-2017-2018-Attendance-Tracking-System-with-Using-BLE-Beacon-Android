@@ -78,7 +78,7 @@ public class DataManager {
         try {
             InputStream inputStream = httpURLConnection.getInputStream();
             BufferedReader bufferedReader = new BufferedReader(
-                    new InputStreamReader(inputStream, "iso-8859-1"));
+                    new InputStreamReader(inputStream, "UTF-8"));
             String result = "";
             String line = "";
             while ((line = bufferedReader.readLine()) != null) {
