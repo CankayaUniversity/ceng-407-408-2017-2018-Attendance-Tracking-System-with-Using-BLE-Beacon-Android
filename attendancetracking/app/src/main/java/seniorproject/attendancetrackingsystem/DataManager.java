@@ -41,17 +41,19 @@ public class DataManager {
         //Initiate and set arraylists
         parameters = new ArrayList<String>();
         values = new ArrayList<String>();
-        if (type != "get") {
             try {
-                for (int i = 1; i < params.length; i += 2) {
+                int i;
+                if(type == "get") i = 2;
+                else i = 1;
+                while(i < params.length) {
                     parameters.add(params[i]);
-                    values.add(params[i + 1]);
+                    values.add(params[i+1]);
+                    i += 2;
                 }
             } catch (IndexOutOfBoundsException e) {
                 e.printStackTrace();
             }
         }
-    }
 
     public void sendData(String method) {
         try {
@@ -99,7 +101,6 @@ public class DataManager {
     private String dataGenerator() {
         String data = "";
         try {
-            if (type == "get") return URLEncoder.encode("Request", "UTF-8") + "=" + "true";
             for (int i = 0; i < parameters.size(); i++) {
                 data += URLEncoder.encode(parameters.get(i), "UTF-8") + "="
                         + URLEncoder.encode(values.get(i), "UTF-8") + "&";

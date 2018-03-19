@@ -47,7 +47,7 @@ public class RegistrationActivity extends AppCompatActivity implements Backgroun
         departments = new ArrayList<String>();
         BackgroundWorker backgroundWorker = new BackgroundWorker(this);
 
-        backgroundWorker.execute("get", "department-list");
+        backgroundWorker.execute("get", "department-list","Request","true");
 
         Collections.sort(departments);
 

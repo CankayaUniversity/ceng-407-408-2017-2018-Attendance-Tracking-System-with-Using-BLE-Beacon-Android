@@ -4,18 +4,44 @@ package seniorproject.attendancetrackingsystem;
 import java.util.ArrayList;
 
 public class Student extends Actor {
-    private int phoneNumber;
+    private int studentNumber;
+    private String phoneNumber;
     private ArrayList<Course> takenCourses;
 
-    public void setPhoneNumber(int phoneNumber){ this.phoneNumber = phoneNumber; }
-    public int getPhoneNumber(){ return this.phoneNumber; }
-    public void initiateServices(){
+    Student() {
+        studentNumber = 0;
+        phoneNumber = "";
+        setMail("");
+        setName("");
+        setSurname("");
+        setPassword("");
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getPhoneNumber() {
+        return this.phoneNumber;
+    }
+
+    public void setStudentNumber(int studentNumber) {
+        this.studentNumber = studentNumber;
+    }
+
+    public int getStudentNumber() {
+        return this.studentNumber;
+    }
+
+    public void initiateServices() {
         //Initiate Bluetooth Service
     }
-    public void courseAssignment(int courseID, int section){
+
+    public void courseAssignment(int courseID, int section) {
         //Course Assignment
     }
-    public void changePassword(){
+
+    public void changePassword() {
         //Change Password
     }
 }

@@ -8,7 +8,7 @@ import android.widget.EditText;
 import com.basgeekball.awesomevalidation.AwesomeValidation;
 import com.basgeekball.awesomevalidation.ValidationStyle;
 
-public class LoginStudentActivity extends AppCompatActivity {
+public class LoginStudentActivity extends AppCompatActivity implements BackgroundWorker.TaskCompleted {
     private EditText ET_StudentID, ET_Password;
     private AwesomeValidation awesomeValidation;
     @Override
@@ -35,5 +35,10 @@ public class LoginStudentActivity extends AppCompatActivity {
             else if(ET_Password.getText().toString().isEmpty())
                 ET_Password.setError("Enter your password");
         }
+    }
+
+    @Override
+    public void onTaskComplete(String result) {
+
     }
 }

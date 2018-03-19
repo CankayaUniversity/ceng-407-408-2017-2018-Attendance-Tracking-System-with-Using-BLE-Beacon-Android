@@ -60,7 +60,7 @@ public class BackgroundWorker extends AsyncTask<String, Void, String> {
                 case "studentLogin":
                 case "lecturerLogin":
                     newIntent = new Intent(context, WelcomePage.class);
-                    newIntent.putExtra("username", result.substring(11, result.length()));
+                    newIntent.putExtra("user_id", result.substring(11, result.length()));
                     if (type == "studentLogin")
                         newIntent.putExtra("userType", "student");
                     else if (type == "lecturerLogin")
