@@ -18,10 +18,13 @@ public class MainActivity extends AppCompatActivity {
         Button register = (Button) findViewById(R.id.register_button);
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
-        if (bundle != null) {
-            String message = bundle.get("message").toString();
-            if (!message.isEmpty())
+        if (intent != null && bundle != null) {
+            try {
+                String message = bundle.get("message").toString();
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+            }catch(NullPointerException e){
+                e.printStackTrace();
+            }
         }
         login.setOnClickListener(new View.OnClickListener() {
             @Override
