@@ -49,10 +49,7 @@ public class RegistrationActivity extends AppCompatActivity implements Backgroun
 
         backgroundWorker.execute("get", "department-list","Request","true");
 
-        Collections.sort(departments);
-
         departments.add(0, "Choose your department");
-
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item, departments);
@@ -99,8 +96,10 @@ public class RegistrationActivity extends AppCompatActivity implements Backgroun
                 if (viewGroup.getChildAt(i) instanceof EditText) {
                     if (viewGroup.getChildAt(i).getTag().equals("l")) {
                         ((EditText) viewGroup.getChildAt(i)).setVisibility(View.INVISIBLE);
+                        ((EditText) viewGroup.getChildAt(i)).setText("");
                     } else {
                         ((EditText) viewGroup.getChildAt(i)).setVisibility(View.VISIBLE);
+                        ((EditText) viewGroup.getChildAt(i)).setText("");
                     }
                 } else if (viewGroup.getChildAt(i) instanceof Spinner)
                     ((Spinner) viewGroup.getChildAt(i)).setVisibility(View.INVISIBLE);
@@ -120,8 +119,10 @@ public class RegistrationActivity extends AppCompatActivity implements Backgroun
                 if (viewGroup.getChildAt(i) instanceof EditText) {
                     if (viewGroup.getChildAt(i).getTag().equals("s")) {
                         ((EditText) viewGroup.getChildAt(i)).setVisibility(View.INVISIBLE);
+                        ((EditText) viewGroup.getChildAt(i)).setText("");
                     } else {
                         ((EditText) viewGroup.getChildAt(i)).setVisibility(View.VISIBLE);
+                        ((EditText) viewGroup.getChildAt(i)).setText("");
                     }
                 } else if (viewGroup.getChildAt(i) instanceof Spinner) {
 
@@ -184,5 +185,6 @@ public class RegistrationActivity extends AppCompatActivity implements Backgroun
         for (int i = 0; i < tokens.length; i++) {
             departments.add(tokens[i].substring(tokens[i].indexOf(" "), tokens[i].length()));
         }
+        Collections.sort(departments);
     }
 }
