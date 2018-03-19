@@ -13,9 +13,15 @@ public class BackgroundWorker extends AsyncTask<String, Void, String> {
     private Context context;
     private AlertDialog alertDialog;
     private String type;
+    private TaskCompleted CallBack;
+
+    public interface TaskCompleted {
+        void onTaskComplete(String result);
+    }
 
     BackgroundWorker(Context ctx) {
         context = ctx;
+        CallBack = (TaskCompleted) context;
     }
 
     @Override
@@ -26,7 +32,6 @@ public class BackgroundWorker extends AsyncTask<String, Void, String> {
         DM.sendData("POST");
         String result = DM.getResult();
         DM.disconnect();
-
         return result;
     }
 
@@ -49,7 +54,7 @@ public class BackgroundWorker extends AsyncTask<String, Void, String> {
 
     @Override
     protected void onPostExecute(String result) {
-        if (result != null && result.contains("Successful")) {
+        if ((result != null && result.contains("Successful")) || type == "get") {
             Intent newIntent;
             switch (type) {
                 case "studentLogin":
@@ -68,6 +73,9 @@ public class BackgroundWorker extends AsyncTask<String, Void, String> {
                     newIntent = new Intent(context, MainActivity.class);
                     newIntent.putExtra("message", "Registration is successful");
                     context.startActivity(newIntent);
+                    break;
+                case "get":
+                    CallBack.onTaskComplete(result);
                     break;
             }
         } else {

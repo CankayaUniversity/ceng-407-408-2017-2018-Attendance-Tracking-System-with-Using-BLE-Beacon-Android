@@ -21,11 +21,14 @@ public class DataManager {
 
     DataManager(String... params) {
         type = params[0];
+        String domain = "http://attendancesystem.xyz/attendancetracking/";
         // Setting page URL according to type
         if (type == "studentLogin" || type == "lecturerLogin")
-            targetURL = "http://attendancesystem.xyz/attendancetracking/login.php";
+            targetURL = domain + "login.php";
         else if (type == "studentRegister" || type == "lecturerRegister")
-            targetURL = "http://attendancesystem.xyz/attendancetracking/register.php";
+            targetURL = domain + "register.php";
+        else
+            targetURL = domain + type + "-" + params[1] + ".php";
 
         try {
             URL url = new URL(targetURL);
@@ -38,13 +41,15 @@ public class DataManager {
         //Initiate and set arraylists
         parameters = new ArrayList<String>();
         values = new ArrayList<String>();
-        try {
-            for (int i = 1; i < params.length; i += 2) {
-                parameters.add(params[i]);
-                values.add(params[i + 1]);
+        if (type != "get") {
+            try {
+                for (int i = 1; i < params.length; i += 2) {
+                    parameters.add(params[i]);
+                    values.add(params[i + 1]);
+                }
+            } catch (IndexOutOfBoundsException e) {
+                e.printStackTrace();
             }
-        } catch (IndexOutOfBoundsException e) {
-            e.printStackTrace();
         }
     }
 
@@ -94,6 +99,7 @@ public class DataManager {
     private String dataGenerator() {
         String data = "";
         try {
+            if (type == "get") return URLEncoder.encode("Request", "UTF-8") + "=" + "true";
             for (int i = 0; i < parameters.size(); i++) {
                 data += URLEncoder.encode(parameters.get(i), "UTF-8") + "="
                         + URLEncoder.encode(values.get(i), "UTF-8") + "&";

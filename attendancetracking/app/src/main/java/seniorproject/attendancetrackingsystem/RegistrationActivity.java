@@ -1,7 +1,6 @@
 package seniorproject.attendancetrackingsystem;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
@@ -20,16 +19,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 
-public class RegistrationActivity extends AppCompatActivity {
+public class RegistrationActivity extends AppCompatActivity implements BackgroundWorker.TaskCompleted {
     private EditText studentSchoolID, studentEmail, studentPassword, studentName, studentSurname,
             lecturerEmail, lecturerPassword, lecturerName, lecturerSurname;
     private RadioGroup radioGroup;
     private AwesomeValidation awesomeValidation;
     private Spinner departmentList;
     private ArrayList<String> departments;
-    private String lecturerDepartment;
-    private AlertDialog alertDialog;
-    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,31 +45,9 @@ public class RegistrationActivity extends AppCompatActivity {
         radioGroup = (RadioGroup) findViewById(R.id.radioGroup1);
         departmentList = (Spinner) findViewById(R.id.lecturer_courses);
         departments = new ArrayList<String>();
+        BackgroundWorker backgroundWorker = new BackgroundWorker(this);
 
-        departments.add("MATH");
-        departments.add("PSY");
-        departments.add("CENG");
-        departments.add("EEE");
-        departments.add("ECE");
-        departments.add("CE");
-        departments.add("IE");
-        departments.add("ECON");
-        departments.add("MAN");
-        departments.add("TINS");
-        departments.add("ELL");
-        departments.add("BAF");
-        departments.add("PSI");
-        departments.add("LAW");
-        departments.add("HIR");
-        departments.add("INTT");
-        departments.add("MSE");
-        departments.add("ME");
-        departments.add("MECE");
-        departments.add("INAR");
-        departments.add("ARCH");
-        departments.add("CRP");
-        departments.add("FLD");
-        departments.add("ODB");
+        backgroundWorker.execute("get", "department-list");
 
         Collections.sort(departments);
 
@@ -184,14 +158,31 @@ public class RegistrationActivity extends AppCompatActivity {
                         password, "mail", mail, "name", name, "surname", surname,
                         "phoneNumber", phoneNumber);
             } else if (radioGroup.getCheckedRadioButtonId() == R.id.radio_button_lecturer) {
+                if (departmentList.getSelectedItemId() == 0) {
+                    AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+                    alertDialog.setTitle("Department is empty");
+                    alertDialog.setMessage("Please choose your department from the list");
+                    alertDialog.show();
+                    return;
+                }
                 String mail = lecturerEmail.getText().toString();
                 String password = lecturerPassword.getText().toString();
                 String name = lecturerName.getText().toString();
                 String surname = lecturerSurname.getText().toString();
+                String lecturerDepartment = departmentList.getSelectedItem().toString();
                 BackgroundWorker backgroundWorker = new BackgroundWorker(this);
                 backgroundWorker.execute("lecturerRegister", "mail", mail, "password", password,
                         "name", name, "surname", surname, "department", lecturerDepartment);
             }
+        }
+    }
+
+    @Override
+    public void onTaskComplete(String result) {
+        String[] tokens = result.split("\n");
+        String message = "";
+        for (int i = 0; i < tokens.length; i++) {
+            departments.add(tokens[i].substring(tokens[i].indexOf(" "), tokens[i].length()));
         }
     }
 }
