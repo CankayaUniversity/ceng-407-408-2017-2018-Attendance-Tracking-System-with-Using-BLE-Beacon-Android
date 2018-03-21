@@ -5,7 +5,7 @@
     <color name="oceanN">#336699</color>
     <color name="darkNight">#292b3d</color>
     <color name="skyline">#fafafa</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#FFFFFF</color>
     <color name="gradientStart">#336699</color>
     <color name="gradientEnd">#0077b5</color>
 </resources>

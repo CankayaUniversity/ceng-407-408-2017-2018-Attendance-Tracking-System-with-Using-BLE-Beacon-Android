@@ -32,7 +32,10 @@
             android:layout_width="match_parent"
             android:layout_height="69dp"
             android:hint="E-mail"
-            android:inputType="textEmailAddress" />
+            android:inputType="textEmailAddress"
+            android:textColor="#fff"
+            android:textColorHint="#fff"
+            android:textColorHighlight="#fff"/>
 
         <!-- Password Label -->
         <EditText
@@ -40,7 +43,10 @@
             android:layout_width="match_parent"
             android:layout_height="63dp"
             android:hint="Password"
-            android:inputType="textPassword" />
+            android:inputType="textPassword"
+            android:textColor="#fff"
+            android:textColorHint="#fff"
+            android:textColorHighlight="#fff"/>
 
         <Button
             android:id="@+id/login_button"

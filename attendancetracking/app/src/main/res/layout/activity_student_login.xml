@@ -30,7 +30,10 @@
             android:layout_width="match_parent"
             android:layout_height="69dp"
             android:hint="School ID"
-            android:inputType="textPhonetic" />
+            android:inputType="textPhonetic"
+            android:textColor="#fff"
+            android:textColorHint="#fff"
+            android:textColorHighlight="#fff"/>
 
         <!-- Password Label -->
         <EditText
@@ -38,7 +41,10 @@
             android:layout_width="match_parent"
             android:layout_height="63dp"
             android:hint="Password"
-            android:inputType="textPassword" />
+            android:inputType="textPassword"
+            android:textColor="#fff"
+            android:textColorHint="#fff"
+            android:textColorHighlight="#fff"/>
 
         <Button
             android:id="@+id/login_button"
