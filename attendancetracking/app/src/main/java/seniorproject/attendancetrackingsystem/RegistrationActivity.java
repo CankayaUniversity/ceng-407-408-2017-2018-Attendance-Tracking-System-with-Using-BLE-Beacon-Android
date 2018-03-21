@@ -52,7 +52,7 @@ public class RegistrationActivity extends AppCompatActivity implements Backgroun
         departments.add(0, "Choose your department");
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item, departments);
+                R.layout.spinner_item, departments);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         departmentList.setAdapter(adapter);
 
