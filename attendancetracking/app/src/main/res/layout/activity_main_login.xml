@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/a2"
+    android:background="@drawable/gradientback"
     tools:context="seniorproject.attendancetrackingsystem.MainActivity" >
 
 
@@ -18,7 +18,9 @@
         android:layout_alignTop="@+id/student_login"
         android:layout_marginEnd="13dp"
         android:text="Lecturer Logın"
-        android:textSize="15dp" />
+        android:textSize="15dp"
+        android:textColor="#fff"
+        android:background="@drawable/button_border"/>
 
     <Button
         android:id="@+id/student_login"
@@ -30,7 +32,9 @@
         android:layout_marginStart="15dp"
         android:layout_marginTop="126dp"
         android:text="Student Logın"
-        android:textSize="15dp" />
+        android:textSize="15dp"
+        android:textColor="#fff"
+        android:background="@drawable/button_border"/>
 
 
     <ImageView

@@ -3,7 +3,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:fitsSystemWindows="true"
-    android:background="@drawable/a2">
+    android:background="@drawable/gradientback">
 
 
     <LinearLayout
@@ -45,10 +45,15 @@
         <Button
             android:id="@+id/login_button"
             style="@style/Widget.AppCompat.Button.Borderless"
-            android:layout_width="match_parent"
+            android:layout_width="170dp"
+            android:layout_gravity="center"
+            android:textAlignment="center"
             android:layout_height="wrap_content"
             android:onClick="OnLogin"
-            android:text="Logın" />
+            android:text="Logın"
+
+            android:background="@drawable/button_border"
+            android:textColor="#fff"/>
 
 
     </LinearLayout>

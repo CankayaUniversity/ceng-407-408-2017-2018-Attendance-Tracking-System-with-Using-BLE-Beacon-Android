@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:fillViewport="true">
@@ -10,7 +10,7 @@
         android:id="@+id/generalRelative"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/back"
+        android:background="@drawable/gradientback"
         android:visibility="visible"
         tools:context="seniorproject.attendancetrackingsystem.RegistrationActivity">
 
@@ -36,7 +36,8 @@
                 android:layout_alignParentStart="true"
                 android:layout_alignParentTop="true"
                 android:text="Lecturer Registration"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:textColor="#fff"/>
 
             <RadioButton
                 android:id="@+id/radio_button_student"
@@ -46,7 +47,8 @@
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentTop="true"
                 android:text="Student Registration"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:textColor="#fff"/>
         </RadioGroup>
 
         <RelativeLayout
@@ -176,7 +178,7 @@
                 android:layout_height="40dp"
                 android:layout_alignParentBottom="true"
                 android:layout_alignStart="@+id/student_surname"
-                android:tag="l"/>
+                android:tag="l" />
 
 
         </RelativeLayout>
@@ -189,9 +191,9 @@
             android:layout_below="@+id/EditViewRelative"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="34dp"
-            android:text="Register"
-            android:onClick="onRegister"/>
+            android:onClick="onRegister"
+            android:text="Register" />
 
 
     </RelativeLayout>
-</ScrollView>
+</LinearLayout>
