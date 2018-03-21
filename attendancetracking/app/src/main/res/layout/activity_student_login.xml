@@ -2,8 +2,8 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:fitsSystemWindows="true"
-    android:background="@drawable/a2" >
+    android:background="@drawable/gradientback"
+    android:fitsSystemWindows="true">
 
 
     <LinearLayout
@@ -23,7 +23,6 @@
             android:src="@drawable/logo" />
 
 
-
         <!-- Email Label -->
 
         <EditText
@@ -31,7 +30,10 @@
             android:layout_width="match_parent"
             android:layout_height="69dp"
             android:hint="School ID"
-            android:inputType="textPhonetic" />
+            android:inputType="textPhonetic"
+            android:textColor="#fff"
+            android:textColorHint="#fff"
+            android:textColorHighlight="#fff"/>
 
         <!-- Password Label -->
         <EditText
@@ -39,15 +41,22 @@
             android:layout_width="match_parent"
             android:layout_height="63dp"
             android:hint="Password"
-            android:inputType="textPassword" />
+            android:inputType="textPassword"
+            android:textColor="#fff"
+            android:textColorHint="#fff"
+            android:textColorHighlight="#fff"/>
 
         <Button
             android:id="@+id/login_button"
             style="@style/Widget.AppCompat.Button.Borderless"
-            android:layout_width="match_parent"
+            android:layout_width="170dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/button_border"
             android:onClick="OnLogin"
-            android:text="Logın" />
+            android:text="Logın"
+            android:textAlignment="center"
+            android:textColor="#fff" />
 
 
     </LinearLayout>

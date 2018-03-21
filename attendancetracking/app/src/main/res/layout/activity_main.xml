@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/a2"
+    android:background="@drawable/gradientback"
     tools:context="seniorproject.attendancetrackingsystem.MainActivity" >
 
 
@@ -13,24 +13,28 @@
         android:id="@+id/login_button"
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="160dp"
-        android:layout_height="37dp"
+        android:layout_height="43dp"
         android:layout_alignParentEnd="true"
         android:layout_alignTop="@+id/register_button"
         android:layout_marginEnd="13dp"
         android:text="Logın"
         tools:layout_editor_absoluteX="198dp"
-        tools:layout_editor_absoluteY="358dp" />
+        tools:layout_editor_absoluteY="358dp"
+        android:background="@drawable/button_border"
+        android:textColor="#fff"/>
 
     <Button
         android:id="@+id/register_button"
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="160dp"
-        android:layout_height="37dp"
+        android:layout_height="43dp"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/textView"
         android:layout_marginStart="16dp"
         android:layout_marginTop="97dp"
         android:text="regıstratıon"
+        android:background="@drawable/button_border"
+        android:textColor="#fff"
         tools:layout_editor_absoluteX="27dp"
         tools:layout_editor_absoluteY="358dp" />
 
@@ -45,10 +49,11 @@
         android:fontFamily="sans-serif"
         android:text="Welcome to Attendance Tracking System"
         android:textAlignment="center"
-        android:textColor="@android:color/black"
+        android:textColor="@android:color/white"
         android:textSize="23dp"
         tools:layout_editor_absoluteX="58dp"
-        tools:layout_editor_absoluteY="187dp" />
+        tools:layout_editor_absoluteY="187dp"
+        />
 
     <ImageView
         android:id="@+id/imageView"
