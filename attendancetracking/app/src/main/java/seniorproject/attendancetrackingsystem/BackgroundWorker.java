@@ -60,11 +60,12 @@ public class BackgroundWorker extends AsyncTask<String, Void, String> {
                 case "studentLogin":
                 case "lecturerLogin":
                     newIntent = new Intent(context, WelcomePage.class);
-                    newIntent.putExtra("user_id", result.substring(11, result.length()));
+                    String username = result.substring(11, result.length());
+                    SessionManager session = new SessionManager(context);
                     if (type == "studentLogin")
-                        newIntent.putExtra("userType", "student");
+                        session.createLoginSession("student",username);
                     else if (type == "lecturerLogin")
-                        newIntent.putExtra("usertype", "lecturer");
+                       session.createLoginSession("lecturer",username);
                     context.startActivity(newIntent);
                     break;
                 case "studentRegister":

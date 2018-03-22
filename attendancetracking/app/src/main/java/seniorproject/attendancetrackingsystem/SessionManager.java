@@ -14,8 +14,8 @@ public class SessionManager {
     Context context;
     private static final String PREF_NAME = "SessionPref";
     private static final String IS_LOGIN = "IsLoggedIn";
-    private static final String KEY_USERTYPE = "userType";
-    private static final String KEY_USERNAME = "username";
+    public static final String KEY_USERTYPE = "userType";
+    public static final String KEY_USERNAME = "username";
     private static final int PRIVATE_MODE = 0;
 
     public SessionManager(Context context) {
@@ -34,7 +34,7 @@ public class SessionManager {
 
     public void checkLogin() {
         if (!this.isLoggedIn()) {
-            Intent intent = new Intent(context, MainLoginActivity.class);
+            Intent intent = new Intent(context, MainActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             context.startActivity(intent);
@@ -51,7 +51,7 @@ public class SessionManager {
     public void logoutUser() {
         editor.clear();
         editor.commit();
-        Intent intent = new Intent(context, MainLoginActivity.class);
+        Intent intent = new Intent(context, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
