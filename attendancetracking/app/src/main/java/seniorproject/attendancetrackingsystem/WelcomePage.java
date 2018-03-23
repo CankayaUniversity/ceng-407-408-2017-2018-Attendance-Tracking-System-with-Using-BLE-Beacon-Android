@@ -4,8 +4,8 @@ package seniorproject.attendancetrackingsystem;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
@@ -36,13 +36,12 @@ public class WelcomePage extends AppCompatActivity {
         settingsFragment = new SettingsFragment();
         reportFragment = new ReportFragment();
         assignmentFragment = new AssignmentFragment();
-
-
+        setFragment(welcomeFragment);
 
         mMainNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()){
+                switch (item.getItemId()) {
                     case R.id.nav_home:
                         mMainNav.setItemBackgroundResource(R.color.darkNight);
                         setFragment(welcomeFragment);
@@ -68,15 +67,19 @@ public class WelcomePage extends AppCompatActivity {
 
                 }
             }
-
-
-
-            private void setFragment(Fragment fragment) {
-                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.replace(R.id.main_frame,fragment);
-                fragmentTransaction.commit();
-            }
         });
+    }
+
+    private void setFragment(Fragment fragment) {
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.main_frame, fragment);
+        fragmentTransaction.commit();
+    }
+
+    @Override
+    public void onBackPressed() {
+        setFragment(welcomeFragment);
+        mMainNav.setSelectedItemId(R.id.nav_home);
     }
 }
 
