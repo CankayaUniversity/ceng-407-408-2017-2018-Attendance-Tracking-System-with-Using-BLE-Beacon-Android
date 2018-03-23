@@ -25,14 +25,12 @@
         <activity android:name=".LoginActivity" />
         <activity
             android:name=".WelcomePage"
-
-
-            android:theme="@style/MyTheme"
-            android:exported="true"/>
-        <activity android:name=".CourseAssignment"
-            android:label="@string/app_name"/>
-            android:label="@string/title_activity_welcome_page"
+            android:exported="true"
             android:theme="@style/MyTheme" />
+        <activity
+            android:name=".CourseAssignment"
+            android:label="@string/app_name" />
+
     </application>
 
 </manifest>
