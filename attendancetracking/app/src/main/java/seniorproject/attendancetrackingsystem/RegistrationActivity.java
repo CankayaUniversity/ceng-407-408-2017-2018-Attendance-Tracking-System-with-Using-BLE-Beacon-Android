@@ -4,7 +4,7 @@ package seniorproject.attendancetrackingsystem;
 import android.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.Switch;
 
 
@@ -21,9 +21,9 @@ public class RegistrationActivity extends AppCompatActivity implements Backgroun
         }
 
         roleSwitch = (Switch) findViewById(R.id.role_switch);
-        roleSwitch.setOnClickListener(new View.OnClickListener() {
+        roleSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (roleSwitch.isChecked()) {
                     getFragmentManager().beginTransaction().replace(R.id.register_layout,
                             new LecturerRegister()).commit();

@@ -1,11 +1,9 @@
 package seniorproject.attendancetrackingsystem;
 
 
-
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
-
+import android.support.v7.app.AppCompatActivity;
+import android.widget.CompoundButton;
 import android.widget.Switch;
 
 
@@ -23,22 +21,17 @@ public class LoginActivity extends AppCompatActivity implements BackgroundWorker
         }
 
         roleSwitch = (Switch) findViewById(R.id.role_switch);
-        roleSwitch.setOnClickListener(new View.OnClickListener() {
+        roleSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
-                changeRole();
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (roleSwitch.isChecked())
+                    getFragmentManager().beginTransaction().replace(R.id.login_layout,
+                            new LecturerLogin()).commit();
+                else
+                    getFragmentManager().beginTransaction().replace(R.id.login_layout,
+                            new StudentLogin()).commit();
             }
         });
-
-    }
-
-    private void changeRole() {
-        if (roleSwitch.isChecked())
-            getFragmentManager().beginTransaction().replace(R.id.login_layout,
-                    new LecturerLogin()).commit();
-        else
-            getFragmentManager().beginTransaction().replace(R.id.login_layout,
-                    new StudentLogin()).commit();
     }
 
     @Override
