@@ -35,10 +35,10 @@ public class LoginActivity extends AppCompatActivity implements BackgroundWorker
     private void changeRole() {
         if (roleSwitch.isChecked())
             getFragmentManager().beginTransaction().replace(R.id.login_layout,
-                    new LecturerLogin()).addToBackStack("lecturerFragment").commit();
+                    new LecturerLogin()).commit();
         else
             getFragmentManager().beginTransaction().replace(R.id.login_layout,
-                    new StudentLogin()).addToBackStack("studentFragment").commit();
+                    new StudentLogin()).commit();
     }
 
     @Override
