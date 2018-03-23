@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_home"
+        android:icon="@drawable/ic_home_black_24dp"
+        android:title="@string/nav_home" />
+    <item
+        android:id="@+id/nav_report"
+        android:icon="@drawable/ic_import_contacts_black_24dp"
+        android:title="@string/nav_report" />
+    <item
+        android:id="@+id/nav_services"
+        android:icon="@drawable/ic_settings_bluetooth_black_24dp"
+        android:title="@string/nav_services" />
+    <item
+        android:id="@+id/nav_assignment"
+        android:icon="@drawable/ic_assignment_black_24dp"
+        android:title="@string/nav_assignment" />
+    <item
+        android:id="@+id/nav_settings"
+        android:icon="@drawable/ic_settings_black_24dp"
+        android:title="@string/nav_settings" />
+</menu>

@@ -25,8 +25,9 @@
         <activity android:name=".MainLoginActivity" />
         <activity
             android:name=".WelcomePage"
-            android:label="@string/title_activity_welcome_page"
-            android:theme="@style/MyTheme" />
+
+            android:theme="@style/MyTheme"
+            android:exported="true"/>
         <activity android:name=".CourseAssignment"
             android:label="@string/app_name"/>
     </application>

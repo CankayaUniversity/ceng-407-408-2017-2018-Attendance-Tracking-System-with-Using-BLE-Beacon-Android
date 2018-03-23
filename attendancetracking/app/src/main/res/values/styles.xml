@@ -17,8 +17,7 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-    <style name="MyTheme"  parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:windowNoTitle">true</item>
+    <style name="MyTheme"  parent="Theme.AppCompat.Light">
         <item name="android:windowFullscreen">true</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>

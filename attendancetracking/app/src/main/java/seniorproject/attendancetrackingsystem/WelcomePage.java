@@ -1,66 +1,83 @@
 package seniorproject.attendancetrackingsystem;
 
+
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.widget.TextView;
+import android.view.MenuItem;
+import android.widget.FrameLayout;
 
-import java.util.HashMap;
 
-public class WelcomePage extends AppCompatActivity implements BackgroundWorker.TaskCompleted {
-    private Actor user;
-    private TextView TV_Name, TV_Mail;
-    private SessionManager session;
-    private HashMap<String, String> userInfo;
+public class WelcomePage extends AppCompatActivity {
+
+    private BottomNavigationView mMainNav;
+    private FrameLayout mMainFrame;
+
+    private WelcomeFragment welcomeFragment;
+    private ServicesFragment servicesFragment;
+    private SettingsFragment settingsFragment;
+    private ReportFragment reportFragment;
+    private AssignmentFragment assignmentFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_welcome_page);
-        TV_Name = (TextView) findViewById(R.id.w_user_name);
-        TV_Mail = (TextView) findViewById(R.id.w_user_mail);
-
-        session = new SessionManager(getApplicationContext());
-        userInfo = session.getUserDetails();
 
 
-        BackgroundWorker backgroundWorker = new BackgroundWorker(this);
-        if (userInfo.get(SessionManager.KEY_USERTYPE).equals("student")) {
-            user = new Student();
-            backgroundWorker.execute("get", "student-info", "Request", "true", "id", userInfo.get(SessionManager.KEY_USERNAME));
-        } else if (userInfo.get(SessionManager.KEY_USERTYPE).equals("lecturer")) {
-            user = new Lecturer();
-            backgroundWorker.execute("get", "lecturer-info", "Request", "true", "id", userInfo.get(SessionManager.KEY_USERNAME));
-        }
+        mMainFrame = (FrameLayout) findViewById(R.id.main_frame);
+        mMainNav = (BottomNavigationView) findViewById(R.id.main_nav);
+
+        welcomeFragment = new WelcomeFragment();
+        servicesFragment = new ServicesFragment();
+        settingsFragment = new SettingsFragment();
+        reportFragment = new ReportFragment();
+        assignmentFragment = new AssignmentFragment();
 
 
-    }
+
+        mMainNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()){
+                    case R.id.nav_home:
+                        mMainNav.setItemBackgroundResource(R.color.darkNight);
+                        setFragment(welcomeFragment);
+                        return true;
+                    case R.id.nav_settings:
+                        mMainNav.setItemBackgroundResource(R.color.darkNight);
+                        setFragment(settingsFragment);
+                        return true;
+                    case R.id.nav_report:
+                        mMainNav.setItemBackgroundResource(R.color.darkNight);
+                        setFragment(reportFragment);
+                        return true;
+                    case R.id.nav_assignment:
+                        mMainNav.setItemBackgroundResource(R.color.darkNight);
+                        setFragment(assignmentFragment);
+                        return true;
+                    case R.id.nav_services:
+                        mMainNav.setItemBackgroundResource(R.color.darkNight);
+                        setFragment(servicesFragment);
+                        return true;
+                    default:
+                        return false;
+
+                }
+            }
 
 
-    @Override
-    public void onTaskComplete(String result) {
-        String[] tokens = result.split("[\n]+");
 
-
-        if (userInfo.get(SessionManager.KEY_USERTYPE).equals("student")) {
-            user = new Student();
-            ((Student) user).setStudentNumber(Integer.parseInt(tokens[0]));
-            user.setName(tokens[1]);
-            user.setSurname(tokens[2]);
-            user.setMail(tokens[3]);
-            ((Student) user).setPhoneNumber(tokens[4]);
-        } else if (userInfo.get(SessionManager.KEY_USERTYPE).equals("lecturer")) {
-            user = new Lecturer();
-            user.setName(tokens[0]);
-            user.setSurname(tokens[1]);
-            user.setMail(tokens[2]);
-        }
-
-        TV_Mail.setText(user.getMail());
-        TV_Name.setText(user.getName() + " " + user.getSurname());
-    }
-
-    public void onLogout(View view) {
-        session.logoutUser();
+            private void setFragment(Fragment fragment) {
+                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.main_frame,fragment);
+                fragmentTransaction.commit();
+            }
+        });
     }
 }
+
+

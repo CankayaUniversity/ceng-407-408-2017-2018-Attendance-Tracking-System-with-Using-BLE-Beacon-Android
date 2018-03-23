@@ -2,10 +2,14 @@
 <resources>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FFFFFF</color>
+
     <color name="oceanN">#336699</color>
     <color name="darkNight">#292b3d</color>
     <color name="skyline">#fafafa</color>
-    <color name="colorAccent">#FFFFFF</color>
     <color name="gradientStart">#336699</color>
     <color name="gradientEnd">#0077b5</color>
+
+    <color name="colorWhite">#ffffff</color>
+    <color name="colorWhiteTransparent">#80ffffff</color>
 </resources>
