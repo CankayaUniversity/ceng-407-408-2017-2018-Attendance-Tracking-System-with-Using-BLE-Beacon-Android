@@ -45,11 +45,9 @@ public class StudentLogin extends Fragment implements View.OnClickListener {
         if (awesomeValidation.validate() && !ET_Password.getText().toString().isEmpty()) {
             String studentID = ET_StudentID.getText().toString();
             String password = ET_Password.getText().toString();
-            if (!studentID.isEmpty() && !password.isEmpty()) {
-                BackgroundWorker backgroundWorker = new BackgroundWorker(getActivity());
-                backgroundWorker.execute("studentLogin", "username", studentID, "password", password);
-            } else if (ET_Password.getText().toString().isEmpty())
-                ET_Password.setError("Enter your password");
-        }
+            BackgroundWorker backgroundWorker = new BackgroundWorker(getActivity());
+            backgroundWorker.execute("studentLogin", "username", studentID, "password", password);
+        } else if (ET_Password.getText().toString().isEmpty())
+            ET_Password.setError("Enter your password");
     }
 }
