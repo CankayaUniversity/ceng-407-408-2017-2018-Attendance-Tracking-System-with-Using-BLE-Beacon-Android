@@ -1,0 +1,49 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="seniorproject.attendancetrackingsystem.AssignmentFragment">
+
+
+    <TextView
+        android:id="@+id/courseName"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:text="Select Course : "/>
+
+
+    <TextView
+        android:id="@+id/sectionNum"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="60dp"
+        android:text="Select Section : "/>
+
+
+    <Spinner
+        android:id="@+id/section"
+        android:layout_width="160dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="110dp"
+        android:layout_marginTop="60dp"
+        android:prompt="@id/section"/>
+
+
+    <Button
+        android:id="@+id/submitCourseAssignment"
+        android:layout_width="170dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="130dp"
+        android:layout_marginLeft="110dp"
+        android:text="Save"
+        android:background="@color/darkNight"/>
+
+    <Spinner
+        android:id="@+id/courseSelect"
+        android:layout_width="260dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="110dp"
+        android:prompt="@id/courseSelect" />
+
+
+</FrameLayout>

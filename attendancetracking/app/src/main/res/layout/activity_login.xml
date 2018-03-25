@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/register_layout"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/login_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/gradientback"
@@ -12,15 +12,29 @@
     android:textAlignment="center">
 
 
+    <ImageView
+        android:layout_width="144dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="85dp"
+        app:srcCompat="@drawable/logo" />
+
     <Switch
         android:id="@+id/role_switch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:elegantTextHeight="true"
         android:showText="true"
-        android:text="Lecturer Register"
+        android:text="Lecturer Login"
         android:textColor="#FFF"
         android:textOff="No"
         android:textOn="Yes"
         android:textSize="20dp" />
+
+<TextView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/testtext"/>
+
+
+
 </LinearLayout>

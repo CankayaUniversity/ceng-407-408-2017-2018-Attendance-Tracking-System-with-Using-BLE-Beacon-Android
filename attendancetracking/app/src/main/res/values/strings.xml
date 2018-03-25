@@ -13,4 +13,12 @@
     <string name="passworderror">Password should be at least 6 characters. \n
         Password should contains at least 1 uppercase letter \n
         1 digit and 1 special character (. - _ ! *)</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_services">Services</string>
+    <string name="nav_report">Reports</string>
+    <string name="nav_assignment">Assignment</string>
+    <string name="nav_settings">Settings</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

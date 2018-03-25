@@ -4,7 +4,9 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -12,23 +14,31 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/MyTheme">
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
-        <activity android:name=".LoginStudentActivity" />
-        <activity android:name=".RegistrationActivity" />
-        <activity android:name=".LoginLecturerActivity" />
-        <activity android:name=".MainLoginActivity" />
+        <activity
+            android:name=".RegistrationActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".LoginActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".WelcomePage"
-            android:label="@string/title_activity_welcome_page"
+            android:exported="true"
+            android:screenOrientation="portrait"
             android:theme="@style/MyTheme" />
-        <activity android:name=".CourseAssignment"
-            android:label="@string/app_name"/>
+        <activity
+            android:name=".CourseAssignment"
+            android:label="@string/app_name" />
+
     </application>
 
 </manifest>
