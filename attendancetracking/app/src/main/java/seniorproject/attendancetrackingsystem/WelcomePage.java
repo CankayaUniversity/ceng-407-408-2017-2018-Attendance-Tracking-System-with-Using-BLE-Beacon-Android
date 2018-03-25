@@ -11,7 +11,7 @@ import android.view.MenuItem;
 import android.widget.FrameLayout;
 
 
-public class WelcomePage extends AppCompatActivity implements BackgroundWorker.TaskCompleted {
+public class WelcomePage extends AppCompatActivity {
 
     private BottomNavigationView mMainNav;
     private FrameLayout mMainFrame;
@@ -82,12 +82,6 @@ public class WelcomePage extends AppCompatActivity implements BackgroundWorker.T
         mMainNav.setSelectedItemId(R.id.nav_home);
     }
 
-    public void onTaskComplete(String result) {
-        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.main_frame);
-        if (currentFragment instanceof AssignmentFragment)
-            ((AssignmentFragment) currentFragment).update(result);
-
-    }
 }
 
 

@@ -69,8 +69,7 @@ public class AssignmentFragment extends Fragment implements View.OnClickListener
         sectionList.add("Section 1");
         sectionList.add("Section 2");
 
-        BackgroundWorker backgroundWorker = new BackgroundWorker(getActivity());
-        backgroundWorker.execute("get", "department-list", "Request", "True");
+ //TODO GET COURSES AND SECTIONS
 
         Button BT_Save = (Button) view.findViewById(R.id.submitCourseAssignment);
 
@@ -93,7 +92,6 @@ public class AssignmentFragment extends Fragment implements View.OnClickListener
 
 
 
-        BackgroundWorker backgroundWorker = new BackgroundWorker(getActivity());
 
         if (SP_CourseList.getSelectedItemId() == 0) {
             AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
@@ -114,7 +112,7 @@ public class AssignmentFragment extends Fragment implements View.OnClickListener
         String course  = SP_CourseList.getSelectedItem().toString();
         String section = SP_SectionList.getSelectedItem().toString();
 
-        backgroundWorker.execute("assignment",  "userType", userType, "username", username, "Request", "build assignment");
+
 
     }
 

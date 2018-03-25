@@ -7,7 +7,7 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 
 
-public class LoginActivity extends AppCompatActivity implements BackgroundWorker.TaskCompleted {
+public class LoginActivity extends AppCompatActivity {
     private Switch roleSwitch;
 
     @Override
@@ -34,9 +34,6 @@ public class LoginActivity extends AppCompatActivity implements BackgroundWorker
         });
     }
 
-    @Override
-    public void onTaskComplete(String result) {
-    }
 
     @Override
     public void onBackPressed() {

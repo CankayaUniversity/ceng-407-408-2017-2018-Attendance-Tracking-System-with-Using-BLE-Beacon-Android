@@ -65,10 +65,7 @@ public class StudentRegister extends Fragment {
                     BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
                     if (bluetoothAdapter != null) bluetoothMac = bluetoothAdapter.getAddress();
 
-                    BackgroundWorker backgroundWorker = new BackgroundWorker(getActivity());
-                    backgroundWorker.execute("studentRegister", "schoolID", schoolID, "password",
-                            password, "mail", mail, "name", name, "surname", surname,
-                            "phoneNumber", bluetoothMac);
+                    //TODO STUDENT REGISTER
 
                 }
             }

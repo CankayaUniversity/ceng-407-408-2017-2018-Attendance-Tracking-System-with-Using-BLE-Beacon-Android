@@ -12,11 +12,13 @@ import android.widget.EditText;
 import com.basgeekball.awesomevalidation.AwesomeValidation;
 import com.basgeekball.awesomevalidation.ValidationStyle;
 
+import java.util.HashMap;
+
 
 public class StudentLogin extends Fragment implements View.OnClickListener {
     private EditText ET_StudentID, ET_Password;
     private AwesomeValidation awesomeValidation;
-
+    private  static DatabaseManager DATABASE_MANAGER;
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -27,6 +29,7 @@ public class StudentLogin extends Fragment implements View.OnClickListener {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        DATABASE_MANAGER = DatabaseManager.getmInstance(getActivity());
         initElements(view);
         awesomeValidation.addValidation(getActivity(), R.id.input_school_id,
                 "^([cC]|(20))[0-9]{7}$", R.string.studentIDerror);
@@ -45,8 +48,13 @@ public class StudentLogin extends Fragment implements View.OnClickListener {
         if (awesomeValidation.validate() && !ET_Password.getText().toString().isEmpty()) {
             String studentID = ET_StudentID.getText().toString();
             String password = ET_Password.getText().toString();
-            BackgroundWorker backgroundWorker = new BackgroundWorker(getActivity());
-            backgroundWorker.execute("studentLogin", "username", studentID, "password", password);
+
+            HashMap<String, String> postParameters = new HashMap<String, String>();
+            postParameters.put("username", studentID);
+            postParameters.put("password", password);
+            postParameters.put("type","studentLogin");
+            DATABASE_MANAGER.execute("login",postParameters);
+
         } else if (ET_Password.getText().toString().isEmpty())
             ET_Password.setError("Enter your password");
     }

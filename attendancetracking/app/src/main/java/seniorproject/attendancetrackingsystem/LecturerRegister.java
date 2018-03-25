@@ -25,6 +25,7 @@ public class LecturerRegister extends Fragment {
     private Spinner departmentList;
     private EditText lecturerMail, lecturerName, lecturerSurname, lecturerPassword;
     private ArrayList<String> departments;
+    private static DatabaseManager DATABASE_MANAGER;
 
     @Nullable
     @Override
@@ -35,6 +36,7 @@ public class LecturerRegister extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        DATABASE_MANAGER = DatabaseManager.getmInstance(getActivity());
         initElements(view);
         awesomeValidation.addValidation(getActivity(), R.id.lecturer_e_mail,
                 Patterns.EMAIL_ADDRESS, R.string.emailerror);
@@ -56,9 +58,10 @@ public class LecturerRegister extends Fragment {
         Button registerButton = (Button) view.findViewById(R.id.register_button);
         awesomeValidation = new AwesomeValidation(ValidationStyle.BASIC);
         departments = new ArrayList<String>();
-        BackgroundWorker backgroundWorker = new BackgroundWorker(getActivity());
-        backgroundWorker.execute("get", "department-list", "Request", "True");
+
         departments.add(0, "Choose your department");
+
+        DATABASE_MANAGER.execute("get","department-list",departments);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
                 R.layout.spinner_item, departments);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -79,21 +82,10 @@ public class LecturerRegister extends Fragment {
                     String name = lecturerName.getText().toString();
                     String surname = lecturerSurname.getText().toString();
                     String lecturerDepartment = departmentList.getSelectedItem().toString();
-                    BackgroundWorker backgroundWorker = new BackgroundWorker(getActivity());
-                    backgroundWorker.execute("lecturerRegister", "mail", mail, "password", password,
-                            "name", name, "surname", surname, "department", lecturerDepartment);
+//TODO LECTURER REGISTER
                 }
             }
         });
     }
 
-    public void update(String result) {
-        String[] tokens = result.split("\n");
-        String message = "";
-        for (int i = 0; i < tokens.length; i++) {
-            departments.add(tokens[i].substring(tokens[i].indexOf(" "), tokens[i].length()));
-        }
-        Collections.sort(departments);
-
-    }
 }

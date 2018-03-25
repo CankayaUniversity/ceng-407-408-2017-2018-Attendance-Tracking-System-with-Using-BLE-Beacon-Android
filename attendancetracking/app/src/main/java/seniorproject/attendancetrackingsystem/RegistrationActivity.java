@@ -8,7 +8,7 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 
 
-public class RegistrationActivity extends AppCompatActivity implements BackgroundWorker.TaskCompleted {
+public class RegistrationActivity extends AppCompatActivity {
     private Switch roleSwitch;
 
     @Override
@@ -35,11 +35,5 @@ public class RegistrationActivity extends AppCompatActivity implements Backgroun
 
     }
 
-    @Override
-    public void onTaskComplete(String result) {
-        Fragment currentFragment = getFragmentManager().findFragmentById(R.id.register_layout);
-        if (currentFragment instanceof LecturerRegister)
-            ((LecturerRegister) currentFragment).update(result);
 
-    }
 }

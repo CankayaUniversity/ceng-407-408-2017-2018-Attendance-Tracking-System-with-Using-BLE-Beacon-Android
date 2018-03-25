@@ -13,10 +13,13 @@ import android.widget.EditText;
 import com.basgeekball.awesomevalidation.AwesomeValidation;
 import com.basgeekball.awesomevalidation.ValidationStyle;
 
+import java.util.HashMap;
+
 
 public class LecturerLogin extends Fragment implements View.OnClickListener {
     private EditText ET_Mail, ET_Password;
     private AwesomeValidation awesomeValidation;
+    private static DatabaseManager DATABASE_MANAGER;
 
     @Nullable
     @Override
@@ -27,6 +30,7 @@ public class LecturerLogin extends Fragment implements View.OnClickListener {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        DATABASE_MANAGER = DatabaseManager.getmInstance(getActivity());
         initElements(view);
         awesomeValidation.addValidation(getActivity(), R.id.input_email,
                 Patterns.EMAIL_ADDRESS, R.string.emailerror);
@@ -45,8 +49,12 @@ public class LecturerLogin extends Fragment implements View.OnClickListener {
         if (awesomeValidation.validate() && !ET_Password.getText().toString().isEmpty()) {
             String mail = ET_Mail.getText().toString();
             String password = ET_Password.getText().toString();
-            BackgroundWorker backgroundWorker = new BackgroundWorker(getActivity());
-            backgroundWorker.execute("lecturerLogin", "username", mail, "password", password);
+            HashMap<String, String> postParameters = new HashMap<String, String>();
+            postParameters.put("username", mail);
+            postParameters.put("password", password);
+            postParameters.put("type", "lecturerLogin");
+            DATABASE_MANAGER.execute("login",postParameters);
+
         } else if (ET_Password.getText().toString().isEmpty())
             ET_Password.setError("Enter your password");
     }
