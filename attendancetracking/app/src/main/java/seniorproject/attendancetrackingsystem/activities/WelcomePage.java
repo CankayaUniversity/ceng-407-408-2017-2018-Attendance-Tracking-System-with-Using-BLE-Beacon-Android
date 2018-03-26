@@ -1,4 +1,4 @@
-package seniorproject.attendancetrackingsystem;
+package seniorproject.attendancetrackingsystem.activities;
 
 
 import android.os.Bundle;
@@ -9,6 +9,13 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
+
+import seniorproject.attendancetrackingsystem.R;
+import seniorproject.attendancetrackingsystem.fragments.AssignmentFragment;
+import seniorproject.attendancetrackingsystem.fragments.ReportFragment;
+import seniorproject.attendancetrackingsystem.fragments.ServicesFragment;
+import seniorproject.attendancetrackingsystem.fragments.SettingsFragment;
+import seniorproject.attendancetrackingsystem.fragments.WelcomeFragment;
 
 
 public class WelcomePage extends AppCompatActivity {

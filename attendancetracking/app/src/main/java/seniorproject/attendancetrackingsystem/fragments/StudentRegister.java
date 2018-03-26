@@ -1,4 +1,4 @@
-package seniorproject.attendancetrackingsystem;
+package seniorproject.attendancetrackingsystem.fragments;
 
 import android.app.Fragment;
 import android.bluetooth.BluetoothAdapter;
@@ -13,6 +13,8 @@ import android.widget.EditText;
 
 import com.basgeekball.awesomevalidation.AwesomeValidation;
 import com.basgeekball.awesomevalidation.ValidationStyle;
+
+import seniorproject.attendancetrackingsystem.R;
 
 
 public class StudentRegister extends Fragment {

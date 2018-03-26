@@ -1,4 +1,4 @@
-package seniorproject.attendancetrackingsystem;
+package seniorproject.attendancetrackingsystem.fragments;
 
 
 import android.os.Bundle;
@@ -7,14 +7,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import seniorproject.attendancetrackingsystem.R;
+
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ServicesFragment extends Fragment {
+public class SettingsFragment extends Fragment {
 
 
-    public ServicesFragment() {
+    public SettingsFragment() {
         // Required empty public constructor
     }
 
@@ -23,7 +25,7 @@ public class ServicesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_services, container, false);
+        return inflater.inflate(R.layout.fragment_settings, container, false);
     }
 
 }

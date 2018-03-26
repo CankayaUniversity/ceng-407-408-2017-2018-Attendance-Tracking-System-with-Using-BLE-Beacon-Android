@@ -1,4 +1,4 @@
-package seniorproject.attendancetrackingsystem;
+package seniorproject.attendancetrackingsystem.utils;
 
 
 import java.sql.Date;

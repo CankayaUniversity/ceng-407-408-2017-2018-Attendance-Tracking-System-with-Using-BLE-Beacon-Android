@@ -1,4 +1,4 @@
-package seniorproject.attendancetrackingsystem;
+package seniorproject.attendancetrackingsystem.utils;
 
 
 import java.util.ArrayList;
@@ -17,20 +17,20 @@ public class Student extends Actor {
         setPassword("");
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
-    }
-
     public String getPhoneNumber() {
         return this.phoneNumber;
     }
 
-    public void setStudentNumber(int studentNumber) {
-        this.studentNumber = studentNumber;
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     public int getStudentNumber() {
         return this.studentNumber;
+    }
+
+    public void setStudentNumber(int studentNumber) {
+        this.studentNumber = studentNumber;
     }
 
     public void initiateServices() {

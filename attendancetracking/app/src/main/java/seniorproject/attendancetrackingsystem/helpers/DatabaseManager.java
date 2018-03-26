@@ -1,4 +1,4 @@
-package seniorproject.attendancetrackingsystem;
+package seniorproject.attendancetrackingsystem.helpers;
 
 
 import android.app.AlertDialog;
@@ -20,6 +20,9 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import seniorproject.attendancetrackingsystem.activities.WelcomePage;
+import seniorproject.attendancetrackingsystem.utils.Department;
 
 public class DatabaseManager {
 

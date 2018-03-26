@@ -1,4 +1,4 @@
-package seniorproject.attendancetrackingsystem;
+package seniorproject.attendancetrackingsystem.helpers;
 
 
 import android.content.Context;
@@ -8,15 +8,17 @@ import android.content.SharedPreferences.Editor;
 
 import java.util.HashMap;
 
+import seniorproject.attendancetrackingsystem.activities.MainActivity;
+
 public class SessionManager {
-    private SharedPreferences pref;
-    private Editor editor;
-    Context context;
-    private static final String PREF_NAME = "SessionPref";
-    private static final String IS_LOGIN = "IsLoggedIn";
     public static final String KEY_USERTYPE = "userType";
     public static final String KEY_USERNAME = "username";
+    private static final String PREF_NAME = "SessionPref";
+    private static final String IS_LOGIN = "IsLoggedIn";
     private static final int PRIVATE_MODE = 0;
+    Context context;
+    private SharedPreferences pref;
+    private Editor editor;
 
     public SessionManager(Context context) {
         this.context = context;

@@ -1,4 +1,4 @@
-package seniorproject.attendancetrackingsystem;
+package seniorproject.attendancetrackingsystem.helpers;
 
 import android.content.Context;
 
@@ -7,6 +7,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+
+import seniorproject.attendancetrackingsystem.utils.Department;
 
 /**
  * Created by Melihşah AKIN on 26.03.2018.
@@ -17,7 +19,7 @@ public class JsonHelper {
     private static Context context;
 
     private JsonHelper(Context context) {
-    this.context = context;
+        this.context = context;
     }
 
     public static synchronized JsonHelper getmInstance(Context context) {
@@ -27,11 +29,11 @@ public class JsonHelper {
     }
 
 
-    public ArrayList<Department> parseDepartmentList(String jsonString){
+    public ArrayList<Department> parseDepartmentList(String jsonString) {
         ArrayList<Department> arrayList = new ArrayList<Department>();
-        try{
+        try {
             JSONArray jsonArray = new JSONArray(jsonString);
-            for(int i = 0; i < jsonArray.length(); i++){
+            for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 Department tempObject = new Department(
                         jsonObject.getInt("department_id"),
@@ -40,10 +42,9 @@ public class JsonHelper {
                 );
                 arrayList.add(tempObject);
             }
-        }catch (JSONException e){
+        } catch (JSONException e) {
             e.printStackTrace();
-        }
-        finally {
+        } finally {
             return arrayList;
         }
     }

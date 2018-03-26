@@ -1,10 +1,14 @@
-package seniorproject.attendancetrackingsystem;
+package seniorproject.attendancetrackingsystem.activities;
 
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.CompoundButton;
 import android.widget.Switch;
+
+import seniorproject.attendancetrackingsystem.R;
+import seniorproject.attendancetrackingsystem.fragments.LecturerLogin;
+import seniorproject.attendancetrackingsystem.fragments.StudentLogin;
 
 
 public class LoginActivity extends AppCompatActivity {

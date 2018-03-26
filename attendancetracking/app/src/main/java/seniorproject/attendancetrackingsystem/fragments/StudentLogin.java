@@ -1,4 +1,4 @@
-package seniorproject.attendancetrackingsystem;
+package seniorproject.attendancetrackingsystem.fragments;
 
 import android.app.Fragment;
 import android.os.Bundle;
@@ -14,11 +14,15 @@ import com.basgeekball.awesomevalidation.ValidationStyle;
 
 import java.util.HashMap;
 
+import seniorproject.attendancetrackingsystem.R;
+import seniorproject.attendancetrackingsystem.helpers.DatabaseManager;
+
 
 public class StudentLogin extends Fragment implements View.OnClickListener {
+    private static DatabaseManager DATABASE_MANAGER;
     private EditText ET_StudentID, ET_Password;
     private AwesomeValidation awesomeValidation;
-    private  static DatabaseManager DATABASE_MANAGER;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -52,8 +56,8 @@ public class StudentLogin extends Fragment implements View.OnClickListener {
             HashMap<String, String> postParameters = new HashMap<String, String>();
             postParameters.put("username", studentID);
             postParameters.put("password", password);
-            postParameters.put("type","studentLogin");
-            DATABASE_MANAGER.execute("login",postParameters);
+            postParameters.put("type", "studentLogin");
+            DATABASE_MANAGER.execute("login", postParameters);
 
         } else if (ET_Password.getText().toString().isEmpty())
             ET_Password.setError("Enter your password");

@@ -1,4 +1,4 @@
-package seniorproject.attendancetrackingsystem;
+package seniorproject.attendancetrackingsystem.utils;
 
 
 import java.sql.Date;
@@ -8,7 +8,7 @@ public class AttendanceSystem {
     public Date date;
     private AttendanceReport report;
 
-    public void createReport(){
+    public void createReport() {
         //CreateReport
     }
 }

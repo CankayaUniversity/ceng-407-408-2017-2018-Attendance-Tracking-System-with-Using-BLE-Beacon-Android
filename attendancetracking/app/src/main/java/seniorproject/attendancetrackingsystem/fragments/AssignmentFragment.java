@@ -1,4 +1,4 @@
-package seniorproject.attendancetrackingsystem;
+package seniorproject.attendancetrackingsystem.fragments;
 
 
 import android.app.AlertDialog;
@@ -10,17 +10,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.basgeekball.awesomevalidation.AwesomeValidation;
-import com.basgeekball.awesomevalidation.ValidationStyle;
-
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.Collections;
+
+import seniorproject.attendancetrackingsystem.R;
 
 
 /**
@@ -37,6 +33,7 @@ public class AssignmentFragment extends Fragment implements View.OnClickListener
     private String username, userType;
     private ArrayList<String> courseList;
     private ArrayList<String> sectionList;
+
     public AssignmentFragment() {
         // Required empty public constructor
     }
@@ -69,7 +66,7 @@ public class AssignmentFragment extends Fragment implements View.OnClickListener
         sectionList.add("Section 1");
         sectionList.add("Section 2");
 
- //TODO GET COURSES AND SECTIONS
+        //TODO GET COURSES AND SECTIONS
 
         Button BT_Save = (Button) view.findViewById(R.id.submitCourseAssignment);
 
@@ -88,9 +85,7 @@ public class AssignmentFragment extends Fragment implements View.OnClickListener
     }
 
     @Override
-    public void onClick (View view) {
-
-
+    public void onClick(View view) {
 
 
         if (SP_CourseList.getSelectedItemId() == 0) {
@@ -99,9 +94,7 @@ public class AssignmentFragment extends Fragment implements View.OnClickListener
             alertDialog.setMessage("Please choose your department from the list");
             alertDialog.show();
             return;
-        }
-
-        else if (SP_SectionList.getSelectedItemId() == 0) {
+        } else if (SP_SectionList.getSelectedItemId() == 0) {
             AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
             alertDialog.setTitle("Section is empty");
             alertDialog.setMessage("Please choose your section from the list");
@@ -109,17 +102,17 @@ public class AssignmentFragment extends Fragment implements View.OnClickListener
             return;
         }
 
-        String course  = SP_CourseList.getSelectedItem().toString();
+        String course = SP_CourseList.getSelectedItem().toString();
         String section = SP_SectionList.getSelectedItem().toString();
 
 
-
     }
 
-    public void setData(String username, String usertype){
+    public void setData(String username, String usertype) {
         this.username = username;
         this.userType = usertype;
     }
+
     public void update(String result) {
         String[] tokens = result.split("\n");
         String message = "";

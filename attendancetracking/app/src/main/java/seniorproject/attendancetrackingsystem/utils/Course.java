@@ -1,8 +1,7 @@
-package seniorproject.attendancetrackingsystem;
+package seniorproject.attendancetrackingsystem.utils;
 
 
 import java.util.ArrayList;
-
 
 
 public class Course {
@@ -10,9 +9,9 @@ public class Course {
     public String courseName, courseCode;
     public ArrayList<Integer> sections;
 
-    Course(String courseName, String courseCode){
+    Course(String courseName, String courseCode) {
         this.courseName = courseName;
         this.courseCode = courseCode;
-      this.sections = new ArrayList<>();
+        this.sections = new ArrayList<>();
     }
 }

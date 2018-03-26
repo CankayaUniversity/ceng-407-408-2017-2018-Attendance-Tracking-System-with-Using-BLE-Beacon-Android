@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
 
 
-    tools:context=".WelcomePage">
+    tools:context=".activities.WelcomePage">
 
 
     <android.support.design.widget.BottomNavigationView

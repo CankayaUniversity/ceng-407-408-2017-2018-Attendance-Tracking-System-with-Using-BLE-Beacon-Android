@@ -1,4 +1,4 @@
-package seniorproject.attendancetrackingsystem;
+package seniorproject.attendancetrackingsystem.fragments;
 
 
 import android.app.AlertDialog;
@@ -18,14 +18,16 @@ import com.basgeekball.awesomevalidation.AwesomeValidation;
 import com.basgeekball.awesomevalidation.ValidationStyle;
 
 import java.util.ArrayList;
-import java.util.Collections;
+
+import seniorproject.attendancetrackingsystem.R;
+import seniorproject.attendancetrackingsystem.helpers.DatabaseManager;
 
 public class LecturerRegister extends Fragment {
+    private static DatabaseManager DATABASE_MANAGER;
     private AwesomeValidation awesomeValidation;
     private Spinner departmentList;
     private EditText lecturerMail, lecturerName, lecturerSurname, lecturerPassword;
     private ArrayList<String> departments;
-    private static DatabaseManager DATABASE_MANAGER;
 
     @Nullable
     @Override
@@ -61,7 +63,7 @@ public class LecturerRegister extends Fragment {
 
         departments.add(0, "Choose your department");
 
-        DATABASE_MANAGER.execute("get","department-list",departments);
+        DATABASE_MANAGER.execute("get", "department-list", departments);
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
                 R.layout.spinner_item, departments);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
