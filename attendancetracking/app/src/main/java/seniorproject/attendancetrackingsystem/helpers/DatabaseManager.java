@@ -21,7 +21,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import seniorproject.attendancetrackingsystem.activities.MainActivity;
 import seniorproject.attendancetrackingsystem.activities.WelcomePage;
+import seniorproject.attendancetrackingsystem.utils.Course;
 import seniorproject.attendancetrackingsystem.utils.Department;
 import seniorproject.attendancetrackingsystem.utils.Globals;
 
@@ -31,8 +33,8 @@ public class DatabaseManager {
     private static final String AccountOperations = Domain + "account-operations.php";
     private static final String GetOperations = Domain + "get-something.php";
     private static DatabaseManager mInstance;
-    private static JsonHelper jsonHelper;
-    private static Context context;
+    private JsonHelper jsonHelper;
+    private Context context;
     private RequestQueue requestQueue;
     private AlertDialog alertDialog;
 
@@ -40,6 +42,7 @@ public class DatabaseManager {
         this.context = context;
         requestQueue = getRequestQueue();
         jsonHelper = JsonHelper.getmInstance(context);
+        alertDialog = new AlertDialog.Builder(context).create();
     }
 
     public static synchronized DatabaseManager getmInstance(Context context) {
@@ -48,13 +51,13 @@ public class DatabaseManager {
         return mInstance;
     }
 
-    public RequestQueue getRequestQueue() {
+    private RequestQueue getRequestQueue() {
         if (requestQueue == null)
             requestQueue = Volley.newRequestQueue(context.getApplicationContext());
         return requestQueue;
     }
 
-    public <T> void addToRequestQueue(Request<T> request) {
+    private <T> void addToRequestQueue(Request<T> request) {
         requestQueue.add(request);
     }
 
@@ -77,15 +80,11 @@ public class DatabaseManager {
                                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                         context.startActivity(intent);
                                     } else {
-                                        alertDialog = new AlertDialog.Builder(context).create();
                                         alertDialog.setTitle("Login Failed");
-                                        //TODO Error message will come in response JSON array
-                                        alertDialog.setMessage("Wrong username or password");
+                                        alertDialog.setMessage(jsonObject.getString("message"));
                                         alertDialog.show();
                                     }
                                 } catch (JSONException e) {
-                                    e.printStackTrace();
-                                } catch (NullPointerException e) {
                                     e.printStackTrace();
                                 }
                             }
@@ -97,9 +96,42 @@ public class DatabaseManager {
                 }) {
                     @Override
                     protected Map<String, String> getParams() throws AuthFailureError {
-                        Map<String, String> postParameters = params;
-                        postParameters.put("operation", "login");
-                        return postParameters;
+                        params.put("operation", "login");
+                        return params;
+                    }
+                };
+                break;
+            case "register":
+                request = new StringRequest(Request.Method.POST, AccountOperations,
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                try {
+                                    JSONObject jsonObject = new JSONObject(response);
+                                    boolean result = jsonObject.getBoolean("success");
+                                    if (result) {
+                                        Intent intent = new Intent(context, MainActivity.class);
+                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                        context.startActivity(intent);
+                                    } else {
+                                        alertDialog.setTitle("Registration Error");
+                                        alertDialog.setMessage(jsonObject.getString("message"));
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(context, "Error: " + error.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                }) {
+                    @Override
+                    protected Map<String, String> getParams() throws AuthFailureError {
+                        params.put("operation", "register");
+                        return params;
                     }
                 };
                 break;
@@ -112,7 +144,7 @@ public class DatabaseManager {
         switch (action) {
             //GET OPERATIONS
             case "get":
-                if (param == "department-list") {
+                if (param.equals("department-list")) {
                     request = new StringRequest(Request.Method.POST, GetOperations,
                             new Response.Listener<String>() {
                                 @Override
@@ -138,6 +170,34 @@ public class DatabaseManager {
                             Map<String, String> postParameters = new HashMap<>();
                             postParameters.put("operation", "department-list");
                             return postParameters;
+                        }
+                    };
+                } else if (param.equals("course-list")) {
+                    request = new StringRequest(Request.Method.POST, GetOperations,
+                            new Response.Listener<String>() {
+                                @Override
+                                public void onResponse(String response) {
+                                    ((Globals) context.getApplicationContext())
+                                            .setCourses(
+                                                    jsonHelper.parseCourseList(response)
+                                            );
+                                    for (Course course
+                                            :
+                                            ((Globals) context.getApplicationContext()).getCourses()) {
+                                        array.add(course.getCourseName());
+                                    }
+                                }
+                            }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(context, "Error: " + error.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    }) {
+                        @Override
+                        protected Map<String, String> getParams() throws AuthFailureError {
+                            Map<String, String> postParemeters = new HashMap<>();
+                            postParemeters.put("operation", "course-list");
+                            return postParemeters;
                         }
                     };
                 }

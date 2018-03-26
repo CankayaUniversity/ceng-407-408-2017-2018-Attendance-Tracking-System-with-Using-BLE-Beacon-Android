@@ -14,7 +14,11 @@ import android.widget.EditText;
 import com.basgeekball.awesomevalidation.AwesomeValidation;
 import com.basgeekball.awesomevalidation.ValidationStyle;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import seniorproject.attendancetrackingsystem.R;
+import seniorproject.attendancetrackingsystem.helpers.DatabaseManager;
 
 
 public class StudentRegister extends Fragment {
@@ -67,7 +71,17 @@ public class StudentRegister extends Fragment {
                     BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
                     if (bluetoothAdapter != null) bluetoothMac = bluetoothAdapter.getAddress();
 
-                    //TODO STUDENT REGISTER
+                    Map<String, String> postParameters = new HashMap<>();
+                    postParameters.put("schoolID", schoolID);
+                    postParameters.put("password",password);
+                    postParameters.put("mail", mail);
+                    postParameters.put("name", name);
+                    postParameters.put("surname",surname);
+                    postParameters.put("BluetoothMAC", bluetoothMac);
+                    postParameters.put("type", "studentRegister");
+
+                    DatabaseManager.getmInstance(getActivity())
+                    .execute("register",postParameters);
 
                 }
             }

@@ -1,37 +1,32 @@
 package seniorproject.attendancetrackingsystem.fragments;
 
 
-import android.app.AlertDialog;
+import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
-import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 import seniorproject.attendancetrackingsystem.R;
+import seniorproject.attendancetrackingsystem.helpers.DatabaseManager;
+import seniorproject.attendancetrackingsystem.utils.Course;
+import seniorproject.attendancetrackingsystem.utils.Globals;
 
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class AssignmentFragment extends Fragment implements View.OnClickListener {
-
-    private TextView TW_SelectCourse;
-    private TextView TW_SelectSection;
-
     private Spinner SP_CourseList;
     private Spinner SP_SectionList;
 
-    private String username, userType;
-    private ArrayList<String> courseList;
     private ArrayList<String> sectionList;
 
     public AssignmentFragment() {
@@ -53,24 +48,55 @@ public class AssignmentFragment extends Fragment implements View.OnClickListener
 
     private void initElements(View view) {
 
-        SP_CourseList = (Spinner) view.findViewById(R.id.courseSelect);
-        SP_SectionList = (Spinner) view.findViewById(R.id.section);
+        SP_CourseList = view.findViewById(R.id.courseSelect);
+        SP_SectionList = view.findViewById(R.id.section);
+        ArrayList<String> courseList;
 
-        TW_SelectCourse = (TextView) view.findViewById(R.id.courseName);
-        TW_SelectSection = (TextView) view.findViewById(R.id.sectionNum);
-
-        courseList = new ArrayList<String>();
-        sectionList = new ArrayList<String>();
-
+        courseList = new ArrayList<>();
+        sectionList = new ArrayList<>();
+        courseList.add("Choose your course");
         sectionList.add("Choose your section");
-        sectionList.add("Section 1");
-        sectionList.add("Section 2");
 
-        //TODO GET COURSES AND SECTIONS
+        if (((Globals) getActivity().getApplication()).getCourses() == null) {
+            DatabaseManager.getmInstance(getActivity())
+                    .execute("get", "course-list", courseList);
+        } else {
+            for (Course course
+                    :
+                    ((Globals) getActivity().getApplication()).getCourses()) {
+                courseList.add(course.getCourseName());
+            }
+        }
 
-        Button BT_Save = (Button) view.findViewById(R.id.submitCourseAssignment);
+        Button BT_Save = view.findViewById(R.id.submitCourseAssignment);
 
         BT_Save.setOnClickListener(this);
+        SP_CourseList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (SP_CourseList.getSelectedItemId() == 0) return;
+                sectionList.clear();
+                SP_SectionList.setSelection(0);
+                sectionList.add("Choose your section");
+
+                String course_name = SP_CourseList.getSelectedItem().toString();
+
+                for (Course course
+                        :
+                        ((Globals) getActivity().getApplication()).getCourses()) {
+                    if (course_name.equals(course.getCourseName())) {
+                        for (int i = 1; i <= course.getSectionNumber(); i++)
+                            sectionList.add(String.valueOf(i));
+                    }
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
 
         ArrayAdapter<String> course_adapter = new ArrayAdapter<String>(getActivity(),
                 R.layout.spinner_item, courseList);
@@ -82,45 +108,17 @@ public class AssignmentFragment extends Fragment implements View.OnClickListener
                 R.layout.spinner_item, sectionList);
         section_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         SP_SectionList.setAdapter(section_adapter);
+
     }
 
     @Override
     public void onClick(View view) {
 
 
-        if (SP_CourseList.getSelectedItemId() == 0) {
-            AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
-            alertDialog.setTitle("Department is empty");
-            alertDialog.setMessage("Please choose your department from the list");
-            alertDialog.show();
-            return;
-        } else if (SP_SectionList.getSelectedItemId() == 0) {
-            AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
-            alertDialog.setTitle("Section is empty");
-            alertDialog.setMessage("Please choose your section from the list");
-            alertDialog.show();
-            return;
-        }
-
-        String course = SP_CourseList.getSelectedItem().toString();
-        String section = SP_SectionList.getSelectedItem().toString();
+        //TODO MAKE ASSIGNMENT
 
 
     }
 
-    public void setData(String username, String usertype) {
-        this.username = username;
-        this.userType = usertype;
-    }
 
-    public void update(String result) {
-        String[] tokens = result.split("\n");
-        String message = "";
-        for (int i = 0; i < tokens.length; i++) {
-            courseList.add(tokens[i].substring(tokens[i].indexOf(" "), tokens[i].length()));
-        }
-        Collections.sort(courseList);
-        courseList.add(0, "Choose your department");
-
-    }
 }

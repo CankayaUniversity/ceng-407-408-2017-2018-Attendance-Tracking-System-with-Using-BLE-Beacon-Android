@@ -18,6 +18,8 @@ import com.basgeekball.awesomevalidation.AwesomeValidation;
 import com.basgeekball.awesomevalidation.ValidationStyle;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import seniorproject.attendancetrackingsystem.R;
 import seniorproject.attendancetrackingsystem.helpers.DatabaseManager;
@@ -59,7 +61,7 @@ public class LecturerRegister extends Fragment {
         lecturerPassword = (EditText) view.findViewById(R.id.lecturer_password);
         Button registerButton = (Button) view.findViewById(R.id.register_button);
         awesomeValidation = new AwesomeValidation(ValidationStyle.BASIC);
-        departments = new ArrayList<String>();
+        departments = new ArrayList<>();
 
         departments.add(0, "Choose your department");
 
@@ -95,7 +97,23 @@ public class LecturerRegister extends Fragment {
                     String name = lecturerName.getText().toString();
                     String surname = lecturerSurname.getText().toString();
                     String lecturerDepartment = departmentList.getSelectedItem().toString();
-//TODO LECTURER REGISTER
+                    ArrayList<Department> departments = ((Globals) getActivity().getApplication()).getDepartments();
+                    int departmentID = -1;
+                    for (Department department : departments) {
+                        if (department.getDepartmentName() == lecturerDepartment) {
+                            departmentID = departments.indexOf(department);
+                            break;
+                        }
+                    }
+                    Map<String, String> postParameters = new HashMap<>();
+                    postParameters.put("mail", mail);
+                    postParameters.put("name", name);
+                    postParameters.put("surname", surname);
+                    postParameters.put("password", password);
+                    postParameters.put("departmentID", String.valueOf(departmentID));
+                    postParameters.put("type", "lecturerRegister");
+
+                    DatabaseManager.getmInstance(getActivity()).execute("register",postParameters);
                 }
             }
         });

@@ -19,7 +19,6 @@ import seniorproject.attendancetrackingsystem.helpers.DatabaseManager;
 
 
 public class StudentLogin extends Fragment implements View.OnClickListener {
-    private static DatabaseManager DATABASE_MANAGER;
     private EditText ET_StudentID, ET_Password;
     private AwesomeValidation awesomeValidation;
 
@@ -33,7 +32,6 @@ public class StudentLogin extends Fragment implements View.OnClickListener {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        DATABASE_MANAGER = DatabaseManager.getmInstance(getActivity());
         initElements(view);
         awesomeValidation.addValidation(getActivity(), R.id.input_school_id,
                 "^([cC]|(20))[0-9]{7}$", R.string.studentIDerror);
@@ -57,7 +55,7 @@ public class StudentLogin extends Fragment implements View.OnClickListener {
             postParameters.put("username", studentID);
             postParameters.put("password", password);
             postParameters.put("type", "studentLogin");
-            DATABASE_MANAGER.execute("login", postParameters);
+            DatabaseManager.getmInstance(getActivity()).execute("login", postParameters);
 
         } else if (ET_Password.getText().toString().isEmpty())
             ET_Password.setError("Enter your password");

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 public class Globals extends Application {
     private ArrayList<Department> departments;
+    private ArrayList<Course> courses;
 
 
     public ArrayList<Department> getDepartments() {
@@ -17,8 +18,13 @@ public class Globals extends Application {
         this.departments = departments;
     }
 
+    public ArrayList<Course> getCourses() {
+        return courses;
+    }
 
-
+    public void setCourses(ArrayList<Course> courses) {
+        this.courses = courses;
+    }
 
 
 }

@@ -1,6 +1,7 @@
 package seniorproject.attendancetrackingsystem.helpers;
 
 import android.content.Context;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -8,11 +9,9 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import seniorproject.attendancetrackingsystem.utils.Course;
 import seniorproject.attendancetrackingsystem.utils.Department;
 
-/**
- * Created by Melihşah AKIN on 26.03.2018.
- */
 
 public class JsonHelper {
     private static JsonHelper mInstance;
@@ -30,7 +29,7 @@ public class JsonHelper {
 
 
     public ArrayList<Department> parseDepartmentList(String jsonString) {
-        ArrayList<Department> arrayList = new ArrayList<Department>();
+        ArrayList<Department> arrayList = new ArrayList<>();
         try {
             JSONArray jsonArray = new JSONArray(jsonString);
             for (int i = 0; i < jsonArray.length(); i++) {
@@ -44,8 +43,29 @@ public class JsonHelper {
             }
         } catch (JSONException e) {
             e.printStackTrace();
-        } finally {
-            return arrayList;
         }
+        return arrayList;
+    }
+
+    public ArrayList<Course> parseCourseList(String jsonString) {
+        ArrayList<Course> arrayList = new ArrayList<>();
+        try {
+            JSONArray jsonArray = new JSONArray(jsonString);
+            for(int i = 0; i < jsonArray.length(); i++){
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                Course tempObject = new Course(
+                        jsonObject.getInt("course_id"),
+                        jsonObject.getString("course_name"),
+                        jsonObject.getString("course_code"),
+                        jsonObject.getInt("section_number"),
+                        jsonObject.getInt("department_id")
+                        );
+                arrayList.add(tempObject);
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return arrayList;
     }
 }
