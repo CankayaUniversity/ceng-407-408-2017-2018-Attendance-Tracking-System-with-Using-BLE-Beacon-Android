@@ -21,9 +21,10 @@ import java.util.ArrayList;
 
 import seniorproject.attendancetrackingsystem.R;
 import seniorproject.attendancetrackingsystem.helpers.DatabaseManager;
+import seniorproject.attendancetrackingsystem.utils.Department;
+import seniorproject.attendancetrackingsystem.utils.Globals;
 
 public class LecturerRegister extends Fragment {
-    private static DatabaseManager DATABASE_MANAGER;
     private AwesomeValidation awesomeValidation;
     private Spinner departmentList;
     private EditText lecturerMail, lecturerName, lecturerSurname, lecturerPassword;
@@ -38,7 +39,6 @@ public class LecturerRegister extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        DATABASE_MANAGER = DatabaseManager.getmInstance(getActivity());
         initElements(view);
         awesomeValidation.addValidation(getActivity(), R.id.lecturer_e_mail,
                 Patterns.EMAIL_ADDRESS, R.string.emailerror);
@@ -63,9 +63,20 @@ public class LecturerRegister extends Fragment {
 
         departments.add(0, "Choose your department");
 
-        DATABASE_MANAGER.execute("get", "department-list", departments);
+        if (((Globals) getActivity().getApplication()).getDepartments() == null) {
+            DatabaseManager.getmInstance(getActivity())
+                    .execute("get", "department-list", departments);
+        } else {
+            for (Department department
+                    :
+                    ((Globals) getActivity().getApplication()).getDepartments()) {
+                departments.add(department.getDepartmentName());
+            }
+        }
+
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
                 R.layout.spinner_item, departments);
+        departmentList.setAdapter(adapter);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         departmentList.setAdapter(adapter);
         registerButton.setOnClickListener(new View.OnClickListener() {

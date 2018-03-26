@@ -23,6 +23,7 @@ import java.util.Map;
 
 import seniorproject.attendancetrackingsystem.activities.WelcomePage;
 import seniorproject.attendancetrackingsystem.utils.Department;
+import seniorproject.attendancetrackingsystem.utils.Globals;
 
 public class DatabaseManager {
 
@@ -106,36 +107,39 @@ public class DatabaseManager {
         return request;
     }
 
-    public StringRequest createStringRequest(String action, String param, final ArrayList<String> array) {
+    public StringRequest createStringRequest(String action, final String param, final ArrayList<String> array) {
         StringRequest request = null;
         switch (action) {
             //GET OPERATIONS
             case "get":
-                switch (param) {
-                    case "department-list":
-                        request = new StringRequest(Request.Method.POST, GetOperations,
-                                new Response.Listener<String>() {
-                                    @Override
-                                    public void onResponse(String response) {
-                                        ArrayList<Department> tempArray = jsonHelper.parseDepartmentList(response);
-                                        for (Department department : tempArray) {
-                                            array.add(department.getDepartmentName());
-                                        }
+                if (param == "department-list") {
+                    request = new StringRequest(Request.Method.POST, GetOperations,
+                            new Response.Listener<String>() {
+                                @Override
+                                public void onResponse(String response) {
+                                    ((Globals) context.getApplicationContext())
+                                            .setDepartments(
+                                                    JsonHelper.getmInstance(context).parseDepartmentList(response)
+                                            );
+                                    for (Department department
+                                            :
+                                            ((Globals) context.getApplicationContext()).getDepartments()) {
+                                        array.add(department.getDepartmentName());
                                     }
-                                }, new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-                                Toast.makeText(context, "Error: " + error.getMessage(), Toast.LENGTH_LONG).show();
-                            }
-                        }) {
-                            @Override
-                            protected Map<String, String> getParams() throws AuthFailureError {
-                                Map<String, String> postParameters = new HashMap<String, String>();
-                                postParameters.put("operation", "department-list");
-                                return postParameters;
-                            }
-                        };
-                        break;
+                                }
+                            }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Toast.makeText(context, "Error: " + error.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    }) {
+                        @Override
+                        protected Map<String, String> getParams() throws AuthFailureError {
+                            Map<String, String> postParameters = new HashMap<>();
+                            postParameters.put("operation", "department-list");
+                            return postParameters;
+                        }
+                    };
                 }
                 break;
             case "set":
