@@ -12,6 +12,13 @@
     android:textAlignment="center">
 
 
+    <ImageView
+        android:layout_width="144dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/logo"/>
+
+
     <Switch
         android:id="@+id/role_switch"
         android:layout_width="match_parent"

@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/gradientback"
+ android:background="@drawable/gradientback"
     tools:context="seniorproject.attendancetrackingsystem.activities.MainActivity" >
 
 
@@ -17,11 +17,18 @@
         android:layout_alignParentEnd="true"
         android:layout_alignTop="@+id/register_button"
         android:layout_marginEnd="13dp"
-        android:text="Logın"
-        tools:layout_editor_absoluteX="198dp"
-        tools:layout_editor_absoluteY="358dp"
+        android:text="Login"
+
         android:background="@drawable/button_border"
-        android:textColor="#fff"/>
+        android:textColor="#ffffff"
+        android:drawableLeft="@drawable/ic_vpn_key_black_24dp"
+        android:drawableStart="@drawable/ic_vpn_key_black_24dp"
+        android:paddingEnd="20dp"
+        android:paddingStart="20dp"
+        android:textAllCaps="false"
+
+        android:textSize="16sp"
+        />
 
     <Button
         android:id="@+id/register_button"
@@ -32,11 +39,17 @@
         android:layout_below="@+id/textView"
         android:layout_marginStart="16dp"
         android:layout_marginTop="97dp"
-        android:text="regıstratıon"
+        android:drawableLeft="@drawable/ic_person_black_24dp"
+        android:drawableStart="@drawable/ic_person_black_24dp"
+        android:paddingEnd="20dp"
+        android:paddingStart="20dp"
+        android:text="Registration"
         android:background="@drawable/button_border"
-        android:textColor="#fff"
-        tools:layout_editor_absoluteX="27dp"
-        tools:layout_editor_absoluteY="358dp" />
+        android:textAllCaps="false"
+        android:textColor="#ffffff"
+        android:textSize="16sp"
+
+        />
 
     <TextView
         android:id="@+id/textView"
@@ -49,7 +62,7 @@
         android:fontFamily="sans-serif"
         android:text="Welcome to Attendance Tracking System"
         android:textAlignment="center"
-        android:textColor="@android:color/white"
+        android:textColor="#ffffff"
         android:textSize="23dp"
         tools:layout_editor_absoluteX="58dp"
         tools:layout_editor_absoluteY="187dp"

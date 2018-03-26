@@ -33,9 +33,9 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".activities.WelcomePage"
-            android:exported="true"
+
             android:screenOrientation="portrait"
-            android:theme="@style/MyTheme" />
+         />
 
     </application>
 
