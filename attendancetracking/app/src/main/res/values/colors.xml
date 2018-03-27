@@ -6,10 +6,11 @@
 
     <color name="oceanN">#336699</color>
     <color name="darkNight">#292b3d</color>
+    <color name="black">#262626</color>
     <color name="skyline">#fafafa</color>
-    <color name="gradientStart">#336699</color>
-    <color name="gradientEnd">#0077b5</color>
-
+    <color name="gradientStart">#ff2d9a59</color>
+    <color name="gradientEnd">#ff23729a</color>
+    <color name="gradientCenter">#ff42959a</color>
     <color name="colorWhite">#ffffff</color>
     <color name="colorWhiteTransparent">#80ffffff</color>
 </resources>

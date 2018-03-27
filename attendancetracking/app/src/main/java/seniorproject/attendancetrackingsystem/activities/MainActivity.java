@@ -19,12 +19,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         session = new SessionManager(getApplicationContext());
-        if (session.isLoggedIn()) {
+      /*  if (session.isLoggedIn()) {
             Intent intent = new Intent(MainActivity.this, WelcomePage.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
-        }
+        }*/
         Button login = (Button) findViewById(R.id.login_button);
         Button register = (Button) findViewById(R.id.register_button);
         Intent intent = getIntent();
