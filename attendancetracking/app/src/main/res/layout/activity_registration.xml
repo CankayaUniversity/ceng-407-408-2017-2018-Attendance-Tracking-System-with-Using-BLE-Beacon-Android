@@ -25,9 +25,9 @@
         android:layout_height="wrap_content"
         android:elegantTextHeight="true"
         android:showText="true"
-        android:text="Lecturer Register"
+        android:text="@string/lecturer_register_activity"
         android:textColor="#FFF"
-        android:textOff="No"
-        android:textOn="Yes"
+        android:textOff="@string/text_no"
+        android:textOn="@string/text_yes"
         android:textSize="20sp" />
 </LinearLayout>

@@ -25,12 +25,12 @@
         android:elegantTextHeight="true"
         android:shadowColor="@color/skyline"
         android:showText="true"
-        android:text="Lecturer Login"
+        android:text="@string/lecturer_login_string"
         android:textColor="#FFFFFF"
         android:textColorHint="@color/skyline"
         android:textColorLink="@color/skyline"
-        android:textOff="No"
-        android:textOn="Yes"
+        android:textOff="@string/text_no"
+        android:textOn="@string/text_yes"
         android:textSize="20sp" />
 
     <TextView
