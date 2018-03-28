@@ -7,14 +7,12 @@
 
 
     <TextView
-        android:layout_marginTop="70dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="70dp"
 
         android:text="ReportLine 1"
-        android:textColor="#000000"/>
-
-
+        android:textColor="#000000" />
 
 
 </LinearLayout>

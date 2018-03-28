@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+
     <EditText
         android:id="@+id/input_school_id"
         android:layout_width="match_parent"
@@ -10,8 +11,8 @@
         android:hint="School ID"
         android:inputType="textPhonetic"
         android:textColor="#fff"
-        android:textColorHint="#fff"
-        android:textColorHighlight="#fff"/>
+        android:textColorHighlight="#fff"
+        android:textColorHint="#fff" />
 
     <!-- Password Label -->
     <EditText
@@ -21,8 +22,8 @@
         android:hint="Password"
         android:inputType="textPassword"
         android:textColor="#fff"
-        android:textColorHint="#fff"
-        android:textColorHighlight="#fff"/>
+        android:textColorHighlight="#fff"
+        android:textColorHint="#fff" />
 
     <Button
         android:id="@+id/login_button"
@@ -31,7 +32,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:background="@drawable/button_border"
-        android:text="Logın"
+        android:text="Login"
         android:textAlignment="center"
         android:textColor="#fff" />
 </LinearLayout>

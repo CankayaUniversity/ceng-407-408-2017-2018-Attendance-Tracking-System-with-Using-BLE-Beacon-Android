@@ -1,60 +1,59 @@
 package seniorproject.attendancetrackingsystem.utils;
 
-
-import java.util.ArrayList;
-
-
 public class Course {
-    private int courseID;
-    private String courseName, courseCode;
-    private int sectionNumber;
-    private int departmentID;
+  private int courseId;
+  private String courseName;
+  private String courseCode;
+  private int sectionNumber;
+  private int departmentId;
 
-    public Course(int courseID, String courseName, String courseCode, int sectionNumber, int departmentID) {
-        this.courseID = courseID;
-        this.courseName = courseName;
-        this.courseCode = courseCode;
-        this.sectionNumber = sectionNumber;
-        this.departmentID = departmentID;
-    }
+  /** Creates Course object. */
+  public Course(
+      int courseId, String courseName, String courseCode, int sectionNumber, int departmentId) {
+    this.courseId = courseId;
+    this.courseName = courseName;
+    this.courseCode = courseCode;
+    this.sectionNumber = sectionNumber;
+    this.departmentId = departmentId;
+  }
 
-    public int getCourseID() {
-        return courseID;
-    }
+  public int getCourseId() {
+    return courseId;
+  }
 
-    public void setCourseID(int courseID) {
-        this.courseID = courseID;
-    }
+  public void setCourseId(int courseId) {
+    this.courseId = courseId;
+  }
 
-    public String getCourseName() {
-        return courseName;
-    }
+  public String getCourseName() {
+    return courseName;
+  }
 
-    public void setCourseName(String courseName) {
-        this.courseName = courseName;
-    }
+  public void setCourseName(String courseName) {
+    this.courseName = courseName;
+  }
 
-    public String getCourseCode() {
-        return courseCode;
-    }
+  public String getCourseCode() {
+    return courseCode;
+  }
 
-    public void setCourseCode(String courseCode) {
-        this.courseCode = courseCode;
-    }
+  public void setCourseCode(String courseCode) {
+    this.courseCode = courseCode;
+  }
 
-    public int getDepartmentID() {
-        return departmentID;
-    }
+  public int getDepartmentId() {
+    return departmentId;
+  }
 
-    public void setDepartmentID(int departmentID) {
-        this.departmentID = departmentID;
-    }
+  public void setDepartmentId(int departmentId) {
+    this.departmentId = departmentId;
+  }
 
-    public int getSectionNumber() {
-        return sectionNumber;
-    }
+  public int getSectionNumber() {
+    return sectionNumber;
+  }
 
-    public void setSectionNumber(int sectionNumber) {
-        this.sectionNumber = sectionNumber;
-    }
+  public void setSectionNumber(int sectionNumber) {
+    this.sectionNumber = sectionNumber;
+  }
 }

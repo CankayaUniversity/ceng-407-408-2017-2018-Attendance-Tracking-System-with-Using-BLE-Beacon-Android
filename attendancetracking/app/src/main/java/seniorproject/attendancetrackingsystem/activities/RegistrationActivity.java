@@ -1,6 +1,5 @@
 package seniorproject.attendancetrackingsystem.activities;
 
-
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.CompoundButton;
@@ -10,33 +9,37 @@ import seniorproject.attendancetrackingsystem.R;
 import seniorproject.attendancetrackingsystem.fragments.LecturerRegister;
 import seniorproject.attendancetrackingsystem.fragments.StudentRegister;
 
-
 public class RegistrationActivity extends AppCompatActivity {
-    private Switch roleSwitch;
+  private Switch roleSwitch;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_registration);
-        if (savedInstanceState == null) {
-            getFragmentManager().beginTransaction().replace(R.id.register_layout,
-                    new StudentRegister()).commit();
-        }
-
-        roleSwitch = (Switch) findViewById(R.id.role_switch);
-        roleSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (roleSwitch.isChecked()) {
-                    getFragmentManager().beginTransaction().replace(R.id.register_layout,
-                            new LecturerRegister()).commit();
-                } else
-                    getFragmentManager().beginTransaction().replace(R.id.register_layout,
-                            new StudentRegister()).commit();
-            }
-        });
-
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_registration);
+    if (savedInstanceState == null) {
+      getFragmentManager()
+          .beginTransaction()
+          .replace(R.id.register_layout, new StudentRegister())
+          .commit();
     }
 
-
+    roleSwitch = findViewById(R.id.role_switch);
+    roleSwitch.setOnCheckedChangeListener(
+        new CompoundButton.OnCheckedChangeListener() {
+          @Override
+          public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+            if (roleSwitch.isChecked()) {
+              getFragmentManager()
+                  .beginTransaction()
+                  .replace(R.id.register_layout, new LecturerRegister())
+                  .commit();
+            } else {
+              getFragmentManager()
+                  .beginTransaction()
+                  .replace(R.id.register_layout, new StudentRegister())
+                  .commit();
+            }
+          }
+        });
+  }
 }

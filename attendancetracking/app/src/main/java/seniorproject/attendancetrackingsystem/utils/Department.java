@@ -1,39 +1,39 @@
 package seniorproject.attendancetrackingsystem.utils;
 
-
 public class Department {
-    private int departmentID;
-    private String departmentName, abbreviation;
+  private int departmentId;
+  private String departmentName;
+  private String abbreviation;
 
-    public Department(int departmentID, String abbreviation, String departmentName) {
-        this.departmentID = departmentID;
-        this.departmentName = departmentName;
-        this.abbreviation = abbreviation;
-    }
+  /** Creates Department Object. */
 
-    public int getDepartmentID() {
-        return departmentID;
-    }
+  public Department(int departmentId, String abbreviation, String departmentName) {
+    this.departmentId = departmentId;
+    this.departmentName = departmentName;
+    this.abbreviation = abbreviation;
+  }
 
-    public void setDepartmentID(int departmentID) {
-        this.departmentID = departmentID;
-    }
+  public int getDepartmentId() {
+    return departmentId;
+  }
 
-    public String getDepartmentName() {
-        return departmentName;
-    }
+  public void setDepartmentId(int departmentId) {
+    this.departmentId = departmentId;
+  }
 
-    public void setDepartmentName(String departmentName) {
-        this.departmentName = departmentName;
-    }
+  public String getDepartmentName() {
+    return departmentName;
+  }
 
-    public String getAbbreviation() {
-        return abbreviation;
-    }
+  public void setDepartmentName(String departmentName) {
+    this.departmentName = departmentName;
+  }
 
-    public void setAbbreviation(String abbreviation) {
-        this.abbreviation = abbreviation;
-    }
+  public String getAbbreviation() {
+    return abbreviation;
+  }
 
-
+  public void setAbbreviation(String abbreviation) {
+    this.abbreviation = abbreviation;
+  }
 }

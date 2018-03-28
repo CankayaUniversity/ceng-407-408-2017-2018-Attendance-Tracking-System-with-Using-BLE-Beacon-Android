@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
- android:background="@drawable/gradientback"
-    tools:context="seniorproject.attendancetrackingsystem.activities.MainActivity" >
+    android:background="@drawable/gradientback"
+    tools:context="seniorproject.attendancetrackingsystem.activities.MainActivity">
 
 
     <Button
@@ -17,18 +16,16 @@
         android:layout_alignParentEnd="true"
         android:layout_alignTop="@+id/register_button"
         android:layout_marginEnd="13dp"
-        android:text="Login"
-
         android:background="@drawable/button_border"
-        android:textColor="#ffffff"
-        android:drawableLeft="@drawable/ic_vpn_key_black_24dp"
+
         android:drawableStart="@drawable/ic_vpn_key_black_24dp"
         android:paddingEnd="20dp"
         android:paddingStart="20dp"
+        android:text="Login"
         android:textAllCaps="false"
+        android:textColor="#ffffff"
 
-        android:textSize="16sp"
-        />
+        android:textSize="16sp" />
 
     <Button
         android:id="@+id/register_button"
@@ -39,12 +36,11 @@
         android:layout_below="@+id/textView"
         android:layout_marginStart="16dp"
         android:layout_marginTop="97dp"
-        android:drawableLeft="@drawable/ic_person_black_24dp"
+        android:background="@drawable/button_border"
         android:drawableStart="@drawable/ic_person_black_24dp"
         android:paddingEnd="20dp"
         android:paddingStart="20dp"
         android:text="Registration"
-        android:background="@drawable/button_border"
         android:textAllCaps="false"
         android:textColor="#ffffff"
         android:textSize="16sp"
@@ -63,10 +59,9 @@
         android:text="Welcome to Attendance Tracking System"
         android:textAlignment="center"
         android:textColor="#ffffff"
-        android:textSize="23dp"
+        android:textSize="23sp"
         tools:layout_editor_absoluteX="58dp"
-        tools:layout_editor_absoluteY="187dp"
-        />
+        tools:layout_editor_absoluteY="187dp" />
 
     <ImageView
         android:id="@+id/imageView"

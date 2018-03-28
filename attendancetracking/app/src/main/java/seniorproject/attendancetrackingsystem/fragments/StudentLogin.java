@@ -17,47 +17,47 @@ import java.util.HashMap;
 import seniorproject.attendancetrackingsystem.R;
 import seniorproject.attendancetrackingsystem.helpers.DatabaseManager;
 
-
 public class StudentLogin extends Fragment implements View.OnClickListener {
-    private EditText ET_StudentID, ET_Password;
-    private AwesomeValidation awesomeValidation;
+  private EditText etStudentId;
+  private EditText etPassword;
+  private AwesomeValidation awesomeValidation;
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.student_login, container, false);
+  @Nullable
+  @Override
+  public View onCreateView(
+      LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+    return inflater.inflate(R.layout.student_login, container, false);
+  }
 
-    }
+  @Override
+  public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    super.onViewCreated(view, savedInstanceState);
+    initElements(view);
+    awesomeValidation.addValidation(
+        getActivity(), R.id.input_school_id, "^([cC]|(20))[0-9]{7}$", R.string.studentIDerror);
+  }
 
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        initElements(view);
-        awesomeValidation.addValidation(getActivity(), R.id.input_school_id,
-                "^([cC]|(20))[0-9]{7}$", R.string.studentIDerror);
-    }
+  private void initElements(View view) {
+    Button loginButton = view.findViewById(R.id.login_button);
+    loginButton.setOnClickListener(this);
+    etStudentId = view.findViewById(R.id.input_school_id);
+    etPassword = view.findViewById(R.id.input_password);
+    awesomeValidation = new AwesomeValidation(ValidationStyle.BASIC);
+  }
 
-    private void initElements(View view) {
-        Button loginButton = (Button) view.findViewById(R.id.login_button);
-        loginButton.setOnClickListener(this);
-        ET_StudentID = (EditText) view.findViewById(R.id.input_school_id);
-        ET_Password = (EditText) view.findViewById(R.id.input_password);
-        awesomeValidation = new AwesomeValidation(ValidationStyle.BASIC);
-    }
+  @Override
+  public void onClick(View v) {
+    if (awesomeValidation.validate() && !etPassword.getText().toString().isEmpty()) {
+      String studentID = etStudentId.getText().toString();
+      String password = etPassword.getText().toString();
 
-    @Override
-    public void onClick(View v) {
-        if (awesomeValidation.validate() && !ET_Password.getText().toString().isEmpty()) {
-            String studentID = ET_StudentID.getText().toString();
-            String password = ET_Password.getText().toString();
+      HashMap<String, String> postParameters = new HashMap<>();
+      postParameters.put("username", studentID);
+      postParameters.put("password", password);
+      postParameters.put("type", "studentLogin");
+      DatabaseManager.getmInstance(getActivity()).execute("login", postParameters);
 
-            HashMap<String, String> postParameters = new HashMap<String, String>();
-            postParameters.put("username", studentID);
-            postParameters.put("password", password);
-            postParameters.put("type", "studentLogin");
-            DatabaseManager.getmInstance(getActivity()).execute("login", postParameters);
-
-        } else if (ET_Password.getText().toString().isEmpty())
-            ET_Password.setError("Enter your password");
-    }
+    } else if (etPassword.getText().toString().isEmpty())
+      etPassword.setError("Enter your password");
+  }
 }

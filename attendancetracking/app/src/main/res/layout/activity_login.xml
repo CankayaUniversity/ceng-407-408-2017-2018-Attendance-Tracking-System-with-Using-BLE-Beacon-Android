@@ -23,22 +23,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:elegantTextHeight="true"
+        android:shadowColor="@color/skyline"
         android:showText="true"
         android:text="Lecturer Login"
         android:textColor="#FFFFFF"
-        android:textOff="No"
-        android:textOn="Yes"
-        android:textSize="20dp"
         android:textColorHint="@color/skyline"
         android:textColorLink="@color/skyline"
-        android:shadowColor="@color/skyline"
-        />
+        android:textOff="No"
+        android:textOn="Yes"
+        android:textSize="20sp" />
 
-<TextView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:id="@+id/testtext"/>
-
+    <TextView
+        android:id="@+id/testtext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
 
 </LinearLayout>

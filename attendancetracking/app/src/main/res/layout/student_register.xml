@@ -21,8 +21,6 @@
         android:id="@+id/student_password"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:layout_alignStart="@+id/student_schoolID"
-        android:layout_below="@+id/student_schoolID"
         android:layout_marginTop="16dp"
         android:ems="10"
         android:hint="Password"

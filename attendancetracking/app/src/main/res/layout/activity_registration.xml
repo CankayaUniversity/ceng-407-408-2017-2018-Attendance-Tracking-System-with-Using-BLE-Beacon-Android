@@ -16,7 +16,7 @@
         android:layout_width="144dp"
         android:layout_height="150dp"
         android:layout_marginTop="16dp"
-        android:src="@drawable/logo"/>
+        android:src="@drawable/logo" />
 
 
     <Switch
@@ -29,5 +29,5 @@
         android:textColor="#FFF"
         android:textOff="No"
         android:textOn="Yes"
-        android:textSize="20dp" />
+        android:textSize="20sp" />
 </LinearLayout>
