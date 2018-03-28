@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">attendancetracking</string>
     <string name="title_activity_welcome_page">WelcomePage</string>
-
+    <string name="login_lecturer">Lecturer Login</string>
+    <string name="register_lecturer">Lecturer Register</string>
     <string name="action_settings">Settings</string>
     <string name="emailerror">Enter a valid e-mail address</string>
     <string name="studentIDerror">Enter a valid student ID number</string>
