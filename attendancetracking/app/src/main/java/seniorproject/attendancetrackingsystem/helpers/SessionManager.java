@@ -15,7 +15,7 @@ public class SessionManager {
   private static final String PREF_NAME = "SessionPref";
   private static final String IS_LOGIN = "IsLoggedIn";
   private static final int PRIVATE_MODE = 0;
-  final Context context;
+  private final Context context;
   private final SharedPreferences pref;
   private Editor editor;
 
@@ -50,8 +50,9 @@ public class SessionManager {
   }
 
   public void logoutUser() {
+    editor = pref.edit();
     editor.clear();
-    editor.commit();
+    editor.apply();
     Intent intent = new Intent(context, MainActivity.class);
     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

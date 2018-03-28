@@ -16,5 +16,10 @@
     <string name="nav_assignment">Assignment</string>
     <string name="nav_settings">Settings</string>
 
-
+    <string-array name="settings_items">
+        <item>Withdraw from a course</item>
+        <item>Change password</item>
+        <item>Report a problem</item>
+        <item>Logout</item>
+    </string-array>
 </resources>
