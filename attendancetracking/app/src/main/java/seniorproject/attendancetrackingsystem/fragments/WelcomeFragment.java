@@ -35,8 +35,8 @@ public class WelcomeFragment extends Fragment {
     TextView loggedUser = getActivity().findViewById(R.id.w_user_name);
     TextView loggedType = getActivity().findViewById(R.id.w_user_mail);
 
-    loggedType.setText(userInfo.get(SessionManager.KEY_USERTYPE));
-    loggedUser.setText(userInfo.get(SessionManager.KEY_USERNAME));
+    loggedType.setText(userInfo.get(SessionManager.KEY_USER_TYPE));
+    loggedUser.setText(userInfo.get(SessionManager.KEY_USER_NAME));
   }
 
 }

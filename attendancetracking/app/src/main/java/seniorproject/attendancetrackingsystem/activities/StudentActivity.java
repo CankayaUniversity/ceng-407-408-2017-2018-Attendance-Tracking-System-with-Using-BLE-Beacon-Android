@@ -13,7 +13,6 @@ import java.util.Map;
 import java.util.Objects;
 
 import seniorproject.attendancetrackingsystem.R;
-import seniorproject.attendancetrackingsystem.fragments.AssignmentFragment;
 import seniorproject.attendancetrackingsystem.fragments.ReportFragment;
 import seniorproject.attendancetrackingsystem.fragments.ServicesFragment;
 import seniorproject.attendancetrackingsystem.fragments.SettingsFragment;
@@ -28,11 +27,11 @@ public class StudentActivity extends AppCompatActivity {
 
   private BottomNavigationView mainNav;
 
+
   private WelcomeFragment welcomeFragment;
   private ServicesFragment servicesFragment;
   private SettingsFragment settingsFragment;
   private ReportFragment reportFragment;
-  private AssignmentFragment assignmentFragment;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +40,7 @@ public class StudentActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_student);
     Toolbar toolbar = findViewById(R.id.toolbar);
-    // toolbar.setTitle("Ç.Ü. Attendance Tracking System");
+
     setSupportActionBar(toolbar);
     mainNav = findViewById(R.id.main_nav);
     setLoggedUser();
@@ -49,9 +48,12 @@ public class StudentActivity extends AppCompatActivity {
     servicesFragment = new ServicesFragment();
     settingsFragment = new SettingsFragment();
     reportFragment = new ReportFragment();
-    assignmentFragment = new AssignmentFragment();
-    setFragment(welcomeFragment);
 
+
+    setFragment(welcomeFragment);
+    Objects.requireNonNull(getSupportActionBar()).setLogo(R.drawable.kdefault);
+    getSupportActionBar().setTitle("Ç.Ü. Attendance Tracking System");
+    getSupportActionBar().setSubtitle("/Home");
     mainNav.setOnNavigationItemSelectedListener(
             new BottomNavigationView.OnNavigationItemSelectedListener() {
               @Override
@@ -61,42 +63,34 @@ public class StudentActivity extends AppCompatActivity {
                     setFragment(welcomeFragment);
                     Objects.requireNonNull(getSupportActionBar()).setLogo(R.drawable.kdefault);
                     getSupportActionBar().setTitle("Ç.Ü. Attendance Tracking System");
-
                     getSupportActionBar().setSubtitle("/Home");
-
-                    return true;
+                    break;
                   case R.id.nav_settings:
                     setFragment(settingsFragment);
                     Objects.requireNonNull(getSupportActionBar()).setLogo(R.drawable.kdefault);
                     getSupportActionBar().setTitle("Ç.Ü. Attendance Tracking System");
-
                     getSupportActionBar().setSubtitle("/Settings");
-
-                    return true;
+                    break;
                   case R.id.nav_report:
                     setFragment(reportFragment);
                     Objects.requireNonNull(getSupportActionBar()).setLogo(R.drawable.kdefault);
                     getSupportActionBar().setTitle("Ç.Ü. Attendance Tracking System");
-
                     getSupportActionBar().setSubtitle("/Report");
-                    return true;
-                  case R.id.nav_assignment:
-                    setFragment(assignmentFragment);
-                    Objects.requireNonNull(getSupportActionBar()).setLogo(R.drawable.kdefault);
-                    getSupportActionBar().setTitle("Ç.Ü. Attendance Tracking System");
-
-                    getSupportActionBar().setSubtitle("/Assignment");
-                    return true;
+                    break;
                   case R.id.nav_services:
                     setFragment(servicesFragment);
                     Objects.requireNonNull(getSupportActionBar()).setLogo(R.drawable.kdefault);
                     getSupportActionBar().setTitle("Ç.Ü. Attendance Tracking System");
-
                     getSupportActionBar().setSubtitle("/Services");
-                    return true;
+                    break;
+                  case R.id.logout:
+                    SessionManager session = new SessionManager(getApplicationContext());
+                    session.logoutUser();
+                    break;
                   default:
-                    return false;
+                    break;
                 }
+                return true;
               }
             });
   }
