@@ -4,24 +4,29 @@ import java.util.ArrayList;
 
 public class Student extends Actor {
   private int studentNumber;
-  private String phoneNumber;
+  private String bluetoothMAC;
   private ArrayList<Course> takenCourses;
 
-  Student() {
-    studentNumber = 0;
-    phoneNumber = "";
-    setMail("");
-    setName("");
-    setSurname("");
-    setPassword("");
+  public Student() {
+
   }
 
-  public String getPhoneNumber() {
-    return this.phoneNumber;
+  public Student(int id, int studentNumber, String name, String surname, String bluetoothMAC, String
+          mail) {
+    this.studentNumber = studentNumber;
+    this.bluetoothMAC = bluetoothMAC;
+    setId(id);
+    setMail(mail);
+    setName(name);
+    setSurname(surname);
   }
 
-  public void setPhoneNumber(String phoneNumber) {
-    this.phoneNumber = phoneNumber;
+  public String getBluetoothMAC() {
+    return this.bluetoothMAC;
+  }
+
+  public void setBluetoothMAC(String bluetoothMAC) {
+    this.bluetoothMAC = bluetoothMAC;
   }
 
   public int getStudentNumber() {

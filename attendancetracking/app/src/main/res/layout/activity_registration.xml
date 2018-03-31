@@ -25,7 +25,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:elegantTextHeight="true"
-        android:text="@string/register_lecturer"
+        android:showText="true"
+        android:text="@string/lecturer_register_activity"
         android:textColor="#FFF"
         android:textSize="20sp" />
 </LinearLayout>

@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
 
     <application
         android:name=".utils.Globals"
@@ -23,7 +24,6 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
         <activity
             android:name=".activities.RegistrationActivity"
@@ -32,10 +32,9 @@
             android:name=".activities.LoginActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".activities.WelcomePage"
-            android:exported="true"
+            android:name=".activities.StudentActivity"
             android:screenOrientation="portrait" />
-
+        <activity android:name=".activities.LecturerActivity"></activity>
     </application>
 
 </manifest>

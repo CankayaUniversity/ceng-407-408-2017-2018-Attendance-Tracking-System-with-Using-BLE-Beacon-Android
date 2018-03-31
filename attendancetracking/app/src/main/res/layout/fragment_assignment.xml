@@ -22,10 +22,10 @@
             android:layout_centerVertical="true"
             android:layout_marginStart="20dp"
             android:paddingTop="10dp"
-            android:text="Select Course : "
             android:textAlignment="center"
             android:textColor="#ffffff"
             android:textSize="14sp" />
+            android:text="@string/select_course_register"
 
         <Spinner
             android:id="@+id/courseSelect"
@@ -45,10 +45,10 @@
             android:layout_alignTop="@+id/section"
             android:layout_centerVertical="true"
             android:paddingTop="10dp"
-            android:text="Select Section : "
             android:textAlignment="center"
             android:textColor="#ffffff"
             android:textSize="14sp" />
+            android:text="@string/select_section_register"
 
         <Spinner
 
@@ -70,6 +70,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="250dp"
             android:background="@drawable/button_border"
+            android:text="@string/save_register"
             android:gravity="center"
             android:text="Save"
             android:textColor="#ffffff" />

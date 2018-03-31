@@ -46,9 +46,6 @@ public class LoginActivity extends AppCompatActivity {
 
   @Override
   public void onBackPressed() {
-    if (getFragmentManager().getBackStackEntryCount() > 0) {
-      roleSwitch.setChecked(!roleSwitch.isChecked());
-      super.onBackPressed();
-    }
+    super.onBackPressed();
   }
 }

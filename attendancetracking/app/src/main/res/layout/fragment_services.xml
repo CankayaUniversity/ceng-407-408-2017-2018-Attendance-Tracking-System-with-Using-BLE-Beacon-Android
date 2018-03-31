@@ -1,15 +1,17 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
+    android:orientation="vertical"
     tools:context="seniorproject.attendancetrackingsystem.fragments.ServicesFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="Services" />
 
-</FrameLayout>
+    <Switch
+        android:id="@+id/bluetooth_switch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/bluetooth_switch"
+        android:layout_marginTop="70dp"
+        android:layout_marginStart="10dp"
+        android:textSize="18sp"/>
+</LinearLayout>
