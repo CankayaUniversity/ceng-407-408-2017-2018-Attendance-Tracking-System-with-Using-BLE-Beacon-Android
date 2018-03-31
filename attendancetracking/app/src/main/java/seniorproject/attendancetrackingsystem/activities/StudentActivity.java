@@ -24,7 +24,7 @@ import seniorproject.attendancetrackingsystem.utils.Globals;
 import seniorproject.attendancetrackingsystem.utils.Lecturer;
 import seniorproject.attendancetrackingsystem.utils.Student;
 
-public class WelcomePage extends AppCompatActivity {
+public class StudentActivity extends AppCompatActivity {
 
   private BottomNavigationView mainNav;
 
@@ -36,8 +36,10 @@ public class WelcomePage extends AppCompatActivity {
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
+    SessionManager session = new SessionManager(getApplicationContext());
+    session.checkLogin();
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_welcome_page);
+    setContentView(R.layout.activity_student);
     Toolbar toolbar = findViewById(R.id.toolbar);
     // toolbar.setTitle("Ç.Ü. Attendance Tracking System");
     setSupportActionBar(toolbar);
@@ -116,7 +118,7 @@ public class WelcomePage extends AppCompatActivity {
       SessionManager sessionManager = new SessionManager(getApplicationContext());
       Map<String, String> userInfo = sessionManager.getUserDetails();
       Actor actor;
-      if(userInfo.get(SessionManager.KEY_USER_TYPE).equals("student"))
+      if (userInfo.get(SessionManager.KEY_USER_TYPE).equals("student"))
         actor = new Student();
       else
         actor = new Lecturer();
@@ -126,7 +128,7 @@ public class WelcomePage extends AppCompatActivity {
       actor.setSurname(userInfo.get(SessionManager.KEY_USER_SURNAME));
       actor.setMail(userInfo.get(SessionManager.KEY_USER_MAIL));
       //TODO AN SQL QUERY WILL WORK HERE TO RECIEVE LOGGED USER INFO
-      ((Globals)getApplication()).setLoggedUser(actor);
+      ((Globals) getApplication()).setLoggedUser(actor);
     }
   }
 }
