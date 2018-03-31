@@ -19,6 +19,8 @@ public class MainActivity extends AppCompatActivity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
+
+
     session = new SessionManager(getApplicationContext());
       if (session.isLoggedIn()) {
         Intent intent = new Intent(MainActivity.this, WelcomePage.class);
@@ -30,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     Button register = findViewById(R.id.register_button);
     Intent intent = getIntent();
     Bundle bundle = intent.getExtras();
+
     if (bundle != null) {
       try {
         String message = Objects.requireNonNull(bundle.get("message")).toString();

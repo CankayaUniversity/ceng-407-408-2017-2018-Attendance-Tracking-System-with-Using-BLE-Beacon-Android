@@ -1,24 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
     <item
         android:id="@+id/nav_home"
         android:icon="@drawable/ic_home_black_24dp"
-        android:title="@string/nav_home" />
+        android:title="@string/nav_home"
+        android:visible="true"
+        app:showAsAction="always|withText" />
+    />
     <item
         android:id="@+id/nav_report"
         android:icon="@drawable/ic_import_contacts_black_24dp"
-        android:title="@string/nav_report" />
+        android:title="@string/nav_report"
+        app:showAsAction="always|withText" />
     <item
         android:id="@+id/nav_services"
         android:icon="@drawable/ic_settings_bluetooth_black_24dp"
-        android:title="@string/nav_services" />
-    <item
-        android:id="@+id/nav_assignment"
-        android:icon="@drawable/ic_assignment_black_24dp"
-        android:title="@string/nav_assignment" />
+        android:title="@string/nav_services"
+        android:visible="true"
+        app:showAsAction="always|withText" />
     <item
         android:id="@+id/nav_settings"
         android:icon="@drawable/ic_settings_black_24dp"
-        android:title="@string/nav_settings" />
+        android:title="@string/nav_settings"
+        android:visible="true"
+        app:showAsAction="always|withText" />
+    <item
+        android:id="@+id/logout"
+        android:icon="@drawable/ic_exit_to_app_black_24dp"
+        android:title="@string/nav_logout"
+        android:visible="true"
+        app:showAsAction="always|withText" />
 </menu>

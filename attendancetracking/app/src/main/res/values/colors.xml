@@ -1,12 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FFFFFF</color>
 
-    <color name="oceanN">#336699</color>
-    <color name="darkNight">#292b3d</color>
-    <color name="black">#262626</color>
     <color name="skyline">#fafafa</color>
     <color name="gradientStart">#ff2d9a59</color>
     <color name="gradientEnd">#ff23729a</color>

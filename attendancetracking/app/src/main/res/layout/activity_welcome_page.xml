@@ -12,18 +12,7 @@
     <include layout="@layout/toolbar_layout" />
 
 
-    <android.support.design.widget.BottomNavigationView
-        android:id="@+id/main_nav"
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-        app:itemBackground="@color/gradientCenter"
-        app:itemIconTint="@color/nav_item_color"
-        app:itemTextColor="@color/nav_item_color"
-        app:menu="@menu/nav_items">
 
-    </android.support.design.widget.BottomNavigationView>
 
     <FrameLayout
         android:id="@+id/main_frame"
@@ -32,6 +21,19 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true">
 
+        <android.support.design.widget.BottomNavigationView
+            android:id="@+id/main_nav"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_gravity="bottom"
+            app:itemBackground="@color/gradientCenter"
+            app:itemIconTint="@color/nav_item_color"
+            app:itemTextColor="@color/nav_item_color"
+            app:menu="@menu/nav_items"
+
+            >
+
+        </android.support.design.widget.BottomNavigationView>
     </FrameLayout>
 
 
