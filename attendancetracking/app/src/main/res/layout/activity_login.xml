@@ -25,7 +25,6 @@
         android:layout_height="wrap_content"
         android:elegantTextHeight="true"
         android:shadowColor="@color/skyline"
-        android:showText="true"
         android:text="@string/lecturer_login_string"
         android:textColor="#FFFFFF"
         android:textColorHint="@color/skyline"

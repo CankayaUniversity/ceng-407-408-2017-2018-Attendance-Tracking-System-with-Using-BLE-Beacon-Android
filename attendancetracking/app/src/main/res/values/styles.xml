@@ -9,6 +9,9 @@
         <item name="android:textColorPrimaryInverse">#FFFFFF</item>
         <item name="android:textColorSecondary">#FFFFFF</item>
     </style>
-
+    <style name="MyThemePopUp" parent="@style/Theme.AppCompat.Light.NoActionBar">
+        <item name="overlapAnchor">false</item>
+        <item name="android:dropDownVerticalOffset">-4dp</item>
+    </style>
 
 </resources>
