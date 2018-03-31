@@ -8,8 +8,8 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
-import android.widget.FrameLayout;
 
+import java.util.Map;
 import java.util.Objects;
 
 import seniorproject.attendancetrackingsystem.R;
@@ -18,6 +18,11 @@ import seniorproject.attendancetrackingsystem.fragments.ReportFragment;
 import seniorproject.attendancetrackingsystem.fragments.ServicesFragment;
 import seniorproject.attendancetrackingsystem.fragments.SettingsFragment;
 import seniorproject.attendancetrackingsystem.fragments.WelcomeFragment;
+import seniorproject.attendancetrackingsystem.helpers.SessionManager;
+import seniorproject.attendancetrackingsystem.utils.Actor;
+import seniorproject.attendancetrackingsystem.utils.Globals;
+import seniorproject.attendancetrackingsystem.utils.Lecturer;
+import seniorproject.attendancetrackingsystem.utils.Student;
 
 public class WelcomePage extends AppCompatActivity {
 
@@ -37,7 +42,7 @@ public class WelcomePage extends AppCompatActivity {
     // toolbar.setTitle("Ç.Ü. Attendance Tracking System");
     setSupportActionBar(toolbar);
     mainNav = findViewById(R.id.main_nav);
-
+    setLoggedUser();
     welcomeFragment = new WelcomeFragment();
     servicesFragment = new ServicesFragment();
     settingsFragment = new SettingsFragment();
@@ -46,52 +51,52 @@ public class WelcomePage extends AppCompatActivity {
     setFragment(welcomeFragment);
 
     mainNav.setOnNavigationItemSelectedListener(
-        new BottomNavigationView.OnNavigationItemSelectedListener() {
-          @Override
-          public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            switch (item.getItemId()) {
-              case R.id.nav_home:
-                setFragment(welcomeFragment);
-                Objects.requireNonNull(getSupportActionBar()).setLogo(R.drawable.kdefault);
-                getSupportActionBar().setTitle("Ç.Ü. Attendance Tracking System");
+            new BottomNavigationView.OnNavigationItemSelectedListener() {
+              @Override
+              public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                  case R.id.nav_home:
+                    setFragment(welcomeFragment);
+                    Objects.requireNonNull(getSupportActionBar()).setLogo(R.drawable.kdefault);
+                    getSupportActionBar().setTitle("Ç.Ü. Attendance Tracking System");
 
-                getSupportActionBar().setSubtitle("/Home");
+                    getSupportActionBar().setSubtitle("/Home");
 
-                return true;
-              case R.id.nav_settings:
-                setFragment(settingsFragment);
-                Objects.requireNonNull(getSupportActionBar()).setLogo(R.drawable.kdefault);
-                getSupportActionBar().setTitle("Ç.Ü. Attendance Tracking System");
+                    return true;
+                  case R.id.nav_settings:
+                    setFragment(settingsFragment);
+                    Objects.requireNonNull(getSupportActionBar()).setLogo(R.drawable.kdefault);
+                    getSupportActionBar().setTitle("Ç.Ü. Attendance Tracking System");
 
-                getSupportActionBar().setSubtitle("/Settings");
+                    getSupportActionBar().setSubtitle("/Settings");
 
-                return true;
-              case R.id.nav_report:
-                setFragment(reportFragment);
-                Objects.requireNonNull(getSupportActionBar()).setLogo(R.drawable.kdefault);
-                getSupportActionBar().setTitle("Ç.Ü. Attendance Tracking System");
+                    return true;
+                  case R.id.nav_report:
+                    setFragment(reportFragment);
+                    Objects.requireNonNull(getSupportActionBar()).setLogo(R.drawable.kdefault);
+                    getSupportActionBar().setTitle("Ç.Ü. Attendance Tracking System");
 
-                getSupportActionBar().setSubtitle("/Report");
-                return true;
-              case R.id.nav_assignment:
-                setFragment(assignmentFragment);
-                Objects.requireNonNull(getSupportActionBar()).setLogo(R.drawable.kdefault);
-                getSupportActionBar().setTitle("Ç.Ü. Attendance Tracking System");
+                    getSupportActionBar().setSubtitle("/Report");
+                    return true;
+                  case R.id.nav_assignment:
+                    setFragment(assignmentFragment);
+                    Objects.requireNonNull(getSupportActionBar()).setLogo(R.drawable.kdefault);
+                    getSupportActionBar().setTitle("Ç.Ü. Attendance Tracking System");
 
-                getSupportActionBar().setSubtitle("/Assignment");
-                return true;
-              case R.id.nav_services:
-                setFragment(servicesFragment);
-                Objects.requireNonNull(getSupportActionBar()).setLogo(R.drawable.kdefault);
-                getSupportActionBar().setTitle("Ç.Ü. Attendance Tracking System");
+                    getSupportActionBar().setSubtitle("/Assignment");
+                    return true;
+                  case R.id.nav_services:
+                    setFragment(servicesFragment);
+                    Objects.requireNonNull(getSupportActionBar()).setLogo(R.drawable.kdefault);
+                    getSupportActionBar().setTitle("Ç.Ü. Attendance Tracking System");
 
-                getSupportActionBar().setSubtitle("/Services");
-                return true;
-              default:
-                return false;
-            }
-          }
-        });
+                    getSupportActionBar().setSubtitle("/Services");
+                    return true;
+                  default:
+                    return false;
+                }
+              }
+            });
   }
 
   private void setFragment(Fragment fragment) {
@@ -104,5 +109,24 @@ public class WelcomePage extends AppCompatActivity {
   public void onBackPressed() {
     setFragment(welcomeFragment);
     mainNav.setSelectedItemId(R.id.nav_home);
+  }
+
+  private void setLoggedUser() {
+    if (((Globals) getApplication()).getLoggedUser() == null) {
+      SessionManager sessionManager = new SessionManager(getApplicationContext());
+      Map<String, String> userInfo = sessionManager.getUserDetails();
+      Actor actor;
+      if(userInfo.get(SessionManager.KEY_USER_TYPE).equals("student"))
+        actor = new Student();
+      else
+        actor = new Lecturer();
+
+      actor.setId(Integer.parseInt(userInfo.get(SessionManager.KEY_USER_ID)));
+      actor.setName(userInfo.get(SessionManager.KEY_USER_NAME));
+      actor.setSurname(userInfo.get(SessionManager.KEY_USER_SURNAME));
+      actor.setMail(userInfo.get(SessionManager.KEY_USER_MAIL));
+      //TODO AN SQL QUERY WILL WORK HERE TO RECIEVE LOGGED USER INFO
+      ((Globals)getApplication()).setLoggedUser(actor);
+    }
   }
 }

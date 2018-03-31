@@ -1,14 +1,13 @@
 package seniorproject.attendancetrackingsystem.utils;
 
 public class Actor {
-  private  int id;
+  private int id;
   private String name;
   private String surname;
   private String password;
   private String mail;
 
   Actor() {
-    name = surname = password = mail = "";
   }
 
   public String getPassword() {
@@ -41,5 +40,13 @@ public class Actor {
 
   public void setMail(String mail) {
     this.mail = mail;
+  }
+
+  public int getId() {
+    return id;
+  }
+
+  public void setId(int id) {
+    this.id = id;
   }
 }

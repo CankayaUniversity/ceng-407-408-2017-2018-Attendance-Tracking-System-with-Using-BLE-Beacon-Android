@@ -3,6 +3,7 @@ package seniorproject.attendancetrackingsystem.helpers;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -21,9 +22,11 @@ import java.util.Map;
 
 import seniorproject.attendancetrackingsystem.activities.MainActivity;
 import seniorproject.attendancetrackingsystem.activities.WelcomePage;
+import seniorproject.attendancetrackingsystem.utils.Actor;
 import seniorproject.attendancetrackingsystem.utils.Course;
 import seniorproject.attendancetrackingsystem.utils.Department;
 import seniorproject.attendancetrackingsystem.utils.Globals;
+import seniorproject.attendancetrackingsystem.utils.Student;
 
 public class DatabaseManager {
 
@@ -77,9 +80,11 @@ public class DatabaseManager {
                     JSONObject jsonObject = new JSONObject(response);
                     boolean result = jsonObject.getBoolean("success");
                     if (result) {
+                      Actor actor = jsonHelper.parseUser(response);
+                      ((Globals)context.getApplicationContext()).setLoggedUser(actor);
                       SessionManager sessionManager = new SessionManager(context);
-                      sessionManager.createLoginSession(
-                          params.get("type"), params.get("username"));
+                      sessionManager.createLoginSession(jsonObject.getString("user_type"), actor
+                              .getName(), actor.getSurname(), actor.getMail(), actor.getId());
                       Intent intent = new Intent(context, WelcomePage.class);
                       intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                       intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
