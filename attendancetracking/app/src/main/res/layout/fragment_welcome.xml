@@ -75,7 +75,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Settings"
+                        android:text="@string/settings_welcome_page"
                         android:textColor="#404040"
                         android:textStyle="bold" />
                 </LinearLayout>
@@ -95,7 +95,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Initial Services"
+                        android:text="@string/initial_services_welcome"
                         android:textAlignment="center"
                         android:textColor="#404040"
                         android:textStyle="bold" />
@@ -116,7 +116,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Show Report"
+                        android:text="@string/show_report_welcome"
                         android:textAlignment="center"
                         android:textColor="#404040"
                         android:textStyle="bold" />
@@ -137,7 +137,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Course Assignment"
+                        android:text="@string/course_assignment_welcome"
                         android:textAlignment="center"
                         android:textColor="#404040"
                         android:textStyle="bold" />
