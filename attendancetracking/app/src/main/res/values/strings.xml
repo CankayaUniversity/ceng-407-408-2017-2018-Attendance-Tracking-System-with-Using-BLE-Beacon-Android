@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Attendance Tracking System</string>
+    <string name="app_name">Çankaya ATS</string>
     <string name="login_lecturer">Lecturer Login</string>
     <string name="register_lecturer">Lecturer Register</string>
     <string name="emailerror">Enter a valid e-mail address</string>
@@ -48,7 +48,9 @@
     <string name="name_register_student">Name</string>
     <string name="surname_register_student">Surname</string>
     <string name="register_student_button">Register</string>
-
+    <string name="change_password">Change Password</string>
+    <string name="reportProblem">Report Problem</string>
+    <string name="beacon_conf">Beacon Configuration</string>
     <string-array name="settings_items">
         <item>Withdraw from a course</item>
         <item>Change password</item>

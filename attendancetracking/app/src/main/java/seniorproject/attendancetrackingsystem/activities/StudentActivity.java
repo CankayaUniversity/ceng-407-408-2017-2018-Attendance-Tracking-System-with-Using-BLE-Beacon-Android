@@ -7,6 +7,8 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import java.util.Map;
@@ -65,24 +67,14 @@ public class StudentActivity extends AppCompatActivity {
                     getSupportActionBar().setTitle("Ç.Ü. Attendance Tracking System");
                     getSupportActionBar().setSubtitle("/Home");
                     break;
-                  case R.id.nav_settings:
-                    setFragment(settingsFragment);
-                    Objects.requireNonNull(getSupportActionBar()).setLogo(R.drawable.kdefault);
-                    getSupportActionBar().setTitle("Ç.Ü. Attendance Tracking System");
-                    getSupportActionBar().setSubtitle("/Settings");
-                    break;
+
                   case R.id.nav_report:
                     setFragment(reportFragment);
                     Objects.requireNonNull(getSupportActionBar()).setLogo(R.drawable.kdefault);
                     getSupportActionBar().setTitle("Ç.Ü. Attendance Tracking System");
                     getSupportActionBar().setSubtitle("/Report");
                     break;
-                  case R.id.nav_services:
-                    setFragment(servicesFragment);
-                    Objects.requireNonNull(getSupportActionBar()).setLogo(R.drawable.kdefault);
-                    getSupportActionBar().setTitle("Ç.Ü. Attendance Tracking System");
-                    getSupportActionBar().setSubtitle("/Services");
-                    break;
+
                   case R.id.logout:
                     SessionManager session = new SessionManager(getApplicationContext());
                     session.logoutUser();
@@ -99,6 +91,18 @@ public class StudentActivity extends AppCompatActivity {
     FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
     fragmentTransaction.replace(R.id.main_frame, fragment);
     fragmentTransaction.commit();
+  }
+
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    MenuInflater inflater = getMenuInflater();
+    inflater.inflate(R.menu.toolbarmenu,menu);
+    return super.onCreateOptionsMenu(menu);
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    return super.onOptionsItemSelected(item);
   }
 
   @Override

@@ -31,7 +31,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="10dp"
                 android:textColor="#fff"
-                android:textSize="18sp"
+                android:textSize="24sp"
                 android:textStyle="bold"
 
                 />
@@ -43,7 +43,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="10dp"
                 android:textColor="#fff"
-                android:textSize="13sp"
+                android:textSize="18sp"
                 android:textStyle="bold"
 
                 />
@@ -53,7 +53,8 @@
             android:layout_width="350dp"
             android:layout_height="match_parent"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="280dp">
+            android:layout_marginTop="280dp"
+            android:layout_marginBottom="59dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
