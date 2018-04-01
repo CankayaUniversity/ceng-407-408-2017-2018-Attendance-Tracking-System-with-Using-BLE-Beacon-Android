@@ -7,7 +7,7 @@
     android:background="@drawable/gradientback"
 
 
-    tools:context=".activities.StudentActivity">
+    tools:context=".activities.LecturerActivity">
 
     <include layout="@layout/toolbar_layout" />
 

@@ -16,9 +16,11 @@ import java.util.Objects;
 
 import seniorproject.attendancetrackingsystem.R;
 import seniorproject.attendancetrackingsystem.fragments.ReportFragment;
+import seniorproject.attendancetrackingsystem.fragments.ReportFragmentLecturer;
 import seniorproject.attendancetrackingsystem.fragments.ServicesFragment;
 import seniorproject.attendancetrackingsystem.fragments.SettingsFragment;
 import seniorproject.attendancetrackingsystem.fragments.WelcomeFragment;
+import seniorproject.attendancetrackingsystem.fragments.WelcomeFragmentLecturer;
 import seniorproject.attendancetrackingsystem.helpers.SessionManager;
 import seniorproject.attendancetrackingsystem.utils.Actor;
 import seniorproject.attendancetrackingsystem.utils.Globals;
@@ -30,10 +32,10 @@ public class LecturerActivity extends AppCompatActivity {
   private BottomNavigationView mainNav;
 
 
-  private WelcomeFragment welcomeFragment;
+  private WelcomeFragmentLecturer welcomeFragmentLecturer;
   private ServicesFragment servicesFragment;
   private SettingsFragment settingsFragment;
-  private ReportFragment reportFragment;
+  private ReportFragmentLecturer reportFragmentLecturer;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -46,13 +48,13 @@ public class LecturerActivity extends AppCompatActivity {
     setSupportActionBar(toolbar);
     mainNav = findViewById(R.id.main_nav);
     setLoggedUser();
-    welcomeFragment = new WelcomeFragment();
+    welcomeFragmentLecturer = new WelcomeFragmentLecturer();
     servicesFragment = new ServicesFragment();
     settingsFragment = new SettingsFragment();
-    reportFragment = new ReportFragment();
+    reportFragmentLecturer = new ReportFragmentLecturer();
 
 
-    setFragment(welcomeFragment);
+    setFragment(welcomeFragmentLecturer);
     Objects.requireNonNull(getSupportActionBar()).setLogo(R.drawable.kdefault);
     getSupportActionBar().setTitle("Ç.Ü. Attendance Tracking System");
     getSupportActionBar().setSubtitle("/Home");
@@ -62,7 +64,7 @@ public class LecturerActivity extends AppCompatActivity {
               public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()) {
                   case R.id.nav_home:
-                    setFragment(welcomeFragment);
+                    setFragment(welcomeFragmentLecturer);
                     Objects.requireNonNull(getSupportActionBar()).setLogo(R.drawable.kdefault);
                     getSupportActionBar().setTitle("Ç.Ü. Attendance Tracking System");
                     getSupportActionBar().setSubtitle("/Home");
@@ -70,7 +72,7 @@ public class LecturerActivity extends AppCompatActivity {
 
 
                   case R.id.nav_report:
-                    setFragment(reportFragment);
+                    setFragment(reportFragmentLecturer);
                     Objects.requireNonNull(getSupportActionBar()).setLogo(R.drawable.kdefault);
                     getSupportActionBar().setTitle("Ç.Ü. Attendance Tracking System");
                     getSupportActionBar().setSubtitle("/Report");
@@ -106,7 +108,7 @@ public class LecturerActivity extends AppCompatActivity {
   }
   @Override
   public void onBackPressed() {
-    setFragment(welcomeFragment);
+    setFragment(welcomeFragmentLecturer);
     mainNav.setSelectedItemId(R.id.nav_home);
   }
 
