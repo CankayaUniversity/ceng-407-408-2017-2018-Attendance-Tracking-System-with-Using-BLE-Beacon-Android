@@ -35,8 +35,8 @@ public class DatabaseManager {
   private static DatabaseManager mInstance;
   private final JsonHelper jsonHelper;
   private final Context context;
-  private RequestQueue requestQueue;
   private final AlertDialog alertDialog;
+  private RequestQueue requestQueue;
 
   private DatabaseManager(Context context) {
     this.context = context;
@@ -73,42 +73,45 @@ public class DatabaseManager {
                 Request.Method.POST,
                 AccountOperations,
                 new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                  try {
-                    JSONObject jsonObject = new JSONObject(response);
-                    boolean result = jsonObject.getBoolean("success");
-                    if (result) {
-                      Actor actor = jsonHelper.parseUser(response);
-                      ((Globals)context.getApplicationContext()).setLoggedUser(actor);
-                      SessionManager sessionManager = new SessionManager(context);
-                      sessionManager.createLoginSession(jsonObject.getString("user_type"), actor
-                              .getName(), actor.getSurname(), actor.getMail(), actor.getId());
-                      Intent intent;
-                      if(jsonObject.getString("user_type").equals("student"))
-                        intent = new Intent(context, StudentActivity.class);
-                      else
-                        intent = new Intent(context, LecturerActivity.class);
-                      intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                      intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                      context.startActivity(intent);
-                    } else {
-                      alertDialog.setTitle("Login Failed");
-                      alertDialog.setMessage(jsonObject.getString("message"));
-                      alertDialog.show();
+                  @Override
+                  public void onResponse(String response) {
+                    try {
+                      JSONObject jsonObject = new JSONObject(response);
+                      boolean result = jsonObject.getBoolean("success");
+                      if (result) {
+                        Actor actor = jsonHelper.parseUser(response);
+                        ((Globals) context.getApplicationContext()).setLoggedUser(actor);
+                        SessionManager sessionManager = new SessionManager(context);
+                        sessionManager.createLoginSession(
+                            jsonObject.getString("user_type"),
+                            actor.getName(),
+                            actor.getSurname(),
+                            actor.getMail(),
+                            actor.getId());
+                        Intent intent;
+                        if (jsonObject.getString("user_type").equals("student"))
+                          intent = new Intent(context, StudentActivity.class);
+                        else intent = new Intent(context, LecturerActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        context.startActivity(intent);
+                      } else {
+                        alertDialog.setTitle("Login Failed");
+                        alertDialog.setMessage(jsonObject.getString("message"));
+                        alertDialog.show();
+                      }
+                    } catch (JSONException e) {
+                      e.printStackTrace();
                     }
-                  } catch (JSONException e) {
-                    e.printStackTrace();
                   }
-                }
-              },
+                },
                 new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                  Toast.makeText(context, "Error: " + error.getMessage(), Toast.LENGTH_LONG)
-                      .show();
-                }
-              }) {
+                  @Override
+                  public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(context, "Error: " + error.getMessage(), Toast.LENGTH_LONG)
+                        .show();
+                  }
+                }) {
               @Override
               protected Map<String, String> getParams() {
                 params.put("operation", "login");
@@ -122,32 +125,38 @@ public class DatabaseManager {
                 Request.Method.POST,
                 AccountOperations,
                 new Response.Listener<String>() {
-                @Override
-                public void onResponse(String response) {
-                  try {
-                    JSONObject jsonObject = new JSONObject(response);
-                    boolean result = jsonObject.getBoolean("success");
-                    if (result) {
-                      Intent intent = new Intent(context, MainActivity.class);
-                      intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                      intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                      context.startActivity(intent);
-                    } else {
-                      alertDialog.setTitle("Registration Error");
-                      alertDialog.setMessage(jsonObject.getString("message"));
+                  @Override
+                  public void onResponse(String response) {
+                    try {
+                      JSONObject jsonObject = new JSONObject(response);
+                      boolean result = jsonObject.getBoolean("success");
+                      if (result) {
+                        Toast.makeText(
+                                context.getApplicationContext(),
+                                "Registration is " + "successful",
+                                Toast.LENGTH_LONG)
+                            .show();
+                        Intent intent = new Intent(context, MainActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        context.startActivity(intent);
+                      } else {
+                        alertDialog.setTitle("Registration Error");
+                        alertDialog.setMessage(jsonObject.getString("message"));
+                        alertDialog.show();
+                      }
+                    } catch (JSONException e) {
+                      e.printStackTrace();
                     }
-                  } catch (JSONException e) {
-                    e.printStackTrace();
                   }
-                }
-              },
+                },
                 new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                  Toast.makeText(context, "Error: " + error.getMessage(), Toast.LENGTH_LONG)
-                      .show();
-                }
-              }) {
+                  @Override
+                  public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(context, "Error: " + error.getMessage(), Toast.LENGTH_LONG)
+                        .show();
+                  }
+                }) {
               @Override
               protected Map<String, String> getParams() {
                 params.put("operation", "register");
@@ -164,7 +173,7 @@ public class DatabaseManager {
       String action, final String param, final ArrayList<String> array) {
     StringRequest request = null;
     switch (action) {
-      // GET OPERATIONS
+        // GET OPERATIONS
       case "get":
         if (param.equals("department-list")) {
           request =
@@ -172,54 +181,54 @@ public class DatabaseManager {
                   Request.Method.POST,
                   GetOperations,
                   new Response.Listener<String>() {
-                  @Override
-                  public void onResponse(String response) {
-                    ((Globals) context.getApplicationContext())
-                        .setDepartments(
-                            JsonHelper.getmInstance(context).parseDepartmentList(response));
-                    for (Department department :
-                        ((Globals) context.getApplicationContext()).getDepartments()) {
-                      array.add(department.getDepartmentName());
+                    @Override
+                    public void onResponse(String response) {
+                      ((Globals) context.getApplicationContext())
+                          .setDepartments(
+                              JsonHelper.getmInstance(context).parseDepartmentList(response));
+                      for (Department department :
+                          ((Globals) context.getApplicationContext()).getDepartments()) {
+                        array.add(department.getDepartmentName());
+                      }
                     }
-                  }
-                },
+                  },
                   new Response.ErrorListener() {
-                  @Override
-                  public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(context, "Error: " + error.getMessage(), Toast.LENGTH_LONG)
-                        .show();
-                  }
-                }) {
-              @Override
-              protected Map<String, String> getParams() {
-                Map<String, String> postParameters = new HashMap<>();
-                postParameters.put("operation", "department-list");
-                return postParameters;
-              }
-            };
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                      Toast.makeText(context, "Error: " + error.getMessage(), Toast.LENGTH_LONG)
+                          .show();
+                    }
+                  }) {
+                @Override
+                protected Map<String, String> getParams() {
+                  Map<String, String> postParameters = new HashMap<>();
+                  postParameters.put("operation", "department-list");
+                  return postParameters;
+                }
+              };
         } else if (param.equals("course-list")) {
           request =
               new StringRequest(
                   Request.Method.POST,
                   GetOperations,
                   new Response.Listener<String>() {
-                  @Override
-                  public void onResponse(String response) {
-                    ((Globals) context.getApplicationContext())
-                        .setCourses(jsonHelper.parseCourseList(response));
-                    for (Course course :
-                        ((Globals) context.getApplicationContext()).getCourses()) {
-                      array.add(course.getCourseName());
+                    @Override
+                    public void onResponse(String response) {
+                      ((Globals) context.getApplicationContext())
+                          .setCourses(jsonHelper.parseCourseList(response));
+                      for (Course course :
+                          ((Globals) context.getApplicationContext()).getCourses()) {
+                        array.add(course.getCourseName());
+                      }
                     }
-                  }
-                },
-                new Response.ErrorListener() {
-                  @Override
-                  public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(context, "Error: " + error.getMessage(), Toast.LENGTH_LONG)
-                        .show();
-                  }
-                }) {
+                  },
+                  new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                      Toast.makeText(context, "Error: " + error.getMessage(), Toast.LENGTH_LONG)
+                          .show();
+                    }
+                  }) {
                 @Override
                 protected Map<String, String> getParams() {
                   Map<String, String> postParameters = new HashMap<>();

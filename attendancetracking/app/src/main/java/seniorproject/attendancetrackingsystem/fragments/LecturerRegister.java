@@ -33,7 +33,6 @@ public class LecturerRegister extends Fragment {
   private EditText lecturerName;
   private EditText lecturerSurname;
   private EditText lecturerPassword;
-  private ArrayList<String> departments;
 
   @Nullable
   @Override
@@ -67,7 +66,7 @@ public class LecturerRegister extends Fragment {
     lecturerPassword = view.findViewById(R.id.lecturer_password);
     final Button registerButton = view.findViewById(R.id.register_button);
     awesomeValidation = new AwesomeValidation(ValidationStyle.BASIC);
-    departments = new ArrayList<>();
+    ArrayList<String> departments = new ArrayList<>();
 
     departments.add(0, "Choose your department");
 
@@ -106,7 +105,7 @@ public class LecturerRegister extends Fragment {
               int departmentId = -1;
               for (Department department : departments) {
                 if (Objects.equals(department.getDepartmentName(), lecturerDepartment)) {
-                  departmentId = departments.indexOf(department);
+                  departmentId = department.getDepartmentId();
                   break;
                 }
               }
