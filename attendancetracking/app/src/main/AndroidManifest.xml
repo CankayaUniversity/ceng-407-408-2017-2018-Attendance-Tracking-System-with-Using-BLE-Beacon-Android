@@ -7,6 +7,12 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <uses-feature
+        android:name="android.hardware.bluetooth_le"
+        android:required="true" />
 
     <application
         android:name=".utils.Globals"
@@ -34,7 +40,17 @@
         <activity
             android:name=".activities.StudentActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".activities.LecturerActivity"></activity>
+        <activity android:name=".activities.LecturerActivity" />
+
+        <service
+            android:name="com.aprilbrother.aprilbrothersdk.service.BeaconService"
+            android:exported="false" />
+        <service
+            android:name="com.aprilbrother.aprilbrothersdk.services.ABeaconUartService"
+            android:exported="false" />
+        <service
+            android:name="com.aprilbrother.aprilbrothersdk.services.UartService"
+            android:exported="false" />
     </application>
 
 </manifest>

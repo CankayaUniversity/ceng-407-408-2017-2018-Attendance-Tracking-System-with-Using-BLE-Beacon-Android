@@ -34,9 +34,7 @@
             app:itemBackground="@color/gradientCenter"
             app:itemIconTint="@color/nav_item_color"
             app:itemTextColor="@color/nav_item_color"
-            app:menu="@menu/nav_items"
-
-            >
+            app:menu="@menu/nav_items">
 
         </android.support.design.widget.BottomNavigationView>
     </FrameLayout>
