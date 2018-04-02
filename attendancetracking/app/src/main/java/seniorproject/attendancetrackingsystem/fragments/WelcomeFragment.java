@@ -30,13 +30,15 @@ public class WelcomeFragment extends Fragment {
   public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     SessionManager session = new SessionManager(getActivity().getApplicationContext());
-    HashMap<String,String> userInfo = session.getUserDetails();
-
-    TextView loggedUser = getActivity().findViewById(R.id.w_user_name);
-    TextView loggedType = getActivity().findViewById(R.id.w_user_mail);
-
-    loggedType.setText(userInfo.get(SessionManager.KEY_USER_TYPE));
-    loggedUser.setText(userInfo.get(SessionManager.KEY_USER_NAME));
+    HashMap<String, String> userInfo = session.getUserDetails();
+    TextView nameSurnameField = getActivity().findViewById(R.id.w_user_name);
+    TextView description = getActivity().findViewById(R.id.w_user_mail);
+    String nameText =
+        userInfo.get(SessionManager.KEY_USER_NAME)
+            + " "
+            + userInfo.get(SessionManager.KEY_USER_SURNAME).toUpperCase();
+    String mailText = userInfo.get(SessionManager.KEY_USER_MAIL);
+    nameSurnameField.setText(nameText);
+    description.setText(mailText);
   }
-
 }

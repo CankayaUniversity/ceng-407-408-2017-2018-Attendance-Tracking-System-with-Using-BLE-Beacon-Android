@@ -33,8 +33,6 @@ public class LecturerActivity extends AppCompatActivity {
 
 
   private WelcomeFragmentLecturer welcomeFragmentLecturer;
-  private ServicesFragment servicesFragment;
-  private SettingsFragment settingsFragment;
   private ReportFragmentLecturer reportFragmentLecturer;
 
   @Override
@@ -47,10 +45,7 @@ public class LecturerActivity extends AppCompatActivity {
 
     setSupportActionBar(toolbar);
     mainNav = findViewById(R.id.main_nav);
-    setLoggedUser();
     welcomeFragmentLecturer = new WelcomeFragmentLecturer();
-    servicesFragment = new ServicesFragment();
-    settingsFragment = new SettingsFragment();
     reportFragmentLecturer = new ReportFragmentLecturer();
 
 
@@ -112,22 +107,4 @@ public class LecturerActivity extends AppCompatActivity {
     mainNav.setSelectedItemId(R.id.nav_home);
   }
 
-  private void setLoggedUser() {
-    if (((Globals) getApplication()).getLoggedUser() == null) {
-      SessionManager sessionManager = new SessionManager(getApplicationContext());
-      Map<String, String> userInfo = sessionManager.getUserDetails();
-      Actor actor;
-      if (userInfo.get(SessionManager.KEY_USER_TYPE).equals("student"))
-        actor = new Student();
-      else
-        actor = new Lecturer();
-
-      actor.setId(Integer.parseInt(userInfo.get(SessionManager.KEY_USER_ID)));
-      actor.setName(userInfo.get(SessionManager.KEY_USER_NAME));
-      actor.setSurname(userInfo.get(SessionManager.KEY_USER_SURNAME));
-      actor.setMail(userInfo.get(SessionManager.KEY_USER_MAIL));
-      //TODO AN SQL QUERY WILL WORK HERE TO RECIEVE LOGGED USER INFO
-      ((Globals) getApplication()).setLoggedUser(actor);
-    }
-  }
 }
