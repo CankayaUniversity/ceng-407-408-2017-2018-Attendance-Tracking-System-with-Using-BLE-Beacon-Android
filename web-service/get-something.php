@@ -10,10 +10,17 @@ switch($_POST["operation"]){
 		while($row = mysqli_fetch_assoc($result)){
 			$json [] = $row;
 		}
-echo json_encode($json);
+	echo json_encode($json);
 	break;
 	case 'course-list':
-	//TODO list courses with sections
+	$query = "SELECT * FROM Course";
+	$result = mysqli_query($con, $query);
+	$json = array();
+	while($row = mysqli_fetch_assoc($result)){
+	$json [] = $row;
+}
+	echo json_encode($json);
+
 	break;
 	case 'student-list':
 		$query = "SELECT * FROM Student";
@@ -22,6 +29,31 @@ echo json_encode($json);
 			while($row = mysqli_fetch_assoc($result)){
 				$json [] = $row;
 			}
+		echo json_encode($json);
+	break;
+	case 'user-info':
+		if(empty($_POST["user_id"]) || empty($_POST["user_type"])){
+			$json ["message"] = "Empty field error";
+			echo json_encode($json);
+			exit(0);
+		}
+		$userId = $_POST["user_id"];
+		$userType = $_POST["user_type"];
+		if($userType == "student")
+			$query = "SELECT * FROM Student WHERE student_id = '$userId'";
+		else if($userType == "lecturer")
+			$query = "SELECT * FROM Lecturer WHERE lecturer_id = '$userId'";
+
+		$result = mysqli_query($con, $query);
+		if(mysqli_num_rows($result) > 0 ){
+			$json = mysqli_fetch_assoc($result);
+			$json["success"] = true;
+		}
+		else
+		{
+			$json ["success"] = false;
+			$json ["message"] = "User is not found";
+		}
 		echo json_encode($json);
 	break;
 }
