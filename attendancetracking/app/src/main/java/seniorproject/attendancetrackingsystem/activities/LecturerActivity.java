@@ -39,7 +39,6 @@ public class LecturerActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_lecturer);
     Toolbar toolbar = findViewById(R.id.toolbar);
-
     setSupportActionBar(toolbar);
     mainNav = findViewById(R.id.main_nav);
     welcomeFragmentLecturer = new WelcomeFragmentLecturer();
