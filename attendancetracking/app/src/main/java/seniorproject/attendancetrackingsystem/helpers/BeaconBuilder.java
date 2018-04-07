@@ -14,8 +14,10 @@ import com.aprilbrother.aprilbrothersdk.utils.AprilL;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class BeaconBuilder {
   private static final Region ALL_BEACONS_REGION = new Region("REGION01", null, null, null);
@@ -33,27 +35,32 @@ public class BeaconBuilder {
     progressDialog.setMessage("GOING");
     alertDialog = new AlertDialog.Builder(context).create();
     alertDialog.setTitle("Beacon is detected");
-    progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
-      @Override
-      public void onClick(DialogInterface dialog, int which) {
-        try{
-          beaconManager.stopRanging(ALL_BEACONS_REGION);
-        }catch (RemoteException e){
-          e.printStackTrace();
-        }
-      }
-    });
+    progressDialog.setButton(
+        DialogInterface.BUTTON_NEGATIVE,
+        "Cancel",
+        new DialogInterface.OnClickListener() {
+          @Override
+          public void onClick(DialogInterface dialog, int which) {
+            try {
+              beaconManager.stopRanging(ALL_BEACONS_REGION);
+            } catch (RemoteException e) {
+              e.printStackTrace();
+            }
+          }
+        });
     initialize();
     connectToTheService();
   }
-private int getFirstBeacon(){
+
+  private int getFirstBeacon() {
     int index = 0;
-    for(Beacon x : beacons){
-      if(!ignoreList.contains(x.getMacAddress())) return index;
+    for (Beacon x : beacons) {
+      if (!ignoreList.contains(x.getMacAddress())) return index;
       index++;
     }
     return -1;
-}
+  }
+
   private void initialize() {
     BluetoothAdapter.getDefaultAdapter().enable();
     beacons = new ArrayList<>();
@@ -74,31 +81,39 @@ private int getFirstBeacon(){
               try {
                 final String mac = beacons.get(getFirstBeacon()).getMacAddress();
                 progressDialog.setMessage("Beacon: " + beacons.get(0).getMacAddress());
-                //TODO CONFIRMATION DIALOG WILL BE CALLED
+                // TODO CONFIRMATION DIALOG WILL BE CALLED
                 beaconManager.stopRanging(ALL_BEACONS_REGION);
-               progressDialog.hide();
-               alertDialog.setMessage("Mac address: " + mac);
-               alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Ignore",
-                       new DialogInterface.OnClickListener() {
-                 @Override
-                 public void onClick(DialogInterface dialog, int which) {
-                   ignoreList.add(mac);
-                   connectToTheService();
-                 }
-               });
-               alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "Save",
-                       new DialogInterface.OnClickListener() {
-                 @Override
-                 public void onClick(DialogInterface dialog, int which) {
-                   //TODO UPDATE LECTURER BEACON COLUMN
-                 }
-               });
-               alertDialog.show();
-
+                progressDialog.hide();
+                alertDialog.setMessage("Mac address: " + mac);
+                alertDialog.setButton(
+                    DialogInterface.BUTTON_NEGATIVE,
+                    "Ignore",
+                    new DialogInterface.OnClickListener() {
+                      @Override
+                      public void onClick(DialogInterface dialog, int which) {
+                        ignoreList.add(mac);
+                        connectToTheService();
+                      }
+                    });
+                alertDialog.setButton(
+                    DialogInterface.BUTTON_POSITIVE,
+                    "Save",
+                    new DialogInterface.OnClickListener() {
+                      @Override
+                      public void onClick(DialogInterface dialog, int which) {
+                        Map<String, String> postParameters = new HashMap<>();
+                        postParameters.put("beacon_mac", mac);
+                        SessionManager session = new SessionManager(context);
+                        Map<String, String> userInfo = session.getUserDetails();
+                        postParameters.put("user_id", userInfo.get(SessionManager.KEY_USER_ID));
+                        DatabaseManager.getmInstance(context).execute("set-beacon", postParameters);
+                        BluetoothAdapter.getDefaultAdapter().disable();
+                      }
+                    });
+                alertDialog.show();
 
               } catch (RemoteException e) {
                 e.printStackTrace();
-
               }
             }
           }
