@@ -6,8 +6,6 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.RemoteException;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 import com.aprilbrother.aprilbrothersdk.Beacon;
 import com.aprilbrother.aprilbrothersdk.BeaconManager;
@@ -16,9 +14,8 @@ import com.aprilbrother.aprilbrothersdk.utils.AprilL;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 public class BeaconBuilder {
   private static final Region ALL_BEACONS_REGION = new Region("REGION01", null, null, null);
@@ -27,6 +24,7 @@ public class BeaconBuilder {
   private Context context;
   private BeaconManager beaconManager;
   private ArrayList<Beacon> beacons;
+  private LinkedList<String> ignoreList;
 
   public BeaconBuilder(Context context) {
     this.context = context;
@@ -48,10 +46,18 @@ public class BeaconBuilder {
     initialize();
     connectToTheService();
   }
-
+private int getFirstBeacon(){
+    int index = 0;
+    for(Beacon x : beacons){
+      if(!ignoreList.contains(x.getMacAddress())) return index;
+      index++;
+    }
+    return -1;
+}
   private void initialize() {
     BluetoothAdapter.getDefaultAdapter().enable();
     beacons = new ArrayList<>();
+    ignoreList = new LinkedList<>();
     AprilL.enableDebugLogging(true);
     beaconManager = new BeaconManager(context.getApplicationContext());
     beaconManager.setRangingListener(
@@ -64,23 +70,24 @@ public class BeaconBuilder {
             ComparatorBeaconByRssi com = new ComparatorBeaconByRssi();
             Collections.sort(beacons, com);
 
-            if (list.size() > 0) {
+            if (beacons.size() > 0 && getFirstBeacon() != -1) {
               try {
+                final String mac = beacons.get(getFirstBeacon()).getMacAddress();
                 progressDialog.setMessage("Beacon: " + beacons.get(0).getMacAddress());
                 //TODO CONFIRMATION DIALOG WILL BE CALLED
                 beaconManager.stopRanging(ALL_BEACONS_REGION);
-                Map<String, String> postParameter = new HashMap<>();
-                postParameter.put("beacon", beacons.get(0).getMacAddress());
                progressDialog.hide();
-               alertDialog.setMessage("Mac address: " + postParameter.get
-                       ("beacon"));
-               alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Ignore", new DialogInterface.OnClickListener() {
+               alertDialog.setMessage("Mac address: " + mac);
+               alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Ignore",
+                       new DialogInterface.OnClickListener() {
                  @Override
                  public void onClick(DialogInterface dialog, int which) {
-                   //TODO Add to an arraylist that ignores this beacon
+                   ignoreList.add(mac);
+                   connectToTheService();
                  }
                });
-               alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "Save", new DialogInterface.OnClickListener() {
+               alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "Save",
+                       new DialogInterface.OnClickListener() {
                  @Override
                  public void onClick(DialogInterface dialog, int which) {
                    //TODO UPDATE LECTURER BEACON COLUMN
@@ -101,6 +108,7 @@ public class BeaconBuilder {
   private void connectToTheService() {
     progressDialog.setMessage("Searching...");
     progressDialog.show();
+    alertDialog.hide();
     beaconManager.connect(
         new BeaconManager.ServiceReadyCallback() {
           @Override
