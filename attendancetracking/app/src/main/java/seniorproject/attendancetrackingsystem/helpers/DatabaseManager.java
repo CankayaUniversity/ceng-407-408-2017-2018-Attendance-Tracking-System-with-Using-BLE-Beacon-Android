@@ -32,6 +32,7 @@ public class DatabaseManager {
   private static final String Domain = "http://attendancesystem.xyz/attendancetracking/";
   private static final String AccountOperations = Domain + "account-operations.php";
   private static final String GetOperations = Domain + "get-something.php";
+  private static final String SetOperations = Domain + "set-something.php";
   private static DatabaseManager mInstance;
   private final JsonHelper jsonHelper;
   private final Context context;
@@ -160,6 +161,43 @@ public class DatabaseManager {
               @Override
               protected Map<String, String> getParams() {
                 params.put("operation", "register");
+                return params;
+              }
+            };
+        break;
+      case "set-beacon":
+        request =
+            new StringRequest(
+                Request.Method.POST,
+                SetOperations,
+                new Response.Listener<String>() {
+                  @Override
+                  public void onResponse(String response) {
+                    try {
+                      JSONObject jsonObject = new JSONObject(response);
+                      boolean result = jsonObject.getBoolean("success");
+                      if (result) {
+                        Toast.makeText(context, "Successful", Toast.LENGTH_LONG).show();
+                      } else {
+                        alertDialog.setTitle("Update Failed");
+                        alertDialog.setMessage(jsonObject.getString("message"));
+                        alertDialog.show();
+                      }
+                    } catch (JSONException e) {
+                      e.printStackTrace();
+                    }
+                  }
+                },
+                new Response.ErrorListener() {
+                  @Override
+                  public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(context, "Error: " + error.getMessage(), Toast.LENGTH_LONG)
+                        .show();
+                  }
+                }) {
+              @Override
+              protected Map<String, String> getParams() {
+                params.put("operation", "beacon-mac");
                 return params;
               }
             };
