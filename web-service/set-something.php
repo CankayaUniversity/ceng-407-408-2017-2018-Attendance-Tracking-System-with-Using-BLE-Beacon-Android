@@ -16,9 +16,9 @@ switch($_POST["operation"]){
 		$section = $_POST["section"];
 
 		if($userType == "student")
-			$query = "INSERT INTO Taken_Lectures(student_id, course_id, section) VALUES('$userId', '$courseId', '$section')"); 
+			$query = "INSERT INTO Taken_Lectures(student_id, course_id, section) VALUES('$userId', '$courseId', '$section')"; 
 		else if($userType == "lecturer")
-			$query = "INSERT INTO Given_Lectures(lecturer_id, course_id, section) VALUES('$userId', '$courseId', '$section')");
+			$query = "INSERT INTO Given_Lectures(lecturer_id, course_id, section) VALUES('$userId', '$courseId', '$section')";
 		
 		$result = mysqli_query($con, $query);
 		if($result){
@@ -39,7 +39,7 @@ switch($_POST["operation"]){
 		$user_id = $_POST["user_id"];
 		$beacon = $_POST["beacon_mac"];
 
-		$query = mysqli_query("UPDATE Lecturer SET beacon = '$beacon' WHERE lecturer_id = '$user_id'");
+		$query = "UPDATE Lecturer SET beacon_mac = '$beacon' WHERE lecturer_id = '$user_id'";
 		$result = mysqli_query($con, $query);
 		if($result){
 			$json ["success"] = true;
