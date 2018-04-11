@@ -5,20 +5,19 @@ import java.util.ArrayList;
 public class Student extends Actor {
   private int studentNumber;
   private String bluetoothMAC;
-  private ArrayList<Course> takenCourses;
+  private ArrayList<TakenCourses> takenCourses;
 
-  public Student() {
+  public Student() {}
 
-  }
-
-  public Student(int id, int studentNumber, String name, String surname, String bluetoothMAC, String
-          mail) {
+  public Student(
+      int id, int studentNumber, String name, String surname, String bluetoothMAC, String mail) {
     this.studentNumber = studentNumber;
     this.bluetoothMAC = bluetoothMAC;
     setId(id);
     setMail(mail);
     setName(name);
     setSurname(surname);
+    takenCourses = null;
   }
 
   public String getBluetoothMAC() {
@@ -37,12 +36,12 @@ public class Student extends Actor {
     this.studentNumber = studentNumber;
   }
 
-  public void initiateServices() {
-    // Initiate Bluetooth Service
+  public ArrayList<TakenCourses> getTakenCourses() {
+    return this.takenCourses;
   }
 
-  public void courseAssignment(int courseId, int section) {
-    // Course Assignment
+  public void setTakenCourses(ArrayList<TakenCourses> takenCourses) {
+    this.takenCourses = takenCourses;
   }
 
   public void changePassword() {

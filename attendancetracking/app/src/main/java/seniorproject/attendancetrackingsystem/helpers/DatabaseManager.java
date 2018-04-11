@@ -26,6 +26,8 @@ import seniorproject.attendancetrackingsystem.utils.Actor;
 import seniorproject.attendancetrackingsystem.utils.Course;
 import seniorproject.attendancetrackingsystem.utils.Department;
 import seniorproject.attendancetrackingsystem.utils.Globals;
+import seniorproject.attendancetrackingsystem.utils.Student;
+import seniorproject.attendancetrackingsystem.utils.TakenCourses;
 
 public class DatabaseManager {
 
@@ -202,6 +204,33 @@ public class DatabaseManager {
               }
             };
         break;
+      case "get-taken-courses":
+        request =
+            new StringRequest(
+                Request.Method.POST,
+                GetOperations,
+                new Response.Listener<String>() {
+                  @Override
+                  public void onResponse(String response) {
+                    ArrayList<TakenCourses> takenCourses = jsonHelper.parseTakenCourses(response);
+                    Actor actor = ((Globals) context.getApplicationContext()).getLoggedUser();
+                    if (actor instanceof Student) ((Student) actor).setTakenCourses(takenCourses);
+                  }
+                },
+                new Response.ErrorListener() {
+                  @Override
+                  public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(context, "Error: " + error.getMessage(), Toast.LENGTH_LONG)
+                        .show();
+                  }
+                }) {
+              @Override
+              protected Map<String, String> getParams() {
+                params.put("operation", "taken-courses");
+                return params;
+              }
+            };
+        break;
       default:
     }
     return request;
@@ -284,11 +313,56 @@ public class DatabaseManager {
     return request;
   }
 
+  private StringRequest createStringRequest(String action, String param) {
+    StringRequest request = null;
+    switch (action) {
+      case "get":
+        if (param.equals("user-info")) {
+          request =
+              new StringRequest(
+                  Request.Method.POST,
+                  GetOperations,
+                  new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                      Actor actor = jsonHelper.parseUser(response);
+                      ((Globals) context.getApplicationContext()).setLoggedUser(actor);
+                    }
+                  },
+                  new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                      Toast.makeText(context, "Error: " + error.getMessage(), Toast.LENGTH_LONG)
+                          .show();
+                    }
+                  }) {
+                @Override
+                protected Map<String, String> getParams() {
+                  Map<String, String> userInfo = new SessionManager(context).getUserDetails();
+                  Map<String, String> postParameters = new HashMap<>();
+                  postParameters.put("user_id", userInfo.get(SessionManager.KEY_USER_ID));
+                  postParameters.put("user_type", userInfo.get(SessionManager.KEY_USER_TYPE));
+                  postParameters.put("operation", "user-info");
+                  return postParameters;
+                }
+              };
+        }
+
+        break;
+      default:
+    }
+    return request;
+  }
+
   public void execute(String action, Map<String, String> params) {
     getmInstance(context).addToRequestQueue(createStringRequest(action, params));
   }
 
   public void execute(String action, String param, ArrayList<String> array) {
     getmInstance(context).addToRequestQueue(createStringRequest(action, param, array));
+  }
+
+  public void execute(String action, String param) {
+    getmInstance(context).addToRequestQueue(createStringRequest(action, param));
   }
 }
