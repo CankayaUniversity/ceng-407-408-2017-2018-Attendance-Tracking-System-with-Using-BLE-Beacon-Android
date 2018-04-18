@@ -76,7 +76,6 @@ public class BeaconBuilder extends Service implements BeaconConsumer {
               }
             });
             if(beacons.size() > 0 && getFirstBeacon() != -1){
-              Log.i("hello", beacons.get(getFirstBeacon()).getBluetoothAddress());
               try{
                 beaconManager.stopRangingBeaconsInRegion(ALL_BEACONS);
               }catch (RemoteException e){

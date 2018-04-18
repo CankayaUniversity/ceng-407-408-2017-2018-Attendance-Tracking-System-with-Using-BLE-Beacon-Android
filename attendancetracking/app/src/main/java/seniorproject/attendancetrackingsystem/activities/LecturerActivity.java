@@ -18,6 +18,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -34,6 +35,7 @@ import seniorproject.attendancetrackingsystem.helpers.DatabaseManager;
 import seniorproject.attendancetrackingsystem.helpers.SessionManager;
 
 public class LecturerActivity extends AppCompatActivity {
+  private Receiver mReceiver;
   private BeaconBuilder beaconBuilder;
   private boolean mServiceBound = false;
   private BottomNavigationView mainNav;
@@ -101,10 +103,6 @@ public class LecturerActivity extends AppCompatActivity {
             return true;
           }
         });
-    Receiver mReceiver = new Receiver();
-    IntentFilter filter = new IntentFilter();
-    filter.addAction(BeaconBuilder.ACTION);
-    registerReceiver(mReceiver, filter);
     alertDialog = new AlertDialog.Builder(this).create();
     alertDialog.setCanceledOnTouchOutside(false);
     progressDialog = new ProgressDialog(this);
@@ -202,8 +200,24 @@ private void showProgressDialog(){
   @Override
   protected void onStop() {
     super.onStop();
-    unbindService(serviceConnection);
-    mServiceBound = false;
+    if(mServiceBound){
+      unbindService(serviceConnection);
+      mServiceBound = false;
+    }
+    progressDialog.hide();
+    alertDialog.hide();
+    unregisterReceiver(mReceiver);
+    Log.i("reciever", "unregistered");
+  }
+
+  @Override
+  protected void onStart() {
+    super.onStart();
+    mReceiver = new Receiver();
+    IntentFilter filter = new IntentFilter();
+    filter.addAction(BeaconBuilder.ACTION);
+    registerReceiver(mReceiver, filter);
+    Log.i("receiver", "registered");
   }
 
   private class Receiver extends BroadcastReceiver {
