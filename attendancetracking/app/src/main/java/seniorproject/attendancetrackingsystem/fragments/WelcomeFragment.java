@@ -1,19 +1,34 @@
 package seniorproject.attendancetrackingsystem.fragments;
 
 import android.app.Fragment;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 
 import seniorproject.attendancetrackingsystem.R;
 import seniorproject.attendancetrackingsystem.helpers.SessionManager;
+import seniorproject.attendancetrackingsystem.utils.RegularMode;
 
 /* A simple {@link Fragment} subclass. */
 public class WelcomeFragment extends Fragment {
+  ArrayAdapter<String> adapter;
+  private Receiver mReceiver;
+  private ArrayList<String> messages;
+  private ListView listView;
 
   public WelcomeFragment() {
     // Required empty public constructor
@@ -40,5 +55,43 @@ public class WelcomeFragment extends Fragment {
     String mailText = userInfo.get(SessionManager.KEY_USER_MAIL);
     nameSurnameField.setText(nameText);
     description.setText(mailText);
+    listView = view.findViewById(R.id.notification_list);
+    messages = new ArrayList<>();
+    adapter =
+        new ArrayAdapter<>(
+            getActivity().getApplicationContext(), R.layout.notification_item, messages);
+    listView.setAdapter(adapter);
+  }
+
+  @Override
+  public void onResume() {
+    super.onResume();
+    mReceiver = new Receiver();
+    IntentFilter filter = new IntentFilter();
+    filter.addAction(RegularMode.ACTION);
+    getActivity().registerReceiver(mReceiver, filter);
+  }
+
+  @Override
+  public void onPause() {
+    super.onPause();
+    getActivity().unregisterReceiver(mReceiver);
+  }
+
+  private void showMessages(String currentCourse) {
+    messages.clear();
+    SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.ENGLISH);
+    Date currentDate = new Date();
+    if (currentCourse.equals("null"))
+      messages.add("There isn't any course for now");
+    else messages.add("Current Course: " + currentCourse + "\n" + dateFormat.format(currentDate));
+    listView.setAdapter(adapter);
+  }
+
+  private class Receiver extends BroadcastReceiver {
+    @Override
+    public void onReceive(Context context, Intent intent) {
+      showMessages(intent.getStringExtra("course_code"));
+    }
   }
 }

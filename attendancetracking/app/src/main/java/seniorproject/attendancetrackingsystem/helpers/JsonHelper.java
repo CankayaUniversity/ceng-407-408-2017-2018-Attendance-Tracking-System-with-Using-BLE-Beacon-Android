@@ -12,6 +12,7 @@ import seniorproject.attendancetrackingsystem.utils.Actor;
 import seniorproject.attendancetrackingsystem.utils.Course;
 import seniorproject.attendancetrackingsystem.utils.Department;
 import seniorproject.attendancetrackingsystem.utils.Lecturer;
+import seniorproject.attendancetrackingsystem.utils.Schedule;
 import seniorproject.attendancetrackingsystem.utils.Student;
 import seniorproject.attendancetrackingsystem.utils.TakenCourses;
 
@@ -115,5 +116,21 @@ public class JsonHelper {
     }
 
     return arrayList;
+  }
+
+  public Schedule parseSchedule(String jsonString) {
+    Schedule schedule = new Schedule();
+    try {
+      JSONArray jsonArray = new JSONArray(jsonString);
+      for (int i = 0; i < jsonArray.length(); i++) {
+        JSONObject jsonObject = jsonArray.getJSONObject(i);
+        schedule.add(jsonObject.getInt("course_id"),jsonObject.getInt("section"),
+                jsonObject.getString("week_day"), jsonObject.getString("hour"),
+                jsonObject.getString("beacon_mac"),jsonObject.getString("course_code"));
+      }
+    } catch (JSONException e) {
+      e.printStackTrace();
+    }
+    return schedule;
   }
 }

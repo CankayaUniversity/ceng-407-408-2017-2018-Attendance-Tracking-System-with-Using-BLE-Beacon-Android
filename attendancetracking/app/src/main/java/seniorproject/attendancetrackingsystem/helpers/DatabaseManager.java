@@ -31,10 +31,10 @@ import seniorproject.attendancetrackingsystem.utils.TakenCourses;
 
 public class DatabaseManager {
 
-  private static final String Domain = "http://attendancesystem.xyz/attendancetracking/";
-  private static final String AccountOperations = Domain + "account-operations.php";
-  private static final String GetOperations = Domain + "get-something.php";
-  private static final String SetOperations = Domain + "set-something.php";
+  public static final String Domain = "http://attendancesystem.xyz/attendancetracking/";
+  public static final String AccountOperations = Domain + "account-operations.php";
+  public static final String GetOperations = Domain + "get-something.php";
+  public static final String SetOperations = Domain + "set-something.php";
   private static DatabaseManager mInstance;
   private final JsonHelper jsonHelper;
   private final Context context;
@@ -364,5 +364,8 @@ public class DatabaseManager {
 
   public void execute(String action, String param) {
     getmInstance(context).addToRequestQueue(createStringRequest(action, param));
+  }
+  public void execute(StringRequest stringRequest){
+    getmInstance(context).addToRequestQueue(stringRequest);
   }
 }
