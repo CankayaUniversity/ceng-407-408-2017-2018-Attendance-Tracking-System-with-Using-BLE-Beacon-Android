@@ -9,6 +9,12 @@ public class Globals extends Application {
   private ArrayList<Course> courses;
   private Actor loggedUser;
 
+  public Globals() {
+    this.departments = null;
+    this.courses = null;
+    this.loggedUser = null;
+  }
+
   public ArrayList<Department> getDepartments() {
     return departments;
   }
@@ -32,5 +38,4 @@ public class Globals extends Application {
   public void setLoggedUser(Actor loggedUser) {
     this.loggedUser = loggedUser;
   }
-
 }

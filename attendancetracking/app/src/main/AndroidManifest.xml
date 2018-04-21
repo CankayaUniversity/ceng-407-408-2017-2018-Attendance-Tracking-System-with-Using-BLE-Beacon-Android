@@ -41,16 +41,9 @@
             android:name=".activities.StudentActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".activities.LecturerActivity" />
-
-        <service
-            android:name="com.aprilbrother.aprilbrothersdk.service.BeaconService"
-            android:exported="false" />
-        <service
-            android:name="com.aprilbrother.aprilbrothersdk.services.ABeaconUartService"
-            android:exported="false" />
-        <service
-            android:name="com.aprilbrother.aprilbrothersdk.services.UartService"
-            android:exported="false" />
+        <service android:name=".helpers.BeaconBuilder"/>
+        <service android:name=".utils.RegularMode"/>
+        <service android:name=".helpers.ServiceManager"/>
     </application>
 
 </manifest>

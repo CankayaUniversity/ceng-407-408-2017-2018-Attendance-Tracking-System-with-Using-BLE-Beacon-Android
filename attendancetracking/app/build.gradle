@@ -30,5 +30,5 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     implementation 'com.basgeekball:awesome-validation:4.1'
     implementation 'com.android.volley:volley:1.1.0'
-    implementation files('libs/ab-sdk-beta1.7.3.jar')
+    implementation 'org.altbeacon:android-beacon-library:2.13.1'
 }

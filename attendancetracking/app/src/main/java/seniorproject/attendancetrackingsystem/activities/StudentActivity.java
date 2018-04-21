@@ -2,6 +2,7 @@ package seniorproject.attendancetrackingsystem.activities;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -18,6 +19,7 @@ import seniorproject.attendancetrackingsystem.R;
 import seniorproject.attendancetrackingsystem.fragments.ReportFragment;
 import seniorproject.attendancetrackingsystem.fragments.WelcomeFragment;
 import seniorproject.attendancetrackingsystem.helpers.DatabaseManager;
+import seniorproject.attendancetrackingsystem.helpers.ServiceManager;
 import seniorproject.attendancetrackingsystem.helpers.SessionManager;
 import seniorproject.attendancetrackingsystem.utils.Globals;
 
@@ -35,7 +37,7 @@ public class StudentActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_student);
     Toolbar toolbar = findViewById(R.id.toolbar);
-
+    startService(new Intent(this, ServiceManager.class));
     setSupportActionBar(toolbar);
     mainNav = findViewById(R.id.main_nav);
     welcomeFragment = new WelcomeFragment();
