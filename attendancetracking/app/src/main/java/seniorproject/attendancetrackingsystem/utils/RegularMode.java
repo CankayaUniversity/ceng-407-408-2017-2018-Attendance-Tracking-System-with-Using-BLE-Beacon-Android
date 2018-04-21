@@ -38,6 +38,16 @@ public class RegularMode extends Service implements BeaconConsumer {
     beaconManager
         .getBeaconParsers()
         .add(new BeaconParser().setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"));
+    beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(BeaconParser
+            .EDDYSTONE_UID_LAYOUT));
+    beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(BeaconParser
+            .EDDYSTONE_URL_LAYOUT));
+    beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(BeaconParser
+            .EDDYSTONE_TLM_LAYOUT));
+    beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(BeaconParser
+            .URI_BEACON_LAYOUT));
+    beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(BeaconParser
+            .ALTBEACON_LAYOUT));
     new BackgroundPowerSaver(this);
     beaconManager.bind(this);
   }
