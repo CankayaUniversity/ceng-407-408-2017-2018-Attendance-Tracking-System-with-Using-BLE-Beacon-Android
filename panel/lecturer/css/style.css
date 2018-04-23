@@ -13,7 +13,7 @@ body {
 
 header {
       width: 100%;
-      height: 10vh;
+      height: 5vh;
 	  background: linear-gradient(135deg,#2d9a59,#42959a,#23729a) no-repeat fixed;
 
 }
@@ -65,7 +65,26 @@ nav ul li {
       padding: 16px 10px;;
 }
 
+nav ul li ul {
+	top:30px;
+	background: linear-gradient(135deg,#2d9a59,#42959a,#23729a) no-repeat fixed;
+	text-align: left;
+	position:absolute;
+      	display: none;
+	width:170px;
+      	}
+
+nav ul li:hover ul {
+	background: linear-gradient(135deg,#2d9a59,#42959a,#23729a) no-repeat fixed;
+      	display: block;
+      	}
+
 nav ul li a {
+      text-decoration: none;
+      color: #fff;
+      font-size: 16px;
+}
+nav ul li ul li a {
       text-decoration: none;
       color: #fff;
       font-size: 16px;
@@ -86,6 +105,73 @@ nav ul li a {
 }
 .left-align{
       text-align: left;
+}
+
+.custom-file-upload input[type=text]{
+
+width:70%;
+padding: 15px;
+border-radius:5px;
+border:1px solid #7ac9b7;
+}
+.custom-file-upload-hidden {
+    display: none;
+    visibility: hidden;
+    position: absolute;
+    left: -9999px;
+}
+.custom-file-upload {
+    display: block;
+    font-size: 16px;
+    margin-top: 30px;
+    //border: 1px solid #ccc;
+    label {
+        display: block;
+        margin-bottom: 5px;
+    }
+}
+
+.file-upload-wrapper {
+    position: relative; 
+    margin-bottom: 5px;
+    //border: 1px solid #ccc;
+}
+.file-upload-input {
+    width: $file-upload-size;
+    color: #000;
+    font-size: 16px;
+    padding: 11px 17px; 
+    border: none;
+    background-color: $file-upload-color; 
+    @include transition(all 0.2s ease-in); 
+    float: left; /* IE 9 Fix */
+    &:hover, &:focus { 
+        background-color: darken($file-upload-color, 5);
+        outline: none; 
+    }
+}
+.file-upload-button {
+    cursor: pointer; 
+    display: inline-block; 
+    color: #000;
+    font-size: 16px;
+    text-transform: uppercase;
+    padding: 15px 20px; 
+    margin-top: 10px;
+    border-radius:5px;
+border:1px solid #7ac9b7;
+margin-left: 1px;
+width: 25%;
+    background-color: darken($file-upload-color, 10); 
+    float: right; /* IE 9 Fix */
+    @include transition(all 0.2s ease-in);
+    &:hover {
+        background-color: darken($file-upload-color, 20);
+    }
+}
+
+.clear{
+      clear: left;
 }
 @media(max-width: 786px) {
 

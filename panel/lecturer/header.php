@@ -9,6 +9,7 @@ check_login();
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta http-equiv="X-UA-Compatible" content="ie=edge">
       <title>Çankaya Attendance Tracking System</title>
+      <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico">
       <link rel="stylesheet" type="text/css" href="css/responsiveform.css">
       <link rel="stylesheet" media="screen and (max-width: 1200px) and (min-width: 601px)" href="css/responsiveform1.css" />
       <link rel="stylesheet" media="screen and (max-width: 600px) and (min-width: 351px)" href="css/responsiveform2.css" />
@@ -17,6 +18,8 @@ check_login();
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
       <link href="https://fonts.googleapis.com/css?family=Montserrat:400,600" rel="stylesheet">
       <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+
+
 </head>
 <body>
             <div class="wrapper">

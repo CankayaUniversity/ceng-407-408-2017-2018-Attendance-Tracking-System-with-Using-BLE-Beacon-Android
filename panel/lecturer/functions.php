@@ -18,16 +18,16 @@ function login($query){
 	$res = $db->query($query);
 	if($res->num_rows > 0){
 			$row = $res->fetch_object();
-			echo 'giris basarili';
+			echo 'Login Success!';
 			setcookie('user', $row->lecturer_id, time() + 3600);
 			header("refresh:3; url=index.php");
 		}else
-			echo 'giris basarisiz';
+			echo 'Login Failed!';
 	}
 
 function lecturer_login($mail, $pass){
 	if(empty($mail) || empty($pass)){
-		echo "boş alan hatası";
+		echo "Empty Field Error";
 	}
 	else{
 		$pass = md5($pass);
@@ -50,21 +50,21 @@ function update_password($type, $id, $pass){
 	else if($type == 'admin') $query = "update Admin set password = '$pass' where admin_id = '$id'";
 
 	if($db->query($query)){
-		echo 'Şifre değişti';
+		echo 'Password Changed.';
 	}else
 	{
-		echo 'Güncelleme hatası';
+		echo 'Update Error!';
 	}
 }
 
 function lecturer_change_password($old, $new, $newrepeat){
 	global $db;
 	if(empty($old) || empty($new) || empty($newrepeat)){
-			echo 'boş alan hatası';
+			echo 'Empty Field Error';
 	}
 
 	if($new !== $newrepeat){
-		echo 'girilenler aynı değil';
+		echo 'Password is not matches.';
 	}
 	else{
 		$old = md5($old);
