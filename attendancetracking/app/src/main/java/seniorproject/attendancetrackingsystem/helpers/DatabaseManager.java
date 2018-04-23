@@ -25,7 +25,9 @@ import seniorproject.attendancetrackingsystem.activities.StudentActivity;
 import seniorproject.attendancetrackingsystem.utils.Actor;
 import seniorproject.attendancetrackingsystem.utils.Course;
 import seniorproject.attendancetrackingsystem.utils.Department;
+import seniorproject.attendancetrackingsystem.utils.GivenCourses;
 import seniorproject.attendancetrackingsystem.utils.Globals;
+import seniorproject.attendancetrackingsystem.utils.Lecturer;
 import seniorproject.attendancetrackingsystem.utils.Student;
 import seniorproject.attendancetrackingsystem.utils.TakenCourses;
 
@@ -227,6 +229,32 @@ public class DatabaseManager {
               @Override
               protected Map<String, String> getParams() {
                 params.put("operation", "taken-courses");
+                return params;
+              }
+            };
+        break;
+      case "get-given-courses":
+        request =
+            new StringRequest(
+                Request.Method.POST,
+                GetOperations,
+                new Response.Listener<String>() {
+                  @Override
+                  public void onResponse(String response) {
+                    ArrayList<GivenCourses> givenCourses = jsonHelper.parseGivenCourses(response);
+                    Actor actor = ((Globals) context.getApplicationContext()).getLoggedUser();
+                    if (actor instanceof Lecturer) ((Lecturer) actor).setGivenCourses(givenCourses);
+                  }
+                },
+                new Response.ErrorListener() {
+                  @Override
+                  public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(context, "Error: " + error.getMessage(), Toast.LENGTH_LONG)
+                        .show();
+                  }
+                }) {
+              protected Map<String, String> getParams() {
+                params.put("operation", "given-courses");
                 return params;
               }
             };

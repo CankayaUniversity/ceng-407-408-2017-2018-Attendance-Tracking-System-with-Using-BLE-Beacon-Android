@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import seniorproject.attendancetrackingsystem.utils.Actor;
 import seniorproject.attendancetrackingsystem.utils.Course;
 import seniorproject.attendancetrackingsystem.utils.Department;
+import seniorproject.attendancetrackingsystem.utils.GivenCourses;
 import seniorproject.attendancetrackingsystem.utils.Lecturer;
 import seniorproject.attendancetrackingsystem.utils.Schedule;
 import seniorproject.attendancetrackingsystem.utils.Student;
@@ -118,6 +119,20 @@ public class JsonHelper {
     return arrayList;
   }
 
+public ArrayList<GivenCourses> parseGivenCourses(String jsonString){
+    ArrayList<GivenCourses> arrayList = new ArrayList<>();
+    try{
+      JSONArray jsonArray = new JSONArray(jsonString);
+      for(int i = 0; i < jsonArray.length(); i++){
+        JSONObject jsonObject = jsonArray.getJSONObject(i);
+        GivenCourses tempGivenCourse = new GivenCourses(jsonObject.getInt("course_id"));
+        arrayList.add(tempGivenCourse);
+      }
+    }catch (JSONException e){
+      e.printStackTrace();
+    }
+    return arrayList;
+}
   public Schedule parseSchedule(String jsonString) {
     Schedule schedule = new Schedule();
     try {
