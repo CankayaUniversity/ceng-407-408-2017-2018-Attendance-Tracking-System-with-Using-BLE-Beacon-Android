@@ -11,6 +11,7 @@ check_login();
       <title>Çankaya Attendance Tracking System</title>
       <link rel="shortcut icon" type="image/x-icon" href="img/favicon.ico">
       <link rel="stylesheet" type="text/css" href="css/responsiveform.css">
+      <link rel="stylesheet" type="text/css" href="css/spinner.css">
       <link rel="stylesheet" media="screen and (max-width: 1200px) and (min-width: 601px)" href="css/responsiveform1.css" />
       <link rel="stylesheet" media="screen and (max-width: 600px) and (min-width: 351px)" href="css/responsiveform2.css" />
       <link rel="stylesheet" media="screen and (max-width: 350px)" href="css/responsiveform3.css" />

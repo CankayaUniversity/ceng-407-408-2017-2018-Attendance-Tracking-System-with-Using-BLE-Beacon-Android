@@ -35,10 +35,7 @@
                         <div id="envelope">
                               <form action="index.php?page=upload_student_list&submit=true" method="post" enctype="multipart/form-data">
             
-                              <div class="custom-file-upload">
-                                    <input type="file" id="file" name="student_list" />
-                              </div>
-                              <div class="clear"></div>
+                              <center><input type="file" name="student_list"/></center>
                               <center><input type="submit" name="submit" value="Save"/></center>
                               </form>
                         </div>

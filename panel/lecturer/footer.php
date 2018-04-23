@@ -1,5 +1,4 @@
 </div>
-<script type="text/javascript" src="js/upload.js"></script>
       <script type="text/javascript">
 
       // Menu-toggle button

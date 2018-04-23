@@ -13,7 +13,7 @@ body {
 
 header {
       width: 100%;
-      height: 5vh;
+      height: 7vh;
 	  background: linear-gradient(135deg,#2d9a59,#42959a,#23729a) no-repeat fixed;
 
 }
@@ -109,8 +109,7 @@ nav ul li ul li a {
 
 .custom-file-upload input[type=text]{
 
-width:70%;
-padding: 15px;
+
 border-radius:5px;
 border:1px solid #7ac9b7;
 }
@@ -126,7 +125,7 @@ border:1px solid #7ac9b7;
     margin-top: 30px;
     //border: 1px solid #ccc;
     label {
-        display: block;
+        display: inline;
         margin-bottom: 5px;
     }
 }
@@ -140,11 +139,10 @@ border:1px solid #7ac9b7;
     width: $file-upload-size;
     color: #000;
     font-size: 16px;
-    padding: 11px 17px; 
-    border: none;
+    width: 60%;
+    float: left;
     background-color: $file-upload-color; 
     @include transition(all 0.2s ease-in); 
-    float: left; /* IE 9 Fix */
     &:hover, &:focus { 
         background-color: darken($file-upload-color, 5);
         outline: none; 
@@ -152,18 +150,18 @@ border:1px solid #7ac9b7;
 }
 .file-upload-button {
     cursor: pointer; 
-    display: inline-block; 
+    display: block; 
     color: #000;
     font-size: 16px;
     text-transform: uppercase;
-    padding: 15px 20px; 
-    margin-top: 10px;
     border-radius:5px;
 border:1px solid #7ac9b7;
-margin-left: 1px;
-width: 25%;
+margin-left: 10px;
+width: 30%;
+height: 50px;
+
+float: right;
     background-color: darken($file-upload-color, 10); 
-    float: right; /* IE 9 Fix */
     @include transition(all 0.2s ease-in);
     &:hover {
         background-color: darken($file-upload-color, 20);

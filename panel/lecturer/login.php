@@ -6,6 +6,7 @@ require_once('functions.php');
 <head>
 <meta charset="utf-8"/>
 <title>Çankaya ATS / Login Page</title>
+<link rel="stylesheet" type="text/css" href="css/spinner.css">
 <link rel="stylesheet" type="text/css" href="css/responsiveform.css">
 <link rel="stylesheet" media="screen and (max-width: 1200px) and (min-width: 601px)" href="css/responsiveform1.css" />
 <link rel="stylesheet" media="screen and (max-width: 600px) and (min-width: 351px)" href="css/responsiveform2.css" />

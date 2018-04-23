@@ -10,24 +10,36 @@ if($db->connect_errno > 0 ){
 	die('Unable to connect to database ['. $db->connect_error . ']');
 }
 
+function call_loader($text='', $url=''){
+	if(!empty($text)) echo '<center>'.$text.'</center>';
+	if(!empty($url)) header("refresh:2; url=$url");
+	echo '<div class="sk-folding-cube">
+        <div class="sk-cube1 sk-cube"></div>
+        <div class="sk-cube2 sk-cube"></div>
+        <div class="sk-cube4 sk-cube"></div>
+        <div class="sk-cube3 sk-cube"></div>
+      </div>';
+}
+
 function check_login(){
 	if(!isset($_COOKIE["user"])) header("location: login.php");
 }
+
 function login($query){
 	global $db;
 	$res = $db->query($query);
 	if($res->num_rows > 0){
 			$row = $res->fetch_object();
-			echo 'Login Success!';
 			setcookie('user', $row->lecturer_id, time() + 3600);
-			header("refresh:3; url=index.php");
-		}else
-			echo 'Login Failed!';
+			call_loader("Login Success!", "index.php");
+		}else{
+			call_loader("Login Failed!","login.php");
+		}
 	}
 
 function lecturer_login($mail, $pass){
 	if(empty($mail) || empty($pass)){
-		echo "Empty Field Error";
+		call_loader("Empty Field Error", "login.php");
 	}
 	else{
 		$pass = md5($pass);
@@ -43,6 +55,7 @@ function logout(){
 		header('location:login.php');
 	}
 }
+
 function update_password($type, $id, $pass){
 	global $db;
 	if($type == 'lecturer') $query = "update Lecturer set password = '$pass' where lecturer_id = '$id'";
@@ -50,21 +63,21 @@ function update_password($type, $id, $pass){
 	else if($type == 'admin') $query = "update Admin set password = '$pass' where admin_id = '$id'";
 
 	if($db->query($query)){
-		echo 'Password Changed.';
+		call_loader("Password is changed!", "index.php");
 	}else
 	{
-		echo 'Update Error!';
+		call_loader("Error while updating password", "index.php");
 	}
 }
 
 function lecturer_change_password($old, $new, $newrepeat){
 	global $db;
 	if(empty($old) || empty($new) || empty($newrepeat)){
-			echo 'Empty Field Error';
+		call_loader("Empty Filed Error", "index.php?page=change_password");
 	}
 
 	if($new !== $newrepeat){
-		echo 'Password is not matches.';
+		call_loader("Password does not match", "index.php?page=change_password");
 	}
 	else{
 		$old = md5($old);
