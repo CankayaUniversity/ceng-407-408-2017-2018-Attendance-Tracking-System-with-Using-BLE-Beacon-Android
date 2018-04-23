@@ -84,7 +84,9 @@ nav ul li a {
       color: #fff;
       display: none;
 }
-
+.left-align{
+      text-align: left;
+}
 @media(max-width: 786px) {
 
       .logo {
@@ -116,5 +118,9 @@ nav ul li a {
       .menu-icon {
             display: block;
       }
+      .left-align{
+            text-align: left;
+      }
 
 }
+

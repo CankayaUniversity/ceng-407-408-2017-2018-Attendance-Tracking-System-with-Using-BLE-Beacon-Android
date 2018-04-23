@@ -35,7 +35,7 @@ color: aliceblue;
 }
 
 
-input[type=text]{
+input[type=text], input[type=password]{
 margin-bottom: 20px;
 margin-top: 10px;
 width:100%;
@@ -43,6 +43,7 @@ padding: 15px;
 border-radius:5px;
 border:1px solid #7ac9b7;
 }
+
 input[type=submit]
 {
 margin-bottom: 20px;
