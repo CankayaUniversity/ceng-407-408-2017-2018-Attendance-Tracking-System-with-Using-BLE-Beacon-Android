@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Lecturer extends Actor {
   private int department;
-  private ArrayList<Course> givenCourses;
+  private ArrayList<GivenCourses> givenCourses;
 
   public Lecturer() {
   }
@@ -25,15 +25,11 @@ public class Lecturer extends Actor {
     this.department = department;
   }
 
-  public void takeAttendance() {
-    // Take Attendance
+  public ArrayList<GivenCourses> getGivenCourses() {
+    return givenCourses;
   }
 
-  public void courseAssignment() {
-    // Course Assignment
-  }
-
-  public void showReport(int type) {
-    // Show Report
+  public void setGivenCourses(ArrayList<GivenCourses> givenCourses) {
+    this.givenCourses = givenCourses;
   }
 }
