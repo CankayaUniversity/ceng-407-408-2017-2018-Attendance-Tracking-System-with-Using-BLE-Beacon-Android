@@ -1,5 +1,6 @@
 ﻿<?php
 require_once('functions.php');
+if(isset($_COOKIE["user"])) header("location: index.php");
 ?>
 <!DOCTYPE html>
 <html>
