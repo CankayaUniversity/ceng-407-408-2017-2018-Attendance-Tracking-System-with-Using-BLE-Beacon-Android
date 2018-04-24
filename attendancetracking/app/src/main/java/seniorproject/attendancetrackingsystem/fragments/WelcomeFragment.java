@@ -84,6 +84,8 @@ public class WelcomeFragment extends Fragment {
     Date currentDate = new Date();
     if (currentCourse.equals("null"))
       messages.add("There isn't any course for now");
+    else if(currentCourse.equals("no_course_for_today"))
+      messages.add("There is no course for today");
     else messages.add("Current Course: " + currentCourse + "\n" + dateFormat.format(currentDate));
     listView.setAdapter(adapter);
   }

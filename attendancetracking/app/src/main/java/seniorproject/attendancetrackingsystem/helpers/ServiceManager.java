@@ -155,7 +155,13 @@ public class ServiceManager extends Service {
                         try {
                           JSONObject jsonObject = new JSONObject(response);
                           boolean result = jsonObject.getBoolean("success");
-                          if (!result) noCourseForToday = true;
+                          if (!result){
+                            noCourseForToday = true;
+                            Intent intent = new Intent();
+                            intent.setAction(RegularMode.ACTION);
+                            intent.putExtra("course_code", "no_course_for_today");
+                            sendBroadcast(intent);
+                          }
                         } catch (JSONException e) {
                           e.printStackTrace();
                         }
