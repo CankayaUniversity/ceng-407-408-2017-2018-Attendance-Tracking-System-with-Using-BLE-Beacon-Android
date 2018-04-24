@@ -3,31 +3,47 @@
     package="seniorproject.attendancetrackingsystem">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <uses-feature
+        android:name="android.hardware.bluetooth_le"
+        android:required="true" />
 
     <application
+        android:name=".utils.Globals"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        android:theme="@style/MyTheme">
+        <activity
+            android:name=".activities.MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LoginStudentActivity" />
-        <activity android:name=".RegistrationActivity" />
-        <activity android:name=".LoginLecturerActivity" />
-        <activity android:name=".MainLoginActivity" />
         <activity
-            android:name=".WelcomePage"
-            android:label="@string/title_activity_welcome_page"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".CourseAssignment"
-            android:label="@string/app_name"></activity>
+            android:name=".activities.RegistrationActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.LoginActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.StudentActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".activities.LecturerActivity" />
+        <service android:name=".helpers.BeaconBuilder"/>
+        <service android:name=".utils.RegularMode"/>
+        <service android:name=".helpers.ServiceManager"/>
     </application>
 
 </manifest>

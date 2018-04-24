@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <EditText
+        android:id="@+id/student_schoolID"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="46dp"
+        android:ems="10"
+        android:hint="@string/school_id_register_id"
+        android:inputType="textPersonName"
+        android:tag="s"
+        android:textColor="#fff"
+        android:textColorHighlight="#fff"
+        android:textColorHint="#fff" />
+
+    <EditText
+        android:id="@+id/student_password"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="16dp"
+        android:ems="10"
+        android:hint="@string/password_student_register"
+        android:inputType="textPassword"
+        android:tag="s"
+        android:textColor="#fff"
+        android:textColorHighlight="#fff"
+        android:textColorHint="#fff" />
+
+    <EditText
+        android:id="@+id/student_e_mail"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="18dp"
+        android:ems="10"
+        android:hint="@string/e_mail_register_student"
+        android:inputType="textEmailAddress"
+        android:tag="s"
+        android:textColor="#fff"
+        android:textColorHighlight="#fff"
+        android:textColorHint="#fff" />
+
+    <EditText
+        android:id="@+id/student_name"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="18dp"
+        android:ems="10"
+        android:hint="@string/name_register_student"
+        android:inputType="textPersonName"
+        android:tag="s"
+        android:textColor="#fff"
+        android:textColorHighlight="#fff"
+        android:textColorHint="#fff" />
+
+    <EditText
+        android:id="@+id/student_surname"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="18dp"
+        android:ems="10"
+        android:hint="@string/surname_register_student"
+        android:inputType="textPersonName"
+        android:tag="s"
+        android:textColor="#fff"
+        android:textColorHighlight="#fff"
+        android:textColorHint="#fff" />
+
+    <Button
+        android:id="@+id/register_button"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="170dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/button_border"
+        android:text="@string/register_student_button"
+        android:textAlignment="center"
+        android:textColor="#fff" />
+</LinearLayout>

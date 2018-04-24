@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/nav_home"
+        android:icon="@drawable/ic_home_black_24dp"
+        android:title="@string/nav_home"
+        android:visible="true"
+        app:showAsAction="always|withText" />
+    />
+    <item
+        android:id="@+id/nav_report"
+        android:icon="@drawable/ic_import_contacts_black_24dp"
+        android:title="@string/nav_report"
+        app:showAsAction="always|withText" />
+
+    <item
+        android:id="@+id/logout"
+        android:icon="@drawable/ic_exit_to_app_black_24dp"
+        android:title="@string/nav_logout"
+        android:visible="true"
+        app:showAsAction="always|withText" />
+</menu>

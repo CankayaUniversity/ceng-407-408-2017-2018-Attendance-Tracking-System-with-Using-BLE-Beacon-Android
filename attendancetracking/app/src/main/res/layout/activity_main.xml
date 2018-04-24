@@ -1,38 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/a2"
-    tools:context="seniorproject.attendancetrackingsystem.MainActivity" >
+    android:background="@drawable/gradientback"
+    tools:context="seniorproject.attendancetrackingsystem.activities.MainActivity">
 
 
     <Button
         android:id="@+id/login_button"
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="160dp"
-        android:layout_height="37dp"
+        android:layout_height="43dp"
         android:layout_alignParentEnd="true"
         android:layout_alignTop="@+id/register_button"
         android:layout_marginEnd="13dp"
-        android:text="Logın"
-        tools:layout_editor_absoluteX="198dp"
-        tools:layout_editor_absoluteY="358dp" />
+        android:background="@drawable/button_border"
+
+        android:drawableStart="@drawable/ic_vpn_key_black_24dp"
+        android:paddingEnd="20dp"
+        android:paddingStart="20dp"
+        android:text="@string/login_text_activity"
+        android:textAllCaps="false"
+        android:textColor="#ffffff"
+
+        android:textSize="16sp" />
 
     <Button
         android:id="@+id/register_button"
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="160dp"
-        android:layout_height="37dp"
+        android:layout_height="43dp"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/textView"
         android:layout_marginStart="16dp"
         android:layout_marginTop="97dp"
-        android:text="regıstratıon"
-        tools:layout_editor_absoluteX="27dp"
-        tools:layout_editor_absoluteY="358dp" />
+        android:background="@drawable/button_border"
+        android:drawableStart="@drawable/ic_person_black_24dp"
+        android:paddingEnd="20dp"
+        android:paddingStart="20dp"
+        android:text="@string/registration_text_activity"
+        android:textAllCaps="false"
+        android:textColor="#ffffff"
+        android:textSize="16sp"
+
+        />
 
     <TextView
         android:id="@+id/textView"
@@ -43,10 +56,10 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="47dp"
         android:fontFamily="sans-serif"
-        android:text="Welcome to Attendance Tracking System"
+        android:text="@string/welcome_text_main"
         android:textAlignment="center"
-        android:textColor="@android:color/black"
-        android:textSize="23dp"
+        android:textColor="#ffffff"
+        android:textSize="23sp"
         tools:layout_editor_absoluteX="58dp"
         tools:layout_editor_absoluteY="187dp" />
 
@@ -57,5 +70,6 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
+        android:contentDescription="logo"
         app:srcCompat="@drawable/logo" />
 </RelativeLayout>

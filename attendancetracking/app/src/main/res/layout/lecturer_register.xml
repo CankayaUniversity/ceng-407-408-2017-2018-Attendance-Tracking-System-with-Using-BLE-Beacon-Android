@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <EditText
+        android:id="@+id/lecturer_e_mail"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="18dp"
+        android:ems="10"
+        android:hint="@string/e_mail_register_lecturer"
+        android:inputType="textEmailAddress"
+        android:tag="s"
+        android:textColor="#fff"
+        android:textColorHighlight="#fff"
+        android:textColorHint="#fff" />
+
+    <EditText
+        android:id="@+id/lecturer_password"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="16dp"
+        android:ems="10"
+        android:hint="@string/password_register_lecturer"
+        android:inputType="textPassword"
+        android:tag="s"
+        android:textColor="#fff"
+        android:textColorHighlight="#fff"
+        android:textColorHint="#fff" />
+
+    <EditText
+        android:id="@+id/lecturer_name"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="18dp"
+        android:ems="10"
+        android:hint="@string/name_lecturer_register"
+        android:inputType="textPersonName"
+        android:tag="s"
+        android:textColor="#fff"
+        android:textColorHighlight="#fff"
+        android:textColorHint="#fff" />
+
+    <EditText
+        android:id="@+id/lecturer_surname"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="18dp"
+        android:ems="10"
+        android:hint="@string/surname_register_lecturer"
+        android:inputType="textPersonName"
+        android:tag="s"
+        android:textColor="#fff"
+        android:textColorHighlight="#fff"
+        android:textColorHint="#fff" />
+
+    <Spinner
+        android:id="@+id/departments"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/register_button"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="170dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/button_border"
+        android:text="@string/register_button_lecturer"
+        android:textAlignment="center"
+        android:textColor="#fff" />
+</LinearLayout>
