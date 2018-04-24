@@ -4,6 +4,7 @@ import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.os.Binder;
+import android.os.Build;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.support.annotation.Nullable;
@@ -31,6 +32,12 @@ public class BeaconBuilder extends Service implements BeaconConsumer {
   @Override
   public void onCreate() {
     super.onCreate();
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+          Intent intent = new Intent();
+          intent.setAction(ACTION);
+          intent.putExtra("permission", "request");
+          sendBroadcast(intent);
+      }
     if(!BluetoothAdapter.getDefaultAdapter().isEnabled())
       BluetoothAdapter.getDefaultAdapter().enable();
     beacons = new ArrayList<>();
@@ -103,7 +110,7 @@ public class BeaconBuilder extends Service implements BeaconConsumer {
   private int getFirstBeacon() {
     int index = 0;
     for (Beacon x : beacons) {
-      if (!ignoreList.contains(x.getBluetoothAddress())) return index;
+      if (x != null && !ignoreList.contains(x.getBluetoothAddress())) return index;
       index++;
     }
     return -1;
