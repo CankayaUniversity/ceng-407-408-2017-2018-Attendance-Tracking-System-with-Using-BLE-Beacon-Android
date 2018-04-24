@@ -96,16 +96,15 @@ switch($_POST["operation"]){
 			echo json_encode($json);
 			exit(0);
 		}
-
 		$oldPassword = md5($_POST["old_password"]);
 		$userId = $_POST["user_id"];
 		$userType = $_POST["user_type"];
 		$newPassword = md5($_POST["new_password"]);
 
 		if($userType == "student")
-			$query = "SELECT student_id WHERE student_id = '$userId' AND password = '$oldPassword'";
+			$query = "SELECT student_id FROM Student WHERE student_id = '$userId' AND password = '$oldPassword'";
 		else if ($userType == "lecturer")
-			$query = "SELECT lecturer_id WHERE lecturer_id = '$userId' AND password = '$oldPassword'";
+			$query = "SELECT lecturer_id FROM Lecturer WHERE lecturer_id = '$userId' AND password = '$oldPassword'";
 		$result = mysqli_query($con, $query);
 		if(mysqli_num_rows($result) <= 0){
 			$json ["success"] = false;
@@ -116,7 +115,7 @@ switch($_POST["operation"]){
 		if($userType == "student")
 			$query = "UPDATE Student SET password = '$newPassword' WHERE student_id = '$userId'";
 		else if($userType == "lecturer")
-			$query = "UPDATE Lecturer SET password = 'newPassword' WHERE lecturer_id = 'userId'";
+			$query = "UPDATE Lecturer SET password = '$newPassword' WHERE lecturer_id = '$userId'";
 		$result = mysqli_query($con, $query);
 
 		if($result)
