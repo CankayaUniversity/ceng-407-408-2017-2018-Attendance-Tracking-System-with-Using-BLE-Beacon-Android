@@ -1,6 +1,5 @@
 package seniorproject.attendancetrackingsystem.helpers;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.widget.Toast;
@@ -40,14 +39,12 @@ public class DatabaseManager {
   private static DatabaseManager mInstance;
   private final JsonHelper jsonHelper;
   private final Context context;
-  private final AlertDialog alertDialog;
   private RequestQueue requestQueue;
 
   private DatabaseManager(Context context) {
     this.context = context;
     requestQueue = getRequestQueue();
     jsonHelper = JsonHelper.getmInstance(context);
-    alertDialog = new AlertDialog.Builder(context).create();
   }
 
   /** synchronize the DatabaseManager to make common for whole activity. */
@@ -101,9 +98,11 @@ public class DatabaseManager {
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         context.startActivity(intent);
                       } else {
-                        alertDialog.setTitle("Login Failed");
-                        alertDialog.setMessage(jsonObject.getString("message"));
-                        alertDialog.show();
+                        Toast.makeText(
+                                context.getApplicationContext(),
+                                jsonObject.getString("message"),
+                                Toast.LENGTH_LONG)
+                            .show();
                       }
                     } catch (JSONException e) {
                       e.printStackTrace();
@@ -146,9 +145,11 @@ public class DatabaseManager {
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         context.startActivity(intent);
                       } else {
-                        alertDialog.setTitle("Registration Error");
-                        alertDialog.setMessage(jsonObject.getString("message"));
-                        alertDialog.show();
+                        Toast.makeText(
+                                context.getApplicationContext(),
+                                jsonObject.getString("message"),
+                                Toast.LENGTH_LONG)
+                            .show();
                       }
                     } catch (JSONException e) {
                       e.printStackTrace();
@@ -183,9 +184,11 @@ public class DatabaseManager {
                       if (result) {
                         Toast.makeText(context, "Successful", Toast.LENGTH_LONG).show();
                       } else {
-                        alertDialog.setTitle("Update Failed");
-                        alertDialog.setMessage(jsonObject.getString("message"));
-                        alertDialog.show();
+                        Toast.makeText(
+                                context.getApplicationContext(),
+                                jsonObject.getString("message"),
+                                Toast.LENGTH_LONG)
+                            .show();
                       }
                     } catch (JSONException e) {
                       e.printStackTrace();
@@ -255,6 +258,49 @@ public class DatabaseManager {
                 }) {
               protected Map<String, String> getParams() {
                 params.put("operation", "given-courses");
+                return params;
+              }
+            };
+        break;
+      case "change-password":
+        request =
+            new StringRequest(
+                Request.Method.POST,
+                AccountOperations,
+                new Response.Listener<String>() {
+                  @Override
+                  public void onResponse(String response) {
+                    try {
+                      JSONObject jsonObject = new JSONObject(response);
+                      boolean result = jsonObject.getBoolean("success");
+                      if (result) {
+                        Toast.makeText(
+                                context.getApplicationContext(),
+                                "Password has been successfully changed",
+                                Toast.LENGTH_LONG)
+                            .show();
+                      } else {
+                        Toast.makeText(
+                                context.getApplicationContext(),
+                                jsonObject.getString("message"),
+                                Toast.LENGTH_LONG)
+                            .show();
+                      }
+                    } catch (JSONException e) {
+                      e.printStackTrace();
+                    }
+                  }
+                },
+                new Response.ErrorListener() {
+                  @Override
+                  public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(context, "Error: " + error.getMessage(), Toast.LENGTH_LONG)
+                        .show();
+                  }
+                }) {
+              @Override
+              protected Map<String, String> getParams() {
+                params.put("operation", "change-password");
                 return params;
               }
             };
@@ -382,6 +428,8 @@ public class DatabaseManager {
     return request;
   }
 
+  private void showDialog(final String message) {}
+
   public void execute(String action, Map<String, String> params) {
     getmInstance(context).addToRequestQueue(createStringRequest(action, params));
   }
@@ -393,7 +441,8 @@ public class DatabaseManager {
   public void execute(String action, String param) {
     getmInstance(context).addToRequestQueue(createStringRequest(action, param));
   }
-  public void execute(StringRequest stringRequest){
+
+  public void execute(StringRequest stringRequest) {
     getmInstance(context).addToRequestQueue(stringRequest);
   }
 }

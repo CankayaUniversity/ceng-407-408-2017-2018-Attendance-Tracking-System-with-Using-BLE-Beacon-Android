@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="old_password" type="id"/>
+    <item name="new_password" type="id"/>
+    <item name="new_password_repeat" type="id"/>
+</resources>
