@@ -31,4 +31,5 @@ dependencies {
     implementation 'com.basgeekball:awesome-validation:4.1'
     implementation 'com.android.volley:volley:1.1.0'
     implementation 'org.altbeacon:android-beacon-library:2.13.1'
+    implementation 'com.nabinbhandari.android:permissions:3.5'
 }
