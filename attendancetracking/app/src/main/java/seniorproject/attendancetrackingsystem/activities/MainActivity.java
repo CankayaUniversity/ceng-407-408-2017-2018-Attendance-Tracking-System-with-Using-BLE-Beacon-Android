@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     }
     Button login = findViewById(R.id.login_button);
     Button register = findViewById(R.id.register_button);
+	Button secureMode = findViewById(R.id.secure);
     Intent intent = getIntent();
     Bundle bundle = intent.getExtras();
 
@@ -59,6 +60,14 @@ public class MainActivity extends AppCompatActivity {
               public void onClick(View v) {
                 Intent registerIntent = new Intent(MainActivity.this, RegistrationActivity.class);
                 startActivity(registerIntent);
+              }
+            });
+	secureMode.setOnClickListener(
+            new View.OnClickListener() {
+              @Override
+              public void onClick(View v) {
+                Intent faceTracker = new Intent(MainActivity.this, seniorproject.attendancetrackingsystem.securemode.FaceTrackerActivity.class);
+                startActivity(faceTracker);
               }
             });
   }
