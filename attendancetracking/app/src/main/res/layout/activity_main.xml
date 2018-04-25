@@ -72,4 +72,14 @@
         android:layout_marginTop="16dp"
         android:contentDescription="logo"
         app:srcCompat="@drawable/logo" />
+
+    <Button
+        android:id="@+id/secure"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/imageView"
+        android:layout_below="@+id/login_button"
+        android:layout_marginStart="13dp"
+        android:layout_marginTop="45dp"
+        android:text="Button" />
 </RelativeLayout>
