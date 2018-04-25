@@ -44,20 +44,9 @@ public class MainActivity extends AppCompatActivity {
   private void checkPermissions() {
     Permissions.check(
         this,
-        new String[] {
-          Manifest.permission.CAMERA,
-          Manifest.permission.ACCESS_COARSE_LOCATION,
-          Manifest.permission.INTERNET,
-          Manifest.permission.BLUETOOTH,
-          Manifest.permission.BLUETOOTH_ADMIN,
-          Manifest.permission.ACCESS_FINE_LOCATION,
-          Manifest.permission.READ_PHONE_STATE,
-          Manifest.permission.ACCESS_NETWORK_STATE
-        },
-        "These permissions are required to use the system properly",
-        new Permissions.Options()
-            .setSettingsDialogTitle("Permission Requirement!")
-            .setRationaleDialogTitle("Info"),
+          Manifest.permission.ACCESS_COARSE_LOCATION
+        ,
+        null,
         new PermissionHandler() {
           @Override
           public void onGranted() {
