@@ -79,6 +79,11 @@ public class ServiceManager extends Service {
                   } else {
                     updateSchedule();
                   }
+                }else {
+                  Intent intent = new Intent();
+                  intent.setAction(RegularMode.ACTION);
+                  intent.putExtra("course_code", "no_course_for_today");
+                  sendBroadcast(intent);
                 }
               } else if (currentDate.after(regularEnd)) {
                 //  Log.i("ACTION", "STOP REGULAR MODE");
@@ -157,10 +162,6 @@ public class ServiceManager extends Service {
                           boolean result = jsonObject.getBoolean("success");
                           if (!result){
                             noCourseForToday = true;
-                            Intent intent = new Intent();
-                            intent.setAction(RegularMode.ACTION);
-                            intent.putExtra("course_code", "no_course_for_today");
-                            sendBroadcast(intent);
                           }
                         } catch (JSONException e) {
                           e.printStackTrace();
