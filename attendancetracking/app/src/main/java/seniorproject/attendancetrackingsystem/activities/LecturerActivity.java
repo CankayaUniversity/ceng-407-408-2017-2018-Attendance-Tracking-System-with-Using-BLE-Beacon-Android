@@ -1,6 +1,5 @@
 package seniorproject.attendancetrackingsystem.activities;
 
-import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
@@ -13,10 +12,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
@@ -52,7 +49,6 @@ public class LecturerActivity extends AppCompatActivity {
     private ProgressDialog progressDialog;
     private WelcomeFragmentLecturer welcomeFragmentLecturer;
     private ReportFragmentLecturer reportFragmentLecturer;
-    private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
     private ServiceConnection serviceConnection =
             new ServiceConnection() {
                 @Override
@@ -318,27 +314,7 @@ public class LecturerActivity extends AppCompatActivity {
     private class Receiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            String permission = intent.getStringExtra("permission");
-            if (permission != null && !permission.isEmpty() && permission.equals("request")) {
-                if (checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    final AlertDialog.Builder builder = new AlertDialog.Builder(LecturerActivity.this);
-                    builder.setTitle("This app needs location access");
-                    builder.setMessage("Please grant location access so this app can detect beacons.");
-                    builder.setPositiveButton(android.R.string.ok, null);
-                    builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                        @Override
-                        public void onDismiss(DialogInterface dialog) {
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_REQUEST_COARSE_LOCATION);
-                            }
-                        }
-
-                    });
-                    builder.show();
-                }
-
-            }
-           // if(intent.getStringExtra("MAC") != null)
+            if(intent.getStringExtra("MAC") != null)
             showAlertDialog(intent.getStringExtra("MAC"));
         }
     }

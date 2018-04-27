@@ -32,12 +32,6 @@ public class BeaconBuilder extends Service implements BeaconConsumer {
   @Override
   public void onCreate() {
     super.onCreate();
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-          Intent intent = new Intent();
-          intent.setAction(ACTION);
-          intent.putExtra("permission", "request");
-          sendBroadcast(intent);
-      }
     if(!BluetoothAdapter.getDefaultAdapter().isEnabled())
       BluetoothAdapter.getDefaultAdapter().enable();
     beacons = new ArrayList<>();
