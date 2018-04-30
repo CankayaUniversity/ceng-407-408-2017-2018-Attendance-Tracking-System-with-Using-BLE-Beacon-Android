@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;
@@ -15,25 +14,17 @@ import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
 import org.altbeacon.beacon.powersave.BackgroundPowerSaver;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
-import java.util.Locale;
-import java.util.Objects;
 
 public class RegularMode extends Service implements BeaconConsumer {
   public static final String ACTION = "REGULAR_MODE";
   private static final Region ALL_BEACONS = new Region("ALL_BEACONS", null, null, null);
   private BeaconManager beaconManager;
-  private Schedule schedule;
-  private ArrayList<Beacon> beacons;
+  private String search;
 
   @Override
   public void onCreate() {
     super.onCreate();
-    beacons = new ArrayList<>();
     beaconManager = BeaconManager.getInstanceForApplication(this);
     beaconManager
         .getBeaconParsers()
@@ -69,51 +60,21 @@ public class RegularMode extends Service implements BeaconConsumer {
         new RangeNotifier() {
           @Override
           public void didRangeBeaconsInRegion(Collection<Beacon> collection, Region region) {
-            Schedule.CourseInfo current = filter(collection);
-            if (current != null && beacons.size() == 1) {
-              // TODO LOG TIME
-              broadcastMessage(current.getCourse_code());
-              Log.i("CURRENT COURSE", current.getCourse_code());
-            } else if (current == null) {
-              broadcastMessage("null");
-              Log.i("CURRENT COURSE", "null");
+            boolean flag = false;
+            for(Beacon x : collection){
+              if(x.getBluetoothAddress().equals(search)) flag = true;
             }
+            broadcastMessage(flag);
           }
         });
   }
-private void broadcastMessage(final String message){
+private void broadcastMessage(final boolean result){
     Intent intent = new Intent();
     intent.setAction(ACTION);
-    intent.putExtra("course_code", message);
+    intent.putExtra("found", result);
     sendBroadcast(intent);
 }
-  private Schedule.CourseInfo filter(Collection<Beacon> beaconList) {
-    beacons.clear();
-    try {
-      SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
-      Date currentDate = dateFormat.parse(dateFormat.format(new Date()));
-      Schedule.CourseInfo currentCourse = null;
-      for (Schedule.CourseInfo x : schedule.getCourses()) {
-        String start = x.getHour();
-        String end = start.substring(0, 2);
-        end = String.valueOf(Integer.parseInt(end) + 1) + ":10";
-        if (currentDate.after(dateFormat.parse(start))
-            && currentDate.before(dateFormat.parse(end))) {
-          currentCourse = x;
-        }
-      }
-      if (currentCourse == null) return null;
-      for (Beacon x : beaconList) {
-        if (x.getBluetoothAddress().equals(Objects.requireNonNull(currentCourse).getBeacon_mac())) {
-          beacons.add(x);
-        }
-      }
-      return currentCourse;
-    } catch (ParseException e) {
-      e.printStackTrace();
-    }
-    return null;
-  }
+
 
   @Nullable
   @Override
@@ -122,10 +83,8 @@ private void broadcastMessage(final String message){
   }
   @Override
   public int onStartCommand(Intent intent, int flags, int startId) {
-    schedule = (Schedule) intent.getSerializableExtra("schedule");
-    if (schedule != null) {
-      if (schedule.getCourses().size() <= 0) stopSelf();
-    }
+   search = intent.getStringExtra("search");
+   if(search.isEmpty()) stopSelf();
     return START_NOT_STICKY;
   }
 }

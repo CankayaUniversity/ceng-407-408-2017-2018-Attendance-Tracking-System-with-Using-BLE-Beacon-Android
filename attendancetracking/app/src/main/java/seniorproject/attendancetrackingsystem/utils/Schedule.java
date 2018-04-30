@@ -3,8 +3,12 @@ package seniorproject.attendancetrackingsystem.utils;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Schedule implements Serializable{
+public class Schedule implements Serializable {
   private ArrayList<CourseInfo> courses;
+
+  public Schedule() {
+    courses = new ArrayList<>();
+  }
 
   public ArrayList<CourseInfo> getCourses() {
     return courses;
@@ -14,22 +18,22 @@ public class Schedule implements Serializable{
     this.courses = courses;
   }
 
-  public Schedule(){
-    courses = new ArrayList<>();
-  }
-public void add(int course_id,
-                int section,
-                String week_day,
-                String hour,
-                String beacon_mac,
-                String course_code){
-    CourseInfo newCourse = new CourseInfo(course_id, section, week_day, hour, beacon_mac,
-            course_code);
+  public void add(
+      int course_id,
+      int section,
+      String week_day,
+      String hour,
+      String beacon_mac,
+      String course_code) {
+    CourseInfo newCourse =
+        new CourseInfo(course_id, section, week_day, hour, beacon_mac, course_code);
     courses.add(newCourse);
-}
-  public void add(CourseInfo courseInfo){
+  }
+
+  public void add(CourseInfo courseInfo) {
     courses.add(courseInfo);
   }
+
   public class CourseInfo implements Serializable {
     private int course_id;
     private int section;
@@ -37,6 +41,7 @@ public void add(int course_id,
     private String hour;
     private String beacon_mac;
     private String course_code;
+    private String end_hour;
 
     public CourseInfo(
         int course_id,
@@ -51,6 +56,8 @@ public void add(int course_id,
       this.hour = hour;
       this.beacon_mac = beacon_mac;
       this.course_code = course_code;
+      this.end_hour = this.hour.substring(0, 2);
+      this.end_hour = String.valueOf(Integer.parseInt(this.end_hour) + 1) + ":10";
     }
 
     public int getCourse_id() {
@@ -99,6 +106,10 @@ public void add(int course_id,
 
     public void setCourse_code(String course_code) {
       this.course_code = course_code;
+    }
+
+    public String getEnd_hour() {
+      return end_hour;
     }
   }
 }
