@@ -49,6 +49,14 @@
                 android:textStyle="bold"
 
                 />
+
+            <Switch
+                android:id="@+id/secure_switch"
+                android:layout_width="369dp"
+                android:layout_height="10dp"
+                android:text="                                                                   Secure Mode"
+                android:textColor="@color/colorWhite" />
+
         </LinearLayout>
 
         <android.support.v7.widget.CardView
