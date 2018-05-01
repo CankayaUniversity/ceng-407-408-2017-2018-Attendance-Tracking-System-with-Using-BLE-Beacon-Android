@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.InputFilter;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,8 +33,8 @@ import seniorproject.attendancetrackingsystem.utils.Schedule;
 /* A simple {@link Fragment} subclass. */
 public class WelcomeFragmentLecturer extends Fragment {
 
-    private Schedule schedule;
     public int token;
+    private Schedule schedule;
 
   public WelcomeFragmentLecturer() {
     // Required empty public constructor
@@ -113,6 +114,7 @@ public class WelcomeFragmentLecturer extends Fragment {
         digit1.setTextColor(Color.BLACK);
         digit1.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
         digit1.setId(R.id.digit1);
+        digit1.setFilters(new InputFilter[] {new InputFilter.LengthFilter(1)});
 
         layout.addView(digit1);
 
@@ -123,6 +125,7 @@ public class WelcomeFragmentLecturer extends Fragment {
         digit2.setTextColor(Color.BLACK);
         digit2.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
         digit2.setId(R.id.digit2);
+        digit2.setFilters(new InputFilter[] {new InputFilter.LengthFilter(1)});
 
         layout.addView(digit2);
 
@@ -133,6 +136,7 @@ public class WelcomeFragmentLecturer extends Fragment {
         digit3.setTextColor(Color.BLACK);
         digit3.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
         digit3.setId(R.id.digit3);
+        digit3.setFilters(new InputFilter[] {new InputFilter.LengthFilter(1)});
 
         layout.addView(digit3);
 
@@ -143,6 +147,7 @@ public class WelcomeFragmentLecturer extends Fragment {
         digit4.setTextColor(Color.BLACK);
         digit4.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
         digit4.setId(R.id.digit4);
+        digit4.setFilters(new InputFilter[] {new InputFilter.LengthFilter(1)});
 
         layout.addView(digit4);
 
@@ -153,6 +158,7 @@ public class WelcomeFragmentLecturer extends Fragment {
         digit5.setTextColor(Color.BLACK);
         digit5.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
         digit5.setId(R.id.digit5);
+        digit5.setFilters(new InputFilter[] {new InputFilter.LengthFilter(1)});
 
         layout.addView(digit5);
         alert.setView(layout);
@@ -173,6 +179,7 @@ public class WelcomeFragmentLecturer extends Fragment {
                     if (tokenize.equals(String.valueOf(token))) {
                         Toast.makeText(getActivity().getApplicationContext(), "Token is entered successfully",
                                 Toast.LENGTH_SHORT).show();
+
                     } else {
                         Toast.makeText(getActivity().getApplicationContext(), "You entered a wrong token",
                                 Toast.LENGTH_SHORT).show();
@@ -181,6 +188,7 @@ public class WelcomeFragmentLecturer extends Fragment {
                 else
                     Toast.makeText(getActivity().getApplicationContext(), "Please fill all digits",
                             Toast.LENGTH_SHORT).show();
+
             }
         });
 
@@ -191,6 +199,7 @@ public class WelcomeFragmentLecturer extends Fragment {
             }
         });
         return alert;
-    }
+
+  }
   }
 
