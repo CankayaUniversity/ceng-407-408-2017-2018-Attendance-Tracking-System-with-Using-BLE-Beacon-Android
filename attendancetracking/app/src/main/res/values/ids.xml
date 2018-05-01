@@ -3,4 +3,10 @@
     <item name="old_password" type="id"/>
     <item name="new_password" type="id"/>
     <item name="new_password_repeat" type="id"/>
+    <item name="digit1" type="id"/>
+    <item name="digit2" type="id"/>
+    <item name="digit3" type="id"/>
+    <item name="digit4" type="id"/>
+    <item name="digit5" type="id"/>
+    <item name="button" type="id"/>
 </resources>
