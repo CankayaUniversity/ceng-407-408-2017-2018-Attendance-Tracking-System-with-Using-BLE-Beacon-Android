@@ -6,8 +6,11 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
+import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +38,10 @@ public class WelcomeFragmentLecturer extends Fragment {
 
     public int token;
     private Schedule schedule;
+    private  Date date1;
+    private  Date date2;
+    private long firstTime;
+    private long secondTime;
 
   public WelcomeFragmentLecturer() {
     // Required empty public constructor
@@ -78,6 +85,9 @@ public class WelcomeFragmentLecturer extends Fragment {
                           Toast.makeText(getActivity().getApplicationContext(),
                                   "Token: " + token, Toast.LENGTH_LONG).show();
                           buildAlert().show();
+
+                          date1 = new Date();
+                          firstTime = date1.getTime();
                   /*try
                   {
                       SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
@@ -137,7 +147,6 @@ public class WelcomeFragmentLecturer extends Fragment {
         digit3.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
         digit3.setId(R.id.digit3);
         digit3.setFilters(new InputFilter[] {new InputFilter.LengthFilter(1)});
-
         layout.addView(digit3);
 
         final EditText digit4 = new EditText(getActivity().getApplicationContext());
@@ -163,6 +172,7 @@ public class WelcomeFragmentLecturer extends Fragment {
         layout.addView(digit5);
         alert.setView(layout);
 
+
         alert.setPositiveButton("Enter", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -171,6 +181,17 @@ public class WelcomeFragmentLecturer extends Fragment {
                 String thirdD = digit3.getText().toString();
                 String fourthD = digit4.getText().toString();
                 String fifthD = digit5.getText().toString();
+
+                date2 = new Date();
+
+                secondTime = date2.getTime();
+
+                long diff = (secondTime - firstTime)/60;
+                if(diff >= 5) {
+
+                    Toast.makeText(getActivity().getApplicationContext(),
+                            "Token entering deadline is passed",Toast.LENGTH_SHORT).show();
+                }
 
                 if (!firstD.isEmpty() && !secondD.isEmpty() && !thirdD.isEmpty() &&
                         !fourthD.isEmpty() && !fifthD.isEmpty()) {
@@ -198,6 +219,124 @@ public class WelcomeFragmentLecturer extends Fragment {
                 dialog.cancel();
             }
         });
+        digit1.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                digit1.setOnKeyListener(new View.OnKeyListener() {
+                    @Override
+                    public boolean onKey(View v, int keyCode, KeyEvent event) {
+                        digit1.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                if(digit1.getText().length() == digit1.getFilters().length)
+                                    digit2.requestFocus();
+                            }
+                        });
+                        return false;
+                    }
+                });
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        digit2.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                digit2.setOnKeyListener(new View.OnKeyListener() {
+                    @Override
+                    public boolean onKey(View v, int keyCode, KeyEvent event) {
+                        digit2.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                if(digit2.getText().length() == digit2.getFilters().length)
+                                    digit3.requestFocus();
+                            }
+                        });
+
+                        return false;
+                    }
+                });
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        digit3.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                digit3.setOnKeyListener(new View.OnKeyListener() {
+                    @Override
+                    public boolean onKey(View v, int keyCode, KeyEvent event) {
+                        digit2.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                if(digit3.getText().length() == digit3.getFilters().length)
+                                    digit4.requestFocus();
+                            }
+                        });
+                        return false;
+                    }
+                });
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        digit4.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                digit4.setOnKeyListener(new View.OnKeyListener() {
+                    @Override
+                    public boolean onKey(View v, int keyCode, KeyEvent event) {
+                        digit2.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                if(digit4.getText().length() == digit4.getFilters().length)
+                                    digit5.requestFocus();
+                            }
+                        });
+                        return false;
+                    }
+                });
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+
         return alert;
 
   }

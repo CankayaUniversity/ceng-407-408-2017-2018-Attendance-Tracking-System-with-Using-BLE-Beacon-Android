@@ -2,6 +2,7 @@ package seniorproject.attendancetrackingsystem.fragments;
 
 import android.app.Fragment;
 import android.bluetooth.BluetoothAdapter;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Patterns;
@@ -18,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import seniorproject.attendancetrackingsystem.R;
+import seniorproject.attendancetrackingsystem.activities.UploadImage;
 import seniorproject.attendancetrackingsystem.helpers.DatabaseManager;
 
 public class StudentRegister extends Fragment {
@@ -62,6 +64,7 @@ public class StudentRegister extends Fragment {
     studentSurname = view.findViewById(R.id.student_surname);
     awesomeValidation = new AwesomeValidation(ValidationStyle.BASIC);
 
+    Button uploadImage = view.findViewById(R.id.upload_image);
     Button registerButton = view.findViewById(R.id.register_button);
     registerButton.setOnClickListener(
         new View.OnClickListener() {
@@ -92,5 +95,13 @@ public class StudentRegister extends Fragment {
             }
           }
         });
+
+    uploadImage.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        Intent intent = new Intent(getActivity().getApplicationContext(), UploadImage.class);
+        getActivity().startActivity(intent);
+      }
+    });
   }
 }

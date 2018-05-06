@@ -150,6 +150,7 @@ public class StudentActivity extends AppCompatActivity {
     layout.addView(newPasswordRepeat);
     alert.setView(layout);
 
+
     alert.setPositiveButton("Change", new DialogInterface.OnClickListener() {
       @Override
       public void onClick(DialogInterface dialog, int which) {
