@@ -24,9 +24,10 @@ public class Schedule implements Serializable {
       String week_day,
       String hour,
       String beacon_mac,
-      String course_code) {
+      String course_code,
+      int classroom_id) {
     CourseInfo newCourse =
-        new CourseInfo(course_id, section, week_day, hour, beacon_mac, course_code);
+        new CourseInfo(course_id, section, week_day, hour, beacon_mac, course_code, classroom_id);
     courses.add(newCourse);
   }
 
@@ -42,6 +43,7 @@ public class Schedule implements Serializable {
     private String beacon_mac;
     private String course_code;
     private String end_hour;
+    private int classroom_id;
 
     public CourseInfo(
         int course_id,
@@ -49,7 +51,8 @@ public class Schedule implements Serializable {
         String week_day,
         String hour,
         String beacon_mac,
-        String course_code) {
+        String course_code,
+        int classroom_id) {
       this.course_id = course_id;
       this.section = section;
       this.week_day = week_day;
@@ -58,6 +61,7 @@ public class Schedule implements Serializable {
       this.course_code = course_code;
       this.end_hour = this.hour.substring(0, 2);
       this.end_hour = String.valueOf(Integer.parseInt(this.end_hour) + 1) + ":10";
+      this.classroom_id = classroom_id;
     }
 
     public int getCourse_id() {
@@ -110,6 +114,14 @@ public class Schedule implements Serializable {
 
     public String getEnd_hour() {
       return end_hour;
+    }
+
+    public int getClassroom_id() {
+      return classroom_id;
+    }
+
+    public void setClassroom_id(int classroom_id) {
+      this.classroom_id = classroom_id;
     }
   }
 }
