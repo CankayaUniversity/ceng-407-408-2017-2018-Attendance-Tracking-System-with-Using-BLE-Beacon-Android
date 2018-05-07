@@ -2,10 +2,10 @@ package seniorproject.attendancetrackingsystem.utils;
 
 import android.app.Service;
 import android.content.Intent;
+import android.os.Environment;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;
@@ -13,49 +13,72 @@ import org.altbeacon.beacon.BeaconManager;
 import org.altbeacon.beacon.BeaconParser;
 import org.altbeacon.beacon.RangeNotifier;
 import org.altbeacon.beacon.Region;
-import org.altbeacon.beacon.powersave.BackgroundPowerSaver;
 
-import java.text.ParseException;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Objects;
+
+import seniorproject.attendancetrackingsystem.helpers.Logger;
+import seniorproject.attendancetrackingsystem.helpers.SessionManager;
 
 public class RegularMode extends Service implements BeaconConsumer {
   public static final String ACTION = "REGULAR_MODE";
   private static final Region ALL_BEACONS = new Region("ALL_BEACONS", null, null, null);
+  private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.ENGLISH);
+  private final SimpleDateFormat dateFormatLog = new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH);
+  private Schedule.CourseInfo currentCourse = null;
   private BeaconManager beaconManager;
-  private Schedule schedule;
-  private ArrayList<Beacon> beacons;
+  private String search;
+  private String filename;
+  private Queue<String> queue = new Queue<>();
 
   @Override
   public void onCreate() {
     super.onCreate();
-    beacons = new ArrayList<>();
     beaconManager = BeaconManager.getInstanceForApplication(this);
     beaconManager
         .getBeaconParsers()
         .add(new BeaconParser().setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"));
-    beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(BeaconParser
-            .EDDYSTONE_UID_LAYOUT));
-    beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(BeaconParser
-            .EDDYSTONE_URL_LAYOUT));
-    beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(BeaconParser
-            .EDDYSTONE_TLM_LAYOUT));
-    beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(BeaconParser
-            .URI_BEACON_LAYOUT));
-    beaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(BeaconParser
-            .ALTBEACON_LAYOUT));
-    new BackgroundPowerSaver(this);
+    beaconManager
+        .getBeaconParsers()
+        .add(new BeaconParser().setBeaconLayout(BeaconParser.EDDYSTONE_UID_LAYOUT));
+    beaconManager
+        .getBeaconParsers()
+        .add(new BeaconParser().setBeaconLayout(BeaconParser.EDDYSTONE_URL_LAYOUT));
+    beaconManager
+        .getBeaconParsers()
+        .add(new BeaconParser().setBeaconLayout(BeaconParser.EDDYSTONE_TLM_LAYOUT));
+    beaconManager
+        .getBeaconParsers()
+        .add(new BeaconParser().setBeaconLayout(BeaconParser.URI_BEACON_LAYOUT));
+    beaconManager
+        .getBeaconParsers()
+        .add(new BeaconParser().setBeaconLayout(BeaconParser.ALTBEACON_LAYOUT));
+    beaconManager.setBackgroundMode(true);
+    beaconManager.setBackgroundScanPeriod(30000); // 30 seconds
+    beaconManager.setBackgroundBetweenScanPeriod(60 * 1000 * 2); // 5 minutes
+    try {
+      beaconManager.updateScanPeriods();
+    } catch (RemoteException e) {
+    }
+    // new BackgroundPowerSaver(this);
     beaconManager.bind(this);
   }
 
   @Override
   public void onDestroy() {
     super.onDestroy();
+    try {
+      beaconManager.stopRangingBeaconsInRegion(ALL_BEACONS);
+    } catch (RemoteException e) {
+      e.printStackTrace();
+    }
     beaconManager.unbind(this);
+    if (queue.size() > 0) writeLog();
   }
 
   @Override
@@ -69,50 +92,47 @@ public class RegularMode extends Service implements BeaconConsumer {
         new RangeNotifier() {
           @Override
           public void didRangeBeaconsInRegion(Collection<Beacon> collection, Region region) {
-            Schedule.CourseInfo current = filter(collection);
-            if (current != null && beacons.size() == 1) {
-              // TODO LOG TIME
-              broadcastMessage(current.getCourse_code());
-              Log.i("CURRENT COURSE", current.getCourse_code());
-            } else if (current == null) {
-              broadcastMessage("null");
-              Log.i("CURRENT COURSE", "null");
+            boolean flag = false;
+            for (Beacon x : collection) {
+
+              if (x.getBluetoothAddress().equals(search)) {
+                String value = dateFormatLog.format(new Date());
+                queue.enqueueDistinct(value);
+                if (queue.size() >= 5) writeLog();
+                flag = true;
+              }
             }
+            broadcastMessage(flag);
           }
         });
   }
-private void broadcastMessage(final String message){
+
+  private void broadcastMessage(final boolean result) {
     Intent intent = new Intent();
     intent.setAction(ACTION);
-    intent.putExtra("course_code", message);
+    intent.putExtra("found", result);
     sendBroadcast(intent);
-}
-  private Schedule.CourseInfo filter(Collection<Beacon> beaconList) {
-    beacons.clear();
+  }
+
+  private void writeLog() {
     try {
-      SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
-      Date currentDate = dateFormat.parse(dateFormat.format(new Date()));
-      Schedule.CourseInfo currentCourse = null;
-      for (Schedule.CourseInfo x : schedule.getCourses()) {
-        String start = x.getHour();
-        String end = start.substring(0, 2);
-        end = String.valueOf(Integer.parseInt(end) + 1) + ":10";
-        if (currentDate.after(dateFormat.parse(start))
-            && currentDate.before(dateFormat.parse(end))) {
-          currentCourse = x;
-        }
+      File root = new File(Environment.getExternalStorageDirectory(), "AttendanceTracking");
+
+      if (!root.exists()) root.mkdirs();
+
+      File logfile = new File(root, filename);
+      FileWriter writer = new FileWriter(logfile, true);
+      while (!queue.isEmpty()) {
+        String value = queue.dequeue() + "\n";
+        writer.append(value);
       }
-      if (currentCourse == null) return null;
-      for (Beacon x : beaconList) {
-        if (x.getBluetoothAddress().equals(Objects.requireNonNull(currentCourse).getBeacon_mac())) {
-          beacons.add(x);
-        }
-      }
-      return currentCourse;
-    } catch (ParseException e) {
+      queue.clear();
+      writer.flush();
+      writer.close();
+    } catch (IOException e) {
       e.printStackTrace();
     }
-    return null;
+    runLogger();
   }
 
   @Nullable
@@ -120,12 +140,30 @@ private void broadcastMessage(final String message){
   public IBinder onBind(Intent intent) {
     return null;
   }
+
+  private void runLogger() {
+    Intent log = new Intent(this, Logger.class);
+    log.putExtra("start", currentCourse.getHour());
+    log.putExtra("stop", currentCourse.getEnd_hour());
+    log.putExtra("classroom_id", currentCourse.getClassroom_id());
+    log.putExtra("filename", filename);
+    startService(log);
+  }
+
   @Override
   public int onStartCommand(Intent intent, int flags, int startId) {
-    schedule = (Schedule) intent.getSerializableExtra("schedule");
-    if (schedule != null) {
-      if (schedule.getCourses().size() <= 0) stopSelf();
-    }
+    search = intent.getStringExtra("search");
+    currentCourse = (Schedule.CourseInfo) intent.getSerializableExtra("course-info");
+    if (search.isEmpty() || currentCourse == null) stopSelf();
+    int user_id =
+        Integer.parseInt(new SessionManager(getBaseContext()).getUserDetails().get("user_id"));
+    filename =
+        currentCourse.getCourse_code()
+            + "_"
+            + currentCourse.getClassroom_id()
+            + "_"
+            + dateFormat.format(new Date())
+            + ".txt";
     return START_NOT_STICKY;
   }
 }

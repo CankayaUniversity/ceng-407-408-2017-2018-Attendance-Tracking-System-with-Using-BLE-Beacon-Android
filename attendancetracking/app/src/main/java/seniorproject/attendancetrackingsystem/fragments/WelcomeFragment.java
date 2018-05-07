@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Objects;
 
 import seniorproject.attendancetrackingsystem.R;
 import seniorproject.attendancetrackingsystem.helpers.SessionManager;
@@ -29,6 +30,9 @@ public class WelcomeFragment extends Fragment {
   private Receiver mReceiver;
   private ArrayList<String> messages;
   private ListView listView;
+  private String currentCourse;
+  private String latestFoundTime;
+  private String checkedTime;
 
   public WelcomeFragment() {
     // Required empty public constructor
@@ -60,6 +64,10 @@ public class WelcomeFragment extends Fragment {
     adapter =
         new ArrayAdapter<>(
             getActivity().getApplicationContext(), R.layout.notification_item, messages);
+    if (currentCourse != null)
+      messages.add("Current Course: " + currentCourse + "\n" + checkedTime);
+    if (latestFoundTime != null) messages.add("Latest Interaction: " + latestFoundTime);
+
     listView.setAdapter(adapter);
   }
 
@@ -69,6 +77,7 @@ public class WelcomeFragment extends Fragment {
     mReceiver = new Receiver();
     IntentFilter filter = new IntentFilter();
     filter.addAction(RegularMode.ACTION);
+    filter.addAction("RegularModeStatus");
     getActivity().registerReceiver(mReceiver, filter);
   }
 
@@ -78,22 +87,53 @@ public class WelcomeFragment extends Fragment {
     getActivity().unregisterReceiver(mReceiver);
   }
 
-  private void showMessages(String currentCourse) {
-    messages.clear();
+  private void showMessages() {
+    if (messages.size() != 0) messages.remove(0);
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.ENGLISH);
     Date currentDate = new Date();
-    if (currentCourse.equals("null"))
-      messages.add("There isn't any course for now");
-    else if(currentCourse.equals("no_course_for_today"))
-      messages.add("There is no course for today");
-    else messages.add("Current Course: " + currentCourse + "\n" + dateFormat.format(currentDate));
+    if (currentCourse.equals("null")){
+      messages.add(0,"Break time!");
+      latestFoundTime = null;
+    }
+     else if(currentCourse.equals("no_course_for_today")){
+      messages.add(0,"There is no course for today");
+      latestFoundTime = null;
+    }
+    else{
+      checkedTime = dateFormat.format(currentDate);
+      messages.add(0, "Current Course: " + this.currentCourse + "\n" + checkedTime);
+    }
+
     listView.setAdapter(adapter);
   }
 
   private class Receiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-      showMessages(intent.getStringExtra("course_code"));
+      if (Objects.equals(intent.getAction(), "RegularModeStatus")) {
+        boolean status = intent.getBooleanExtra("status", true);
+        if (!status) {
+          if (messages.size() > 1) {
+            messages.remove(0);
+            messages.remove(1);
+          } else if (messages.size() == 1) messages.remove(0);
+
+          messages.add(0, "End of the day");
+          listView.setAdapter(adapter);
+        }
+      } else {
+        String course_code = intent.getStringExtra("course_code");
+        if (course_code != null) currentCourse = intent.getStringExtra("course_code");
+        showMessages();
+        boolean found = intent.getBooleanExtra("found", false);
+        if (found) {
+          Date current = new Date();
+          SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH);
+          if (messages.size() != 1) messages.remove(1);
+          latestFoundTime = dateFormat.format(current);
+          messages.add(1, "Latest Interaction: " + dateFormat.format(current));
+        }
+      }
     }
   }
 }

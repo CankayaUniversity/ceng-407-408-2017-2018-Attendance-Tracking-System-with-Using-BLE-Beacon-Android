@@ -5,9 +5,13 @@ import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -17,6 +21,7 @@ import com.android.volley.toolbox.StringRequest;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -32,7 +37,7 @@ import seniorproject.attendancetrackingsystem.utils.Schedule;
 
 public class ServiceManager extends Service {
   private static final String UPDATE = "09:00";
-  private static final String START_REGULAR = "09:20";
+  private static final String START_REGULAR = "00:20";
   private static final String STOP_REGULAR = "17:20";
   private boolean updatedForToday = false;
   private boolean noCourseForToday = false;
@@ -40,6 +45,7 @@ public class ServiceManager extends Service {
   private Timer timer;
   private Handler handler;
   private SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
+  private boolean connected = false;
 
   @Override
   public void onCreate() {
@@ -53,6 +59,7 @@ public class ServiceManager extends Service {
           Date regularStart = null;
           Date regularEnd = null;
           Date updateDate = null;
+          Date breakTime = null;
 
           @Override
           public void run() {
@@ -61,7 +68,6 @@ public class ServiceManager extends Service {
               regularStart = dateFormat.parse(START_REGULAR);
               regularEnd = dateFormat.parse(STOP_REGULAR);
               updateDate = dateFormat.parse(UPDATE);
-
               if (currentDate.after(updateDate) && currentDate.before(regularStart)) {
                 // Log.i("ACTION", "UPDATE");
                 updateSchedule();
@@ -69,48 +75,65 @@ public class ServiceManager extends Service {
                 //  Log.i("ACTION", "START REGULAR MODE");
                 if (!noCourseForToday) {
                   if (updatedForToday) {
-                    if (!BluetoothAdapter.getDefaultAdapter().isEnabled()) bluetoothChecker.start();
-                    try {
-                      bluetoothChecker.join();
-                      if (!isServiceIsRunning(RegularMode.class)) startRegularMode();
-                    } catch (InterruptedException e) {
-                      e.printStackTrace();
+                    if (!isServiceIsRunning(RegularMode.class)) {
+                      Schedule.CourseInfo currentCourse = currentCourse(currentDate);
+                      if (currentCourse != null) {
+                        broadcastCourseInfo(currentCourse.getCourse_code());
+                        breakTime = dateFormat.parse(currentCourse.getEnd_hour());
+                        if (!BluetoothAdapter.getDefaultAdapter().isEnabled())
+                          bluetoothChecker.start();
+                        try {
+                          bluetoothChecker.join();
+                          if (!isServiceIsRunning(RegularMode.class))
+                            startRegularMode(currentCourse);
+                        } catch (InterruptedException e) {
+                          e.printStackTrace();
+                        }
+                      } else {
+                        broadcastCourseInfo("null");
+                      }
+                    } else {
+                      if (breakTime != null && currentDate.after(breakTime)) {
+                        BluetoothAdapter.getDefaultAdapter().disable();
+                        stopRegularMode();
+                      }
                     }
+
                   } else {
                     updateSchedule();
                   }
-                }else {
-                  Intent intent = new Intent();
-                  intent.setAction(RegularMode.ACTION);
-                  intent.putExtra("course_code", "no_course_for_today");
-                  sendBroadcast(intent);
+                } else {
+                  broadcastCourseInfo("no_course_for_today");
                 }
               } else if (currentDate.after(regularEnd)) {
-                //  Log.i("ACTION", "STOP REGULAR MODE");
+                // Log.i("ACTION", "STOP REGULAR MODE");
                 // bluetoothChecker.interrupt();
+                broadcastRegularModeInfo(false);
                 if (isServiceIsRunning(RegularMode.class)) stopRegularMode();
                 updatedForToday = false;
                 noCourseForToday = false;
-                if (BluetoothAdapter.getDefaultAdapter().isEnabled())
-                  BluetoothAdapter.getDefaultAdapter().disable();
               }
             } catch (ParseException e) {
               e.printStackTrace();
             }
+          if(!isServiceIsRunning(RegularMode.class)){
+              runCollector();
+          }
           }
         },
         0,
         1000);
   }
 
-  private void startRegularMode() {
+  private void startRegularMode(Schedule.CourseInfo course) {
     try {
       Thread.sleep(1500);
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
     Intent intent = new Intent(getBaseContext(), RegularMode.class);
-    intent.putExtra("schedule", schedule);
+    intent.putExtra("search", course.getBeacon_mac());
+    intent.putExtra("course-info", course);
     startService(intent);
   }
 
@@ -160,11 +183,11 @@ public class ServiceManager extends Service {
                         try {
                           JSONObject jsonObject = new JSONObject(response);
                           boolean result = jsonObject.getBoolean("success");
-                          if (!result){
+                          if (!result) {
                             noCourseForToday = true;
                           }
                         } catch (JSONException e) {
-                          e.printStackTrace();
+                         //Do Nothing
                         }
                         if (!noCourseForToday) {
                           schedule =
@@ -192,6 +215,59 @@ public class ServiceManager extends Service {
             DatabaseManager.getmInstance(getApplicationContext()).execute(request);
           }
         });
+  }
+
+  private void broadcastCourseInfo(String courseInfo) {
+    Intent intent = new Intent();
+    intent.setAction(RegularMode.ACTION);
+    intent.putExtra("course_code", courseInfo);
+    sendBroadcast(intent);
+  }
+
+  private void broadcastRegularModeInfo(boolean status) {
+    Intent intent = new Intent();
+    intent.setAction("RegularModeStatus");
+    intent.putExtra("status", status);
+    sendBroadcast(intent);
+  }
+private void runCollector(){
+  File root = new File(Environment.getExternalStorageDirectory(), "AttendanceTracking");
+  if(!root.exists()) return; // no need to push something to database
+  File[] list = root.listFiles();
+  if(list.length == 0) return; // no nedd to push something to database
+    connectionChecker();
+    if (connected) {
+      Intent intent = new Intent(this, Logger.class);
+      startService(intent);
+    }
+
+}
+
+private void connectionChecker(){
+  ConnectivityManager connectivityManager =
+          (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+  assert connectivityManager != null;
+  // we are connected to a network
+  connected = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState()
+          == NetworkInfo.State.CONNECTED
+          || connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState()
+          == NetworkInfo.State.CONNECTED;
+}
+  private Schedule.CourseInfo currentCourse(Date currentTime) {
+    Schedule.CourseInfo current = null;
+    for (Schedule.CourseInfo x : schedule.getCourses()) {
+      String start = x.getHour();
+      String end = x.getEnd_hour();
+      try {
+        if (currentTime.after(dateFormat.parse(start))
+            && currentTime.before(dateFormat.parse(end))) {
+          current = x;
+        }
+      } catch (ParseException e) {
+        e.printStackTrace();
+      }
+    }
+    return current;
   }
 
   public class BluetoothChecker extends Thread {
