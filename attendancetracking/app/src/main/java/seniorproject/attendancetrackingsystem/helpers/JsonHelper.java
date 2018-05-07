@@ -141,7 +141,8 @@ public ArrayList<GivenCourses> parseGivenCourses(String jsonString){
         JSONObject jsonObject = jsonArray.getJSONObject(i);
         schedule.add(jsonObject.getInt("course_id"),jsonObject.getInt("section"),
                 jsonObject.getString("week_day"), jsonObject.getString("hour"),
-                jsonObject.getString("beacon_mac"),jsonObject.getString("course_code"));
+                jsonObject.getString("beacon_mac"),jsonObject.getString("course_code"),
+                jsonObject.getInt("classroom_id"));
       }
     } catch (JSONException e) {
       e.printStackTrace();

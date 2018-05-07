@@ -11,6 +11,8 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-feature android:name="android.hardware.camera" />
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
     <uses-feature
         android:name="android.hardware.bluetooth_le"
@@ -46,6 +48,8 @@
         <service android:name=".helpers.BeaconBuilder"/>
         <service android:name=".utils.RegularMode"/>
         <service android:name=".helpers.ServiceManager"/>
+        <service android:name=".helpers.Logger"/>
+        <service android:name=".helpers.Pusher"/>
         <activity android:name=".securemode.FaceTrackerActivity"></activity>
     </application>
 

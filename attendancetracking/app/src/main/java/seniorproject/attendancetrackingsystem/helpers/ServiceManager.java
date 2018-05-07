@@ -5,6 +5,9 @@ import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
@@ -18,6 +21,7 @@ import com.android.volley.toolbox.StringRequest;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -41,6 +45,7 @@ public class ServiceManager extends Service {
   private Timer timer;
   private Handler handler;
   private SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
+  private boolean connected = false;
 
   @Override
   public void onCreate() {
@@ -89,6 +94,7 @@ public class ServiceManager extends Service {
                       }
                     } else {
                       if (breakTime != null && currentDate.after(breakTime)) {
+                        BluetoothAdapter.getDefaultAdapter().disable();
                         stopRegularMode();
                       }
                     }
@@ -110,6 +116,9 @@ public class ServiceManager extends Service {
             } catch (ParseException e) {
               e.printStackTrace();
             }
+          if(!isServiceIsRunning(RegularMode.class)){
+              runCollector();
+          }
           }
         },
         0,
@@ -124,6 +133,7 @@ public class ServiceManager extends Service {
     }
     Intent intent = new Intent(getBaseContext(), RegularMode.class);
     intent.putExtra("search", course.getBeacon_mac());
+    intent.putExtra("course-info", course);
     startService(intent);
   }
 
@@ -177,7 +187,7 @@ public class ServiceManager extends Service {
                             noCourseForToday = true;
                           }
                         } catch (JSONException e) {
-                          e.printStackTrace();
+                         //Do Nothing
                         }
                         if (!noCourseForToday) {
                           schedule =
@@ -218,10 +228,31 @@ public class ServiceManager extends Service {
     Intent intent = new Intent();
     intent.setAction("RegularModeStatus");
     intent.putExtra("status", status);
-    Log.i("broadcast", "geldi");
     sendBroadcast(intent);
   }
+private void runCollector(){
+  File root = new File(Environment.getExternalStorageDirectory(), "AttendanceTracking");
+  if(!root.exists()) return; // no need to push something to database
+  File[] list = root.listFiles();
+  if(list.length == 0) return; // no nedd to push something to database
+    connectionChecker();
+    if (connected) {
+      Intent intent = new Intent(this, Logger.class);
+      startService(intent);
+    }
 
+}
+
+private void connectionChecker(){
+  ConnectivityManager connectivityManager =
+          (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+  assert connectivityManager != null;
+  // we are connected to a network
+  connected = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState()
+          == NetworkInfo.State.CONNECTED
+          || connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState()
+          == NetworkInfo.State.CONNECTED;
+}
   private Schedule.CourseInfo currentCourse(Date currentTime) {
     Schedule.CourseInfo current = null;
     for (Schedule.CourseInfo x : schedule.getCourses()) {
