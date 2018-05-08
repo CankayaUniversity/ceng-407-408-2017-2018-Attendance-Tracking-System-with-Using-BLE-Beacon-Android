@@ -5,7 +5,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,14 +17,26 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.Objects;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import seniorproject.attendancetrackingsystem.R;
+import seniorproject.attendancetrackingsystem.helpers.DatabaseManager;
 import seniorproject.attendancetrackingsystem.helpers.SessionManager;
 import seniorproject.attendancetrackingsystem.utils.RegularMode;
 
@@ -30,9 +46,11 @@ public class WelcomeFragment extends Fragment {
   private Receiver mReceiver;
   private ArrayList<String> messages;
   private ListView listView;
-  private String currentCourse;
-  private String latestFoundTime;
-  private String checkedTime;
+  private Handler handler;
+  private Timer timer;
+  private int classroom_id = 0;
+  private String course_code = "";
+  private boolean secure_mode = false;
 
   public WelcomeFragment() {
     // Required empty public constructor
@@ -48,6 +66,8 @@ public class WelcomeFragment extends Fragment {
   @Override
   public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
+    handler = new Handler();
+    timer = new Timer();
     SessionManager session = new SessionManager(getActivity().getApplicationContext());
     HashMap<String, String> userInfo = session.getUserDetails();
     TextView nameSurnameField = getActivity().findViewById(R.id.w_user_name);
@@ -64,11 +84,21 @@ public class WelcomeFragment extends Fragment {
     adapter =
         new ArrayAdapter<>(
             getActivity().getApplicationContext(), R.layout.notification_item, messages);
-    if (currentCourse != null)
-      messages.add("Current Course: " + currentCourse + "\n" + checkedTime);
-    if (latestFoundTime != null) messages.add("Latest Interaction: " + latestFoundTime);
-
+    if(classroom_id != 0){
+      messages.add("Current Course: "+ course_code);
+    }else if(course_code.equals("null")){
+      messages.add("There is not active course for now");
+    }else if(course_code.equals("no_course_for_today")){
+      messages.add("There is no course for today");
+    }
     listView.setAdapter(adapter);
+
+    timer.scheduleAtFixedRate(new TimerTask() {
+      @Override
+      public void run() {
+        if(isConnected() && classroom_id != 0) tokenListener();
+      }
+    },0,  30000); // runs every 30 seconds
   }
 
   @Override
@@ -89,51 +119,77 @@ public class WelcomeFragment extends Fragment {
 
   private void showMessages() {
     if (messages.size() != 0) messages.remove(0);
-    SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.ENGLISH);
-    Date currentDate = new Date();
-    if (currentCourse.equals("null")){
-      messages.add(0,"Break time!");
-      latestFoundTime = null;
-    }
-     else if(currentCourse.equals("no_course_for_today")){
-      messages.add(0,"There is no course for today");
-      latestFoundTime = null;
-    }
-    else{
-      checkedTime = dateFormat.format(currentDate);
-      messages.add(0, "Current Course: " + this.currentCourse + "\n" + checkedTime);
+   /* SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.ENGLISH);
+    Date currentDate = new Date();*/
+    if(classroom_id != 0){
+      if(secure_mode)
+        messages.add("Current Course: " + course_code + " (Secure Mode)");
+      else
+      messages.add("Current Course: " + course_code);
+    }else if(course_code.equals("null")){
+      messages.add("There is not active course for now");
+    }else if(course_code.equals("no_course_for_today")){
+      messages.add("There is no course for today");
     }
 
     listView.setAdapter(adapter);
   }
 
+  private void tokenListener() {
+    StringRequest request = new StringRequest(Request.Method.POST, DatabaseManager.GetOperations,
+            new Response.Listener<String>() {
+              @Override
+              public void onResponse(String response) {
+                try
+                {
+                  JSONObject jsonObject = new JSONObject(response);
+                  boolean result = jsonObject.getBoolean("success");
+                  if(result){
+                    boolean experied = jsonObject.getBoolean("experied");
+                    if(experied){
+                      // ZAMAN GEÇTİ YİĞENİM
+                    }else
+                    {
+                      secure_mode = true;
+                    }
+                  }
+                }catch (JSONException e){
+                  e.printStackTrace();
+                }
+              }
+            }, new Response.ErrorListener() {
+      @Override
+      public void onErrorResponse(VolleyError error) {
+
+      }
+    }){
+      @Override
+      protected Map<String, String> getParams(){
+        Map<String, String> params = new HashMap<>();
+        params.put("operation", "get-token-status");
+        params.put("classroom_id", String.valueOf(classroom_id));
+        return params;
+      }
+    };
+    DatabaseManager.getmInstance(getActivity().getApplicationContext()).execute(request);
+  }
+private boolean isConnected(){
+  ConnectivityManager connectivityManager =
+          (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+  assert connectivityManager != null;
+  // we are connected to a network
+  return connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState()
+          == NetworkInfo.State.CONNECTED
+          || connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState()
+          == NetworkInfo.State.CONNECTED;
+}
   private class Receiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-      if (Objects.equals(intent.getAction(), "RegularModeStatus")) {
-        boolean status = intent.getBooleanExtra("status", true);
-        if (!status) {
-          if (messages.size() > 1) {
-            messages.remove(0);
-            messages.remove(1);
-          } else if (messages.size() == 1) messages.remove(0);
-
-          messages.add(0, "End of the day");
-          listView.setAdapter(adapter);
-        }
-      } else {
-        String course_code = intent.getStringExtra("course_code");
-        if (course_code != null) currentCourse = intent.getStringExtra("course_code");
-        showMessages();
-        boolean found = intent.getBooleanExtra("found", false);
-        if (found) {
-          Date current = new Date();
-          SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH);
-          if (messages.size() != 1) messages.remove(1);
-          latestFoundTime = dateFormat.format(current);
-          messages.add(1, "Latest Interaction: " + dateFormat.format(current));
-        }
-      }
+        course_code = intent.getStringExtra("course_code");
+        Log.d("course_code", course_code);
+      classroom_id = intent.getIntExtra("classroom_id", 0);
+      showMessages();
     }
   }
 }

@@ -38,7 +38,7 @@ import seniorproject.attendancetrackingsystem.utils.Schedule;
 public class ServiceManager extends Service {
   private static final String UPDATE = "09:00";
   private static final String START_REGULAR = "00:20";
-  private static final String STOP_REGULAR = "17:20";
+  private static final String STOP_REGULAR = "23:59";
   private boolean updatedForToday = false;
   private boolean noCourseForToday = false;
   private Schedule schedule = null;
@@ -78,7 +78,7 @@ public class ServiceManager extends Service {
                     if (!isServiceIsRunning(RegularMode.class)) {
                       Schedule.CourseInfo currentCourse = currentCourse(currentDate);
                       if (currentCourse != null) {
-                        broadcastCourseInfo(currentCourse.getCourse_code());
+                        broadcastCourseInfo(currentCourse);
                         breakTime = dateFormat.parse(currentCourse.getEnd_hour());
                         if (!BluetoothAdapter.getDefaultAdapter().isEnabled())
                           bluetoothChecker.start();
@@ -217,7 +217,15 @@ public class ServiceManager extends Service {
         });
   }
 
-  private void broadcastCourseInfo(String courseInfo) {
+  private void broadcastCourseInfo(Schedule.CourseInfo courseInfo) {
+    Intent intent = new Intent();
+    intent.setAction(RegularMode.ACTION);
+      intent.putExtra("course_code", courseInfo.getCourse_code());
+      intent.putExtra("classroom_id", courseInfo.getClassroom_id());
+    sendBroadcast(intent);
+  }
+
+  private void broadcastCourseInfo(String courseInfo){
     Intent intent = new Intent();
     intent.setAction(RegularMode.ACTION);
     intent.putExtra("course_code", courseInfo);
