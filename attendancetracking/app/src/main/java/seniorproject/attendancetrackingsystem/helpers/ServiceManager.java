@@ -1,6 +1,7 @@
 package seniorproject.attendancetrackingsystem.helpers;
 
 import android.app.ActivityManager;
+import android.app.Notification;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
@@ -11,6 +12,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.android.volley.Request;
@@ -32,6 +34,8 @@ import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import br.com.goncalves.pugnotification.notification.PugNotification;
+import seniorproject.attendancetrackingsystem.R;
 import seniorproject.attendancetrackingsystem.utils.RegularMode;
 import seniorproject.attendancetrackingsystem.utils.Schedule;
 
@@ -46,10 +50,14 @@ public class ServiceManager extends Service {
   private Handler handler;
   private SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
   private boolean connected = false;
+  private Schedule.CourseInfo currentCourse=null;
+  private boolean allowNotification = true;
+
 
   @Override
   public void onCreate() {
     super.onCreate();
+
     final BluetoothChecker bluetoothChecker = new BluetoothChecker();
     handler = new Handler(getMainLooper());
     timer = new Timer();
@@ -76,7 +84,7 @@ public class ServiceManager extends Service {
                 if (!noCourseForToday) {
                   if (updatedForToday) {
                     if (!isServiceIsRunning(RegularMode.class)) {
-                      Schedule.CourseInfo currentCourse = currentCourse(currentDate);
+                      currentCourse = currentCourse(currentDate);
                       if (currentCourse != null) {
                         broadcastCourseInfo(currentCourse);
                         breakTime = dateFormat.parse(currentCourse.getEnd_hour());
@@ -96,6 +104,7 @@ public class ServiceManager extends Service {
                       if (breakTime != null && currentDate.after(breakTime)) {
                         BluetoothAdapter.getDefaultAdapter().disable();
                         stopRegularMode();
+                        allowNotification = true;
                       }
                     }
 
@@ -123,6 +132,13 @@ public class ServiceManager extends Service {
         },
         0,
         1000);
+    Timer listeners = new Timer();
+    listeners.scheduleAtFixedRate(new TimerTask() {
+      @Override
+      public void run() {
+        if(connected && currentCourse != null) tokenListener();
+      }
+    }, 0, 30000);
   }
 
   private void startRegularMode(Schedule.CourseInfo course) {
@@ -136,7 +152,45 @@ public class ServiceManager extends Service {
     intent.putExtra("course-info", course);
     startService(intent);
   }
+  private void tokenListener() {
+    StringRequest request = new StringRequest(Request.Method.POST, DatabaseManager.GetOperations,
+            new Response.Listener<String>() {
+              @Override
+              public void onResponse(String response) {
+                try
+                {
+                  JSONObject jsonObject = new JSONObject(response);
+                  boolean result = jsonObject.getBoolean("success");
+                  if(result){
+                    boolean expired = jsonObject.getBoolean("experied");
+                    boolean secure_mode = true;
+                    broacastCourseInfo(currentCourse, secure_mode, expired);
+                    if(allowNotification){
+                      simpleNotification("Secure Mode", "Secure mode is running " +
+                              "for "+currentCourse.getCourse_code() );
+                      allowNotification = false;
+                    }
+                  }
+                }catch (JSONException e){
+                  e.printStackTrace();
+                }
+              }
+            }, new Response.ErrorListener() {
+      @Override
+      public void onErrorResponse(VolleyError error) {
 
+      }
+    }){
+      @Override
+      protected Map<String, String> getParams(){
+        Map<String, String> params = new HashMap<>();
+        params.put("operation", "get-token-status");
+        params.put("classroom_id", String.valueOf(currentCourse.getClassroom_id()));
+        return params;
+      }
+    };
+    DatabaseManager.getmInstance(getBaseContext()).execute(request);
+  }
   private void stopRegularMode() {
 
     stopService(new Intent(getBaseContext(), RegularMode.class));
@@ -167,7 +221,17 @@ public class ServiceManager extends Service {
     }
     return false;
   }
-
+private void simpleNotification(String title, String text){
+  PugNotification.with(getBaseContext())
+          .load()
+          .title(title)
+          .message(text)
+          .smallIcon(R.drawable.pugnotification_ic_launcher)
+          .largeIcon(R.drawable.pugnotification_ic_launcher)
+          .flags(Notification.DEFAULT_ALL)
+          .simple()
+          .build();
+}
   private void updateSchedule() {
     handler.post(
         new Runnable() {
@@ -192,7 +256,10 @@ public class ServiceManager extends Service {
                         if (!noCourseForToday) {
                           schedule =
                               JsonHelper.getmInstance(getBaseContext()).parseSchedule(response);
-                          if (schedule.getCourses().size() > 0) updatedForToday = true;
+                          if (schedule.getCourses().size() > 0){
+                            updatedForToday = true;
+                            simpleNotification("Update", "Your daily schedule is updated");
+                          }
                         }
                       }
                     },
@@ -224,7 +291,15 @@ public class ServiceManager extends Service {
       intent.putExtra("classroom_id", courseInfo.getClassroom_id());
     sendBroadcast(intent);
   }
-
+  private void broacastCourseInfo(Schedule.CourseInfo courseInfo, boolean secure, boolean expired){
+    Intent intent = new Intent();
+    intent.setAction(RegularMode.ACTION);
+    intent.putExtra("course_code", courseInfo.getCourse_code());
+    intent.putExtra("classroom_id", courseInfo.getClassroom_id());
+    intent.putExtra("secure", secure);
+    intent.putExtra("expired", expired);
+    sendBroadcast(intent);
+  }
   private void broadcastCourseInfo(String courseInfo){
     Intent intent = new Intent();
     intent.setAction(RegularMode.ACTION);

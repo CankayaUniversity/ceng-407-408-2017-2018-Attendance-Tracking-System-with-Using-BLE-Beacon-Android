@@ -51,6 +51,7 @@ public class WelcomeFragment extends Fragment {
   private int classroom_id = 0;
   private String course_code = "";
   private boolean secure_mode = false;
+  private boolean experied = false;
 
   public WelcomeFragment() {
     // Required empty public constructor
@@ -84,19 +85,13 @@ public class WelcomeFragment extends Fragment {
     adapter =
         new ArrayAdapter<>(
             getActivity().getApplicationContext(), R.layout.notification_item, messages);
-    if(classroom_id != 0){
-      messages.add("Current Course: "+ course_code);
-    }else if(course_code.equals("null")){
-      messages.add("There is not active course for now");
-    }else if(course_code.equals("no_course_for_today")){
-      messages.add("There is no course for today");
-    }
-    listView.setAdapter(adapter);
 
+    listView.setAdapter(adapter);
+  showMessages();
     timer.scheduleAtFixedRate(new TimerTask() {
       @Override
       public void run() {
-        if(isConnected() && classroom_id != 0) tokenListener();
+      //  if(isConnected() && classroom_id != 0) tokenListener();
       }
     },0,  30000); // runs every 30 seconds
   }
@@ -122,57 +117,26 @@ public class WelcomeFragment extends Fragment {
    /* SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.ENGLISH);
     Date currentDate = new Date();*/
     if(classroom_id != 0){
-      if(secure_mode)
-        messages.add("Current Course: " + course_code + " (Secure Mode)");
-      else
-      messages.add("Current Course: " + course_code);
+      if(secure_mode && !experied)
+        messages.add("Current Course: " + course_code + " \n(Secure Mode)");
+      else if(secure_mode){
+        messages.add("Current Course: " + course_code + " \n(Secure Mode - Expired)");
+      }
+      else messages.add("Current Course: " + course_code);
     }else if(course_code.equals("null")){
+      secure_mode = false;
+      experied = false;
       messages.add("There is not active course for now");
     }else if(course_code.equals("no_course_for_today")){
+      secure_mode = false;
+      experied = false;
       messages.add("There is no course for today");
     }
 
     listView.setAdapter(adapter);
   }
 
-  private void tokenListener() {
-    StringRequest request = new StringRequest(Request.Method.POST, DatabaseManager.GetOperations,
-            new Response.Listener<String>() {
-              @Override
-              public void onResponse(String response) {
-                try
-                {
-                  JSONObject jsonObject = new JSONObject(response);
-                  boolean result = jsonObject.getBoolean("success");
-                  if(result){
-                    boolean experied = jsonObject.getBoolean("experied");
-                    if(experied){
-                      // ZAMAN GEÇTİ YİĞENİM
-                    }else
-                    {
-                      secure_mode = true;
-                    }
-                  }
-                }catch (JSONException e){
-                  e.printStackTrace();
-                }
-              }
-            }, new Response.ErrorListener() {
-      @Override
-      public void onErrorResponse(VolleyError error) {
 
-      }
-    }){
-      @Override
-      protected Map<String, String> getParams(){
-        Map<String, String> params = new HashMap<>();
-        params.put("operation", "get-token-status");
-        params.put("classroom_id", String.valueOf(classroom_id));
-        return params;
-      }
-    };
-    DatabaseManager.getmInstance(getActivity().getApplicationContext()).execute(request);
-  }
 private boolean isConnected(){
   ConnectivityManager connectivityManager =
           (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -187,8 +151,9 @@ private boolean isConnected(){
     @Override
     public void onReceive(Context context, Intent intent) {
         course_code = intent.getStringExtra("course_code");
-        Log.d("course_code", course_code);
       classroom_id = intent.getIntExtra("classroom_id", 0);
+      secure_mode = intent.getBooleanExtra("secure", false);
+      experied = intent.getBooleanExtra("expired", false);
       showMessages();
     }
   }
