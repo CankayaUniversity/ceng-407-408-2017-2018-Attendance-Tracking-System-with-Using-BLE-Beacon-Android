@@ -32,6 +32,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
@@ -47,7 +48,7 @@ import seniorproject.attendancetrackingsystem.utils.Schedule;
 /* A simple {@link Fragment} subclass. */
 public class WelcomeFragmentLecturer extends Fragment {
 
-  private int token = 0;
+  private String token = "not_initialized";
   private Handler handler;
   private boolean updated = false;
   private boolean noCourseForToday = false;
@@ -128,7 +129,7 @@ public class WelcomeFragmentLecturer extends Fragment {
             }
             if (updated) setItems(current);
             if (currentCourses.isEmpty()) secureModeSwitchVisibility(false);
-            else if (token == 0) secureModeSwitchVisibility(true);
+            else if (token.equals("not_initialized")) secureModeSwitchVisibility(true);
           }
         },
         0,
@@ -183,16 +184,28 @@ public class WelcomeFragmentLecturer extends Fragment {
       DatabaseManager.getmInstance(getActivity().getApplicationContext()).execute(request);
     }
   }
-
+private boolean checkNumber(int number) {
+  return number > 47 && number < 58 || number > 64 && number < 91 || number > 96 && number < 123;
+}
   private void generateToken() {
     Toast.makeText(
             getActivity().getApplicationContext(), "Secure mode is activated", Toast.LENGTH_SHORT)
         .show();
 
     Random r = new Random(System.currentTimeMillis());
-    token = ((1 + r.nextInt(2)) * 10000 + r.nextInt(10000));
-    setToken(String.valueOf(token));
-    showAlertDialog(String.valueOf(token));
+    int number = 0;
+    token = "";
+    LinkedList<Character> digits = new LinkedList<>();
+    while (digits.size()!=5){
+      do{
+        for(int i = 0; i < 10; i++) number = r.nextInt(123);
+      }while(!checkNumber(number));
+      digits.add ((char)number);
+    }
+    while(!digits.isEmpty()) token = String.format("%s%s-", token, digits.pollFirst());
+    token = token.substring(0, token.length()-1); //ignoring last '-' character
+    setToken(token);
+    showAlertDialog(token);
   }
 
   private void infirmUser() {
@@ -370,7 +383,7 @@ public class WelcomeFragmentLecturer extends Fragment {
               }
             });
         secureSwitch.setChecked(false);
-        token = 0;
+        token = "not_initialized";
       }
       items.add(info);
     }
