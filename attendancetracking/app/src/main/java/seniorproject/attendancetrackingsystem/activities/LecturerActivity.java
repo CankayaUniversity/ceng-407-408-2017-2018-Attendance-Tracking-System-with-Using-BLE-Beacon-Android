@@ -25,8 +25,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import java.util.HashMap;
@@ -109,10 +111,13 @@ public class LecturerActivity extends AppCompatActivity {
                         return true;
                     }
                 });
+
         alertDialog = new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_LIGHT).create();
         alertDialog.setCanceledOnTouchOutside(false);
         progressDialog = new ProgressDialog(this, ProgressDialog.THEME_HOLO_LIGHT);
         progressDialog.setCanceledOnTouchOutside(false);
+
+
     }
 
     private void setFragment(Fragment fragment) {

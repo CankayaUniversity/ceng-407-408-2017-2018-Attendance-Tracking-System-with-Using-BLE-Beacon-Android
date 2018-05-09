@@ -102,17 +102,12 @@ public class RegularMode extends Service implements BeaconConsumer {
                 flag = true;
               }
             }
-            broadcastMessage(flag);
+
           }
         });
   }
 
-  private void broadcastMessage(final boolean result) {
-    Intent intent = new Intent();
-    intent.setAction(ACTION);
-    intent.putExtra("found", result);
-    sendBroadcast(intent);
-  }
+
 
   private void writeLog() {
     try {

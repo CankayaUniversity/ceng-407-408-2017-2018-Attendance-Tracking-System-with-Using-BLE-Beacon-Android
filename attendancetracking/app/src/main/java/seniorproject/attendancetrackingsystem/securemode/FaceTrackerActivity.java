@@ -27,6 +27,8 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Surface;
+import android.view.SurfaceView;
 import android.view.View;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -129,7 +131,8 @@ public final class FaceTrackerActivity extends AppCompatActivity {
                 .setClassificationType(FaceDetector.ALL_CLASSIFICATIONS)
                 .build();
 
-        detector.setProcessor(new LargestFaceFocusingProcessor(detector, new BlinkTracker(this.getApplicationContext())));
+        detector.setProcessor(new LargestFaceFocusingProcessor(detector, new BlinkTracker(this.getApplicationContext(),
+                mGraphicOverlay,this)));
 
 
         if (!detector.isOperational()) {
