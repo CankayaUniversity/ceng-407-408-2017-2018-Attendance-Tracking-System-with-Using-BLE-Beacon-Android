@@ -3,8 +3,9 @@ package seniorproject.attendancetrackingsystem.fragments;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -13,20 +14,38 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import java.util.Collections;
-import java.util.Comparator;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import seniorproject.attendancetrackingsystem.R;
+import seniorproject.attendancetrackingsystem.helpers.DatabaseManager;
 
 /* A simple {@link Fragment} subclass. */
 public class ReportFragmentLecturer extends Fragment {
+  private ListView listView;
+  private ArrayList<Integer> classrooms = new ArrayList<>();
+  private Handler handler;
+  private ArrayList<StudentRow> studentList = new ArrayList<>();
+  private StudentAdapter adapter;
+  private Timer timer;
 
   public ReportFragmentLecturer() {
     // Required empty public constructor
   }
-  ListView listView;
-
 
   @Override
   public View onCreateView(
@@ -39,46 +58,130 @@ public class ReportFragmentLecturer extends Fragment {
   @Override
   public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
-
     listView = view.findViewById(R.id.studentlist);
+    handler = new Handler(Looper.getMainLooper());
+    timer = new Timer();
+    Bundle args = getArguments();
+    if (args != null) {
+      classrooms = args.getIntegerArrayList("classrooms");
 
-    //TODO get from database with the current classroom
-    StudentRow student_data[] = new StudentRow[]{
-            new StudentRow("Melihşah Akın",201411202, 2),
-            new StudentRow("Ensar Elmas",201411545, 2),
-            new StudentRow("N. Cem Altunbulduk",201411341, 2),
-            new StudentRow("Merve Şanlı",201411231, 1),
-            new StudentRow("D. Mertcan Kökcür", 201411036, 1),
-            new StudentRow("Bahar Şengez", 201511374, 0),
-            new StudentRow("Berkan Gürel", 201611672,0),
-            new StudentRow("Buğra Gülay",201411909, 0),
-            new StudentRow("Koray Çıbık", 201611677, 0)
-    };
+      adapter = new StudentAdapter(getActivity(), R.layout.liststudent, studentList);
+      listView.setAdapter(adapter);
 
+      studentListListener();
+    }
+  }
 
-    StudentAdapter adapter = new StudentAdapter(getActivity(), R.layout.liststudent,student_data);
-    listView.setAdapter(adapter);
+  private void studentListListener() {
+    timer.scheduleAtFixedRate(
+        new TimerTask() {
+          @Override
+          public void run() {
+            for (int i = 0; i < classrooms.size(); i++) {
+              getStudentList(classrooms.get(i));
+            }
+          }
+        },
+        0,
+        10000); // 2 minutes
+  }
 
+  private void toastWithHandler(final String text) {
+    handler.post(
+        new Runnable() {
+          @Override
+          public void run() {
+            Toast.makeText(getActivity().getApplicationContext(), text, Toast.LENGTH_SHORT).show();
+          }
+        });
+  }
+
+  @Override
+  public void onDestroy() {
+    super.onDestroy();
+    timer.cancel();
+  }
+
+  private void getStudentList(final int classroom_id) {
+    StringRequest request =
+        new StringRequest(
+            Request.Method.POST,
+            DatabaseManager.GetOperations,
+            new Response.Listener<String>() {
+              @Override
+              public void onResponse(String response) {
+                try {
+                  JSONObject jsonObject = new JSONObject(response);
+                  boolean result = jsonObject.getBoolean("success");
+                  if (!result) {
+                    toastWithHandler(jsonObject.getString("message"));
+                    return;
+                  }
+                } catch (JSONException e) {
+                  // do nothing
+                }
+                try {
+                  JSONArray jsonArray = new JSONArray(response);
+                  studentList.clear();
+                  for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    StudentRow studentRow =
+                        new StudentRow(
+                            jsonObject.getString("name") + " " + jsonObject.getString("surname"),
+                            jsonObject.getInt("student_number"),
+                            jsonObject.getInt("status"),
+                            jsonObject.getInt("time"));
+                    studentList.add(studentRow);
+                  }
+                  listView.setAdapter(adapter);
+                } catch (JSONException e) {
+                  e.printStackTrace();
+                }
+              }
+            },
+            new Response.ErrorListener() {
+              @Override
+              public void onErrorResponse(VolleyError error) {}
+            }) {
+          @Override
+          protected Map<String, String> getParams() {
+            Map<String, String> params = new HashMap<>();
+            params.put("classroom_id", String.valueOf(classroom_id));
+            params.put("operation", "attendance-list");
+            return params;
+          }
+        };
+    try {
+      DatabaseManager.getmInstance(getActivity().getApplicationContext()).execute(request);
+    } catch (NullPointerException e) {
+      // Do nothing
+    }
   }
 
   public class StudentRow {
     public String name;
     public int number;
     public int state;
+    public int time;
 
-    public StudentRow(String name, int number, int state){
+    public StudentRow(String name, int number, int state, int time) {
       this.name = name;
       this.number = number;
       this.state = state;
+      this.time = time;
     }
-    public StudentRow(){super();}
+
+    public StudentRow() {
+      super();
+    }
   }
-  public class StudentAdapter extends ArrayAdapter<StudentRow>{
+
+  public class StudentAdapter extends ArrayAdapter<StudentRow> {
     Context context;
     int layoutResourseId;
-    StudentRow data[] = null;
+    ArrayList<StudentRow> data = new ArrayList<>();
 
-    public StudentAdapter(Context context, int layoutResourseId, StudentRow[] data){
+    private StudentAdapter(Context context, int layoutResourseId, ArrayList<StudentRow> data) {
       super(context, layoutResourseId, data);
       this.layoutResourseId = layoutResourseId;
       this.context = context;
@@ -91,32 +194,36 @@ public class ReportFragmentLecturer extends Fragment {
       View row = convertView;
       StudentHolder holder = null;
 
-      if(row == null){
-        LayoutInflater inflater = ((Activity)context).getLayoutInflater();
+      if (row == null) {
+        LayoutInflater inflater = ((Activity) context).getLayoutInflater();
         row = inflater.inflate(layoutResourseId, parent, false);
 
         holder = new StudentHolder();
-        holder.txtName = (TextView)row.findViewById(R.id.studentName);
-        holder.txtNumber = (TextView)row.findViewById(R.id.studentNo);
+        holder.txtName = row.findViewById(R.id.studentName);
+        holder.txtNumber = row.findViewById(R.id.studentNo);
 
         row.setTag(holder);
-      }else
-      {
-        holder = (StudentHolder)row.getTag();
+      } else {
+        holder = (StudentHolder) row.getTag();
       }
 
-      StudentRow student = data[position];
-      holder.txtName.setText(student.name);
+      StudentRow student = data.get(position);
+
+      String info = student.name + " ["+student.time / 60000+" m]";
+      holder.txtName.setText(info);
       holder.txtNumber.setText(String.valueOf(student.number));
-      if(student.state == 0) row.setBackgroundColor(getResources().getColor(R.color.stateRed));
-      else if(student.state == 1) row.setBackgroundColor(getResources().getColor(R.color.stateYellow));
-      else if(student.state == 2) row.setBackgroundColor(getResources().getColor(R.color.stateGreen));
+      if (student.state == 0) row.setBackgroundColor(getResources().getColor(R.color.stateRed));
+      else if (student.state == 1)
+        row.setBackgroundColor(getResources().getColor(R.color.stateYellow));
+      else if (student.state == 2 || student.state == 3)
+        row.setBackgroundColor(getResources().getColor(R.color.stateGreen));
 
       return row;
     }
-   class StudentHolder{
+
+    class StudentHolder {
       TextView txtNumber;
       TextView txtName;
-  }
+    }
   }
 }
