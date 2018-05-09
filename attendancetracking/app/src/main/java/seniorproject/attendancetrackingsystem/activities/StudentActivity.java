@@ -1,9 +1,10 @@
 package seniorproject.attendancetrackingsystem.activities;
 
-import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -14,16 +15,12 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-
-import com.basgeekball.awesomevalidation.AwesomeValidation;
-import com.basgeekball.awesomevalidation.ValidationStyle;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -50,6 +47,7 @@ public class StudentActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_student);
     Toolbar toolbar = findViewById(R.id.toolbar);
+    if(!isServiceIsRunning(ServiceManager.class))
     startService(new Intent(this, ServiceManager.class));
     setSupportActionBar(toolbar);
     mainNav = findViewById(R.id.main_nav);
@@ -150,6 +148,7 @@ public class StudentActivity extends AppCompatActivity {
     layout.addView(newPasswordRepeat);
     alert.setView(layout);
 
+
     alert.setPositiveButton("Change", new DialogInterface.OnClickListener() {
       @Override
       public void onClick(DialogInterface dialog, int which) {
@@ -187,7 +186,14 @@ public class StudentActivity extends AppCompatActivity {
     });
     return alert;
   }
-
+  private boolean isServiceIsRunning(Class<?> serviceClass) {
+    ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+    for (ActivityManager.RunningServiceInfo service :
+            Objects.requireNonNull(manager).getRunningServices(Integer.MAX_VALUE)) {
+      if (serviceClass.getName().equals(service.service.getClassName())) return true;
+    }
+    return false;
+  }
   @Override
   public void onBackPressed() {
     setFragment(welcomeFragment);
