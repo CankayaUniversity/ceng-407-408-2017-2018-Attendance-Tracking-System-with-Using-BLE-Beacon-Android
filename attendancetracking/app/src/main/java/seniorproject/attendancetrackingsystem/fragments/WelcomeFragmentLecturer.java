@@ -8,10 +8,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomNavigationView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.ListView;
@@ -189,9 +191,11 @@ public class WelcomeFragmentLecturer extends Fragment {
       DatabaseManager.getmInstance(getActivity().getApplicationContext()).execute(request);
     }
   }
-private boolean checkNumber(int number) {
-  return number > 47 && number < 58 || number > 64 && number < 91 || number > 96 && number < 123;
-}
+
+  private boolean checkNumber(int number) {
+    return number > 47 && number < 58 || number > 64 && number < 91 || number > 96 && number < 123;
+  }
+
   private void generateToken() {
     Toast.makeText(
             getActivity().getApplicationContext(), "Secure mode is activated", Toast.LENGTH_SHORT)
@@ -201,16 +205,23 @@ private boolean checkNumber(int number) {
     int number = 0;
     token = "";
     LinkedList<Character> digits = new LinkedList<>();
-    while (digits.size()!=5){
-      do{
-        for(int i = 0; i < 10; i++) number = r.nextInt(123);
-      }while(!checkNumber(number));
-      digits.add ((char)number);
+    while (digits.size() != 5) {
+      do {
+        for (int i = 0; i < 10; i++) number = r.nextInt(123);
+      } while (!checkNumber(number));
+      digits.add((char) number);
     }
-    while(!digits.isEmpty()) token = String.format("%s%s-", token, digits.pollFirst());
-    token = token.substring(0, token.length()-1); //ignoring last '-' character
+    StringBuilder out = new StringBuilder();
+
+    while (!digits.isEmpty()) token = String.format("%s%s", token, digits.pollFirst());
+    for(int i =0; i < token.length(); i++){
+      out.append(token.charAt(i)).append("-");
+    }
+    out = new StringBuilder(out.substring(0, out.length() - 1)); // ignoring last '-' character
+    Log.d("out", out.toString());
+    Log.d("token", token);
     setToken(token);
-    showAlertDialog(token);
+    showAlertDialog(out.toString());
   }
 
   private void infirmUser() {
@@ -222,8 +233,8 @@ private boolean checkNumber(int number) {
                 new AlertDialog.Builder(getActivity(), AlertDialog.THEME_HOLO_LIGHT).create();
             alertDialog.setTitle("Warning");
             alertDialog.setMessage(
-                "Once you activate the secure mode, you cannot be able to start regular mode for this course until the course finishes. " +
-                        "\n\nAre you sure to activate secure mode for this course?");
+                "Once you activate the secure mode, you cannot be able to start regular mode for this course until the course finishes. "
+                    + "\n\nAre you sure to activate secure mode for this course?");
             alertDialog.setButton(
                 Dialog.BUTTON_NEGATIVE,
                 "Cancel",
@@ -339,6 +350,38 @@ private boolean checkNumber(int number) {
         });
   }
 
+  private void setOnclick(boolean allow) {
+    if (allow) {
+      listView.setOnItemClickListener(
+          new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+              if (position == 0) {
+                Bundle args = new Bundle();
+                ArrayList<Integer> courses = new ArrayList<>();
+                for (Schedule.CourseInfo x : currentCourses) {
+                  courses.add(x.getClassroom_id());
+                }
+                args.putIntegerArrayList("classrooms", courses);
+                ReportFragmentLecturer f = new ReportFragmentLecturer();
+                BottomNavigationView mainNav = getActivity().findViewById(R.id.main_nav);
+             mainNav.setSelectedItemId(R.id.nav_report);
+                f.setArguments(args);
+                getFragmentManager().beginTransaction().replace(R.id.main_frame, f).commit();
+              }
+            }
+          });
+    } else {
+      listView.setOnItemClickListener(
+          new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+              // do nothing
+            }
+          });
+    }
+  }
+
   private void currentCourse(Date currentTime) {
     currentCourses.clear();
     for (Schedule.CourseInfo x : schedule.getCourses()) {
@@ -366,9 +409,10 @@ private boolean checkNumber(int number) {
           sections.add(x.getSection());
         }
       }
-      String info = "Current Course: " + course_code;
-      for (int x : sections) info = info + " - " + String.valueOf(x);
-      items.add(info);
+      StringBuilder info = new StringBuilder("Current Course: " + course_code);
+      for (int x : sections) info.append(" - ").append(String.valueOf(x));
+      items.add(info.toString());
+      setOnclick(true);
     } else if (currentCourses.size() == 1) {
       items.clear();
       String info =
@@ -377,6 +421,7 @@ private boolean checkNumber(int number) {
               + " - "
               + currentCourses.get(0).getSection();
       items.add(info);
+      setOnclick(true);
     } else {
       items.clear();
       String info = "There is not active course for now";
@@ -395,6 +440,7 @@ private boolean checkNumber(int number) {
         secureSwitch.setChecked(false);
         token = "not_initialized";
       }
+      setOnclick(false);
       items.add(info);
     }
 
