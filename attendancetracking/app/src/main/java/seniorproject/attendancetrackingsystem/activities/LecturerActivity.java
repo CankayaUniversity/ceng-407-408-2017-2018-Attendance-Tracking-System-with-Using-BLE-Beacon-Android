@@ -38,6 +38,7 @@ import java.util.Objects;
 import seniorproject.attendancetrackingsystem.R;
 import seniorproject.attendancetrackingsystem.fragments.CourseSettings;
 import seniorproject.attendancetrackingsystem.fragments.ReportFragmentLecturer;
+import seniorproject.attendancetrackingsystem.fragments.ReportProblem;
 import seniorproject.attendancetrackingsystem.fragments.WelcomeFragmentLecturer;
 import seniorproject.attendancetrackingsystem.helpers.BeaconBuilder;
 import seniorproject.attendancetrackingsystem.helpers.DatabaseManager;
@@ -150,6 +151,12 @@ public class LecturerActivity extends AppCompatActivity {
             Objects.requireNonNull(getSupportActionBar()).setLogo(R.drawable.kdefault);
             getSupportActionBar().setTitle("Ç.Ü. Attendance Tracking System");
             getSupportActionBar().setSubtitle("/Course Settings");
+            getFragmentManager().beginTransaction().replace(R.id.main_frame, f).commit();
+        } else if(item.toString().equals("Report Problem")){
+            ReportProblem f = new ReportProblem();
+            Objects.requireNonNull(getSupportActionBar()).setLogo(R.drawable.kdefault);
+            getSupportActionBar().setTitle("Ç.Ü. Attendance Tracking System");
+            getSupportActionBar().setSubtitle("/Report Problem");
             getFragmentManager().beginTransaction().replace(R.id.main_frame, f).commit();
         }
         return super.onOptionsItemSelected(item);

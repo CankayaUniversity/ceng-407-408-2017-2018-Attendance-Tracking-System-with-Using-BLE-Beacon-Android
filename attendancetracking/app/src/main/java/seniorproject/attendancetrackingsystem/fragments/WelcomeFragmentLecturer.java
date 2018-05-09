@@ -124,7 +124,12 @@ public class WelcomeFragmentLecturer extends Fragment {
             if (current.after(start) && current.before(stop)) {
               if (!updated) {
                 Log.d("update:", "Gathering courses of the today");
-                updateSchedule();
+                handler.post(new Runnable() {
+                  @Override
+                  public void run() {
+                    updateSchedule();
+                  }
+                });
               }
             }
             if (updated) setItems(current);
@@ -324,7 +329,12 @@ private boolean checkNumber(int number) {
                     return params;
                   }
                 };
-            DatabaseManager.getmInstance(getActivity().getApplicationContext()).execute(request);
+            try{
+              DatabaseManager.getmInstance(getActivity().getApplicationContext()).execute(request);
+            }catch (NullPointerException e){
+              //do nothing
+            }
+
           }
         });
   }
