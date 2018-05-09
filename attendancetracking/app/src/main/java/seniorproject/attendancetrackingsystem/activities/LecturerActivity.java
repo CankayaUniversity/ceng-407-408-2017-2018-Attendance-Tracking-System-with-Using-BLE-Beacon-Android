@@ -36,6 +36,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import seniorproject.attendancetrackingsystem.R;
+import seniorproject.attendancetrackingsystem.fragments.CourseSettings;
 import seniorproject.attendancetrackingsystem.fragments.ReportFragmentLecturer;
 import seniorproject.attendancetrackingsystem.fragments.WelcomeFragmentLecturer;
 import seniorproject.attendancetrackingsystem.helpers.BeaconBuilder;
@@ -144,6 +145,12 @@ public class LecturerActivity extends AppCompatActivity {
             // new BeaconBuilder();
         } else if (item.toString().equals("Change Password")) {
             buildAlertDialog().show();
+        } else if(item.toString().equals("Course Settings")){
+            CourseSettings f = new CourseSettings();
+            Objects.requireNonNull(getSupportActionBar()).setLogo(R.drawable.kdefault);
+            getSupportActionBar().setTitle("Ç.Ü. Attendance Tracking System");
+            getSupportActionBar().setSubtitle("/Course Settings");
+            getFragmentManager().beginTransaction().replace(R.id.main_frame, f).commit();
         }
         return super.onOptionsItemSelected(item);
     }

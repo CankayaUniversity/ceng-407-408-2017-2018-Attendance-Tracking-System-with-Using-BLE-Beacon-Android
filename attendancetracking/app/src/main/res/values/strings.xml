@@ -51,6 +51,8 @@
     <string name="change_password">Change Password</string>
     <string name="reportProblem">Report Problem</string>
     <string name="beacon_conf">Beacon Configuration</string>
+    <string name="course_settings">Course Settings</string>
+    <string name="status_warning">Status</string>
     <string-array name="settings_items">
         <item>Withdraw from a course</item>
         <item>Change password</item>

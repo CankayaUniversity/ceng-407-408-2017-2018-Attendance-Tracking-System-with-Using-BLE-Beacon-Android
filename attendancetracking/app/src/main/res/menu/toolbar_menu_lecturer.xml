@@ -4,7 +4,11 @@
     <item
         android:id="@+id/beacon_configuration"
         android:title="@string/beacon_conf"
-        app:showAsAction="never"/>
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/course_settings"
+        android:title="@string/course_settings"
+        app:showAsAction="never" />
     <item
         android:id="@+id/change_password"
         android:title="@string/change_password"
