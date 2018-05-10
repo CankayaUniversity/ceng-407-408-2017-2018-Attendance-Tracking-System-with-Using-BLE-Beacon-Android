@@ -2,26 +2,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#000"
     tools:context="seniorproject.attendancetrackingsystem.fragments.ReportFragment">
-
-<LinearLayout
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal">
-<Spinner
-    android:id="@+id/studentlecturelist"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"/>
-
-    <CalendarView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-
-
-</LinearLayout>
-
-
 
 </LinearLayout>
