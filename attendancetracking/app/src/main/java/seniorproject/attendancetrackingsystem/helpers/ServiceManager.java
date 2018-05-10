@@ -78,8 +78,6 @@ public class ServiceManager extends Service {
               regularStart = dateFormat.parse(START_REGULAR);
               regularEnd = dateFormat.parse(STOP_REGULAR);
               updateDate = dateFormat.parse(UPDATE);
-              char a = (char)67;
-              Log.d("asdad",String.valueOf(a));
               if (currentDate.after(updateDate) && currentDate.before(regularStart)) {
                 // Log.i("ACTION", "UPDATE");
                 updateSchedule();
