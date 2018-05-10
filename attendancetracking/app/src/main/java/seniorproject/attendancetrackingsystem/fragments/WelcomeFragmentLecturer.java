@@ -218,8 +218,6 @@ public class WelcomeFragmentLecturer extends Fragment {
       out.append(token.charAt(i)).append("-");
     }
     out = new StringBuilder(out.substring(0, out.length() - 1)); // ignoring last '-' character
-    Log.d("out", out.toString());
-    Log.d("token", token);
     setToken(token);
     showAlertDialog(out.toString());
   }
@@ -293,6 +291,12 @@ public class WelcomeFragmentLecturer extends Fragment {
             else secureSwitch.setVisibility(View.INVISIBLE);
           }
         });
+  }
+
+  @Override
+  public void onDestroy() {
+    super.onDestroy();
+    timer.cancel();
   }
 
   private void updateSchedule() {

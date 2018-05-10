@@ -16,6 +16,7 @@ import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,12 +34,15 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import seniorproject.attendancetrackingsystem.R;
 import seniorproject.attendancetrackingsystem.helpers.DatabaseManager;
@@ -56,6 +60,8 @@ public class WelcomeFragment extends Fragment {
   private String course_code = "";
   private boolean secure_mode = false;
   private boolean expired = false;
+  private Timer timer;
+  private ArrayList<LatestCourses> latestCourses = new ArrayList<>();
 
   public WelcomeFragment() {
     // Required empty public constructor
@@ -72,6 +78,7 @@ public class WelcomeFragment extends Fragment {
   public void onViewCreated(View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     handler = new Handler();
+    timer = new Timer();
     SessionManager session = new SessionManager(getActivity().getApplicationContext());
     HashMap<String, String> userInfo = session.getUserDetails();
     TextView nameSurnameField = getActivity().findViewById(R.id.w_user_name);
@@ -91,7 +98,15 @@ public class WelcomeFragment extends Fragment {
 
     listView.setAdapter(adapter);
     showMessages();
-
+    timer.scheduleAtFixedRate(
+        new TimerTask() {
+          @Override
+          public void run() {
+            getLatestCoursesList();
+          }
+        },
+        0,
+        600000);
   }
 
   @Override
@@ -111,15 +126,15 @@ public class WelcomeFragment extends Fragment {
   }
 
   private void showMessages() {
-    if (messages.size() != 0) messages.remove(0);
+    messages.clear();
     /* SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss", Locale.ENGLISH);
     Date currentDate = new Date();*/
     if (classroom_id != 0) {
       if (secure_mode && !expired)
-        messages.add("Current Course: " + course_code + " \n(Secure Mode)");
+        messages.add(0,"Current Course: " + course_code + " \n(Secure Mode)");
       else if (secure_mode) {
-        messages.add("Current Course: " + course_code + " \n(Secure Mode - Expired)");
-      } else messages.add("Current Course: " + course_code);
+        messages.add(0,"Current Course: " + course_code + " \n(Secure Mode - Expired)");
+      } else messages.add(0,"Current Course: " + course_code);
     } else if (course_code.equals("null")) {
       secure_mode = false;
       expired = false;
@@ -129,7 +144,7 @@ public class WelcomeFragment extends Fragment {
       expired = false;
       messages.add("There is no course for today");
     }
-
+    addAllLatestCourses();
     listView.setAdapter(adapter);
   }
 
@@ -158,15 +173,17 @@ public class WelcomeFragment extends Fragment {
     digit1.setId(R.id.digit1);
     digit1.setFocusable(true);
     digit1.setFilters(new InputFilter[] {new InputFilter.LengthFilter(1)});
-    digit1.post(new Runnable() {
-      @Override
-      public void run() {
-        final InputMethodManager imm = (InputMethodManager) digit1.getContext().getSystemService
-                (Context.INPUT_METHOD_SERVICE);
-        imm.showSoftInput(digit1, InputMethodManager.SHOW_IMPLICIT);
-        digit1.requestFocus(); // needed if you have more then one input
-      }
-    });
+    digit1.post(
+        new Runnable() {
+          @Override
+          public void run() {
+            final InputMethodManager imm =
+                (InputMethodManager)
+                    digit1.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(digit1, InputMethodManager.SHOW_IMPLICIT);
+            digit1.requestFocus(); // needed if you have more then one input
+          }
+        });
     layout.addView(digit1);
 
     digit2.setWidth(15);
@@ -206,72 +223,60 @@ public class WelcomeFragment extends Fragment {
     digit5.setFilters(new InputFilter[] {new InputFilter.LengthFilter(1)});
     layout.addView(digit5);
 
-    digit1.addTextChangedListener(new TextWatcher() {
-      @Override
-      public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+    digit1.addTextChangedListener(
+        new TextWatcher() {
+          @Override
+          public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
-      }
+          @Override
+          public void onTextChanged(CharSequence s, int start, int before, int count) {
+            if (digit1.getText().length() == 1) digit2.requestFocus();
+          }
 
-      @Override
-      public void onTextChanged(CharSequence s, int start, int before, int count) {
-        if(digit1.getText().length() == 1) digit2.requestFocus();
-      }
+          @Override
+          public void afterTextChanged(Editable s) {}
+        });
+    digit2.addTextChangedListener(
+        new TextWatcher() {
+          @Override
+          public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
-      @Override
-      public void afterTextChanged(Editable s) {
+          @Override
+          public void onTextChanged(CharSequence s, int start, int before, int count) {
+            if (digit2.getText().length() == 1) digit3.requestFocus();
+          }
 
-      }
-    });
-    digit2.addTextChangedListener(new TextWatcher() {
-      @Override
-      public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+          @Override
+          public void afterTextChanged(Editable s) {}
+        });
 
-      }
+    digit3.addTextChangedListener(
+        new TextWatcher() {
+          @Override
+          public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
-      @Override
-      public void onTextChanged(CharSequence s, int start, int before, int count) {
-        if(digit2.getText().length()==1) digit3.requestFocus();
-      }
+          @Override
+          public void onTextChanged(CharSequence s, int start, int before, int count) {
+            if (digit3.getText().length() == 1) digit4.requestFocus();
+          }
 
-      @Override
-      public void afterTextChanged(Editable s) {
+          @Override
+          public void afterTextChanged(Editable s) {}
+        });
 
-      }
-    });
+    digit4.addTextChangedListener(
+        new TextWatcher() {
+          @Override
+          public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
-    digit3.addTextChangedListener(new TextWatcher() {
-      @Override
-      public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+          @Override
+          public void onTextChanged(CharSequence s, int start, int before, int count) {
+            if (digit4.getText().length() == 1) digit5.requestFocus();
+          }
 
-      }
-
-      @Override
-      public void onTextChanged(CharSequence s, int start, int before, int count) {
-if(digit3.getText().length() == 1) digit4.requestFocus();
-      }
-
-      @Override
-      public void afterTextChanged(Editable s) {
-
-      }
-    });
-
-    digit4.addTextChangedListener(new TextWatcher() {
-      @Override
-      public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-      }
-
-      @Override
-      public void onTextChanged(CharSequence s, int start, int before, int count) {
-if(digit4.getText().length() == 1) digit5.requestFocus();
-      }
-
-      @Override
-      public void afterTextChanged(Editable s) {
-
-      }
-    });
+          @Override
+          public void afterTextChanged(Editable s) {}
+        });
     alert.setView(layout);
 
     alert.setPositiveButton(
@@ -322,64 +327,145 @@ if(digit4.getText().length() == 1) digit5.requestFocus();
         || connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState()
             == NetworkInfo.State.CONNECTED;
   }
-private void sendToken(final String token){
-    if(isConnected()){
-      StringRequest request = new StringRequest(Request.Method.POST, DatabaseManager
-              .SetOperations, new Response.Listener<String>() {
-        @Override
-        public void onResponse(String response) {
-          try{
-            JSONObject jsonObject = new JSONObject(response);
-            boolean result = jsonObject.getBoolean("success");
-            if(result){
-              boolean expired = jsonObject.getBoolean("expired");
-              if(!expired){
-                Intent faceTracker =
-                        new Intent(
-                                getActivity().getApplicationContext(),
-                                seniorproject.attendancetrackingsystem.securemode.FaceTrackerActivity.class);
-                startActivity(faceTracker);
-              }else{
-                toastMessageWithHandle("Secure mod is expired");
-              }
-            }else{
-              String message = jsonObject.getString("message");
-              toastMessageWithHandle(message);
-            }
-          }catch (JSONException e){
-            e.printStackTrace();
-          }
-        }
-      }, new Response.ErrorListener() {
-        @Override
-        public void onErrorResponse(VolleyError error) {
 
-        }
-      }){
-        @Override
-        protected Map<String, String> getParams() {
-          Map<String, String> params = new HashMap<>();
-          params.put("classroom_id", String.valueOf(classroom_id));
-          params.put("token_value", token);
-          params.put("operation", "enter-token");
-          return params;
-        }
-      };
+  private void sendToken(final String token) {
+    if (isConnected()) {
+      StringRequest request =
+          new StringRequest(
+              Request.Method.POST,
+              DatabaseManager.SetOperations,
+              new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                  try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    boolean result = jsonObject.getBoolean("success");
+                    if (result) {
+                      boolean expired = jsonObject.getBoolean("expired");
+                      if (!expired) {
+                        Intent faceTracker =
+                            new Intent(
+                                getActivity().getApplicationContext(),
+                                seniorproject.attendancetrackingsystem.securemode
+                                    .FaceTrackerActivity.class);
+                        startActivity(faceTracker);
+                      } else {
+                        toastMessageWithHandle("Secure mod is expired");
+                      }
+                    } else {
+                      String message = jsonObject.getString("message");
+                      toastMessageWithHandle(message);
+                    }
+                  } catch (JSONException e) {
+                    e.printStackTrace();
+                  }
+                }
+              },
+              new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {}
+              }) {
+            @Override
+            protected Map<String, String> getParams() {
+              Map<String, String> params = new HashMap<>();
+              params.put("classroom_id", String.valueOf(classroom_id));
+              params.put("token_value", token);
+              params.put("operation", "enter-token");
+              return params;
+            }
+          };
 
       DatabaseManager.getmInstance(getActivity().getApplicationContext()).execute(request);
-    }else
-    {
-     toastMessageWithHandle("This action requires a network connection");
+    } else {
+      toastMessageWithHandle("This action requires a network connection");
     }
-}
-private void toastMessageWithHandle(final String text){
-    handler.post(new Runnable() {
-      @Override
-      public void run() {
-        Toast.makeText(getActivity().getApplicationContext(), text, Toast.LENGTH_SHORT).show();
-      }
-    });
-}
+  }
+
+  @Override
+  public void onDestroy() {
+    super.onDestroy();
+    timer.cancel();
+  }
+
+  private void addAllLatestCourses() {
+    for (LatestCourses x : latestCourses) {
+      messages.add(x.toString());
+      listView.setAdapter(adapter);
+    }
+  }
+
+  private void getLatestCoursesList() {
+    Log.d("get", "run");
+    if (!isConnected()) return;
+    StringRequest request =
+        new StringRequest(
+            Request.Method.POST,
+            DatabaseManager.GetOperations,
+            new Response.Listener<String>() {
+              @Override
+              public void onResponse(String response) {
+                try {
+                  JSONObject jsonObject = new JSONObject(response);
+                  boolean result = jsonObject.getBoolean("success");
+                  if (!result) {
+                    timer.cancel();
+                    return;
+                  }
+                } catch (JSONException e) {
+                  // do nothing
+                }
+                try {
+                  JSONArray jsonArray = new JSONArray(response);
+                  if (jsonArray.length() > 0) latestCourses.clear();
+                  for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    LatestCourses temp =
+                        new LatestCourses(
+                            jsonObject.getString("course_code"),
+                            jsonObject.getString("date"),
+                            jsonObject.getString("hour"),
+                            jsonObject.getInt("status"));
+                    latestCourses.add(temp);
+                  }
+                  addAllLatestCourses();
+                } catch (JSONException e) {
+                  e.printStackTrace();
+                }
+              }
+            },
+            new Response.ErrorListener() {
+              @Override
+              public void onErrorResponse(VolleyError error) {}
+            }) {
+          @Override
+          protected Map<String, String> getParams() {
+            Map<String, String> params = new HashMap<>();
+            params.put(
+                "user_id",
+                new SessionManager(getActivity().getApplicationContext())
+                    .getUserDetails()
+                    .get(SessionManager.KEY_USER_ID));
+            params.put("operation", "last-15-lectures");
+            return params;
+          }
+        };
+    try {
+      DatabaseManager.getmInstance(getActivity().getApplicationContext()).execute(request);
+    } catch (NullPointerException e) {
+      // do nothing
+    }
+  }
+
+  private void toastMessageWithHandle(final String text) {
+    handler.post(
+        new Runnable() {
+          @Override
+          public void run() {
+            Toast.makeText(getActivity().getApplicationContext(), text, Toast.LENGTH_SHORT).show();
+          }
+        });
+  }
+
   private class Receiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -413,6 +499,33 @@ private void toastMessageWithHandle(final String text){
             });
       }
       showMessages();
+    }
+  }
+
+  class LatestCourses {
+    String date;
+    String hour;
+    String course_code;
+    int status;
+
+    LatestCourses(String course_code, String date, String hour, int status) {
+      this.date = date;
+      this.hour = hour;
+      this.course_code = course_code;
+      this.status = status;
+    }
+
+    @Override
+    public String toString() {
+      String output = date + " " + hour + " - " + course_code;
+      if (status == 0) {
+        output = output + " [Absent]";
+      } else if (status == 1) {
+        output = output + " [Nearly-Attended]";
+      } else if (status == 2 || status == 3) {
+        output = output + " [Attended]";
+      }
+      return output;
     }
   }
 }
