@@ -166,8 +166,8 @@ public class WelcomeFragment extends Fragment {
     info.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
     layout.addView(info);
 
-    digit1.setWidth(15);
-    digit1.setHeight(15);
+    digit1.setWidth(22);
+    digit1.setHeight(22);
     digit1.setTextColor(Color.BLACK);
     digit1.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
     digit1.setId(R.id.digit1);
@@ -186,8 +186,8 @@ public class WelcomeFragment extends Fragment {
         });
     layout.addView(digit1);
 
-    digit2.setWidth(15);
-    digit2.setHeight(15);
+    digit2.setWidth(22);
+    digit2.setHeight(22);
     digit2.setTextColor(Color.BLACK);
     digit2.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
     digit2.setId(R.id.digit2);
@@ -195,8 +195,8 @@ public class WelcomeFragment extends Fragment {
     digit2.setFilters(new InputFilter[] {new InputFilter.LengthFilter(1)});
     layout.addView(digit2);
 
-    digit3.setWidth(15);
-    digit3.setHeight(15);
+    digit3.setWidth(22);
+    digit3.setHeight(22);
     digit3.setTextColor(Color.BLACK);
     digit3.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
     digit3.setId(R.id.digit3);
@@ -204,8 +204,8 @@ public class WelcomeFragment extends Fragment {
     digit3.setFilters(new InputFilter[] {new InputFilter.LengthFilter(1)});
     layout.addView(digit3);
 
-    digit4.setWidth(15);
-    digit4.setHeight(15);
+    digit4.setWidth(22);
+    digit4.setHeight(22);
     digit4.setTextColor(Color.BLACK);
     digit4.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
     digit4.setId(R.id.digit4);
@@ -214,8 +214,8 @@ public class WelcomeFragment extends Fragment {
 
     layout.addView(digit4);
 
-    digit5.setWidth(15);
-    digit5.setHeight(15);
+    digit5.setWidth(22);
+    digit5.setHeight(22);
     digit5.setTextColor(Color.BLACK);
     digit5.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
     digit5.setId(R.id.digit5);
@@ -343,12 +343,12 @@ public class WelcomeFragment extends Fragment {
                     if (result) {
                       boolean expired = jsonObject.getBoolean("expired");
                       if (!expired) {
-                        Intent faceTracker =
+                        Intent imageUpload =
                             new Intent(
                                 getActivity().getApplicationContext(),
-                                seniorproject.attendancetrackingsystem.securemode
-                                    .FaceTrackerActivity.class);
-                        startActivity(faceTracker);
+                                seniorproject.attendancetrackingsystem.activities
+                                    .UploadImage.class);
+                        startActivity(imageUpload);
                       } else {
                         toastMessageWithHandle("Secure mod is expired");
                       }
