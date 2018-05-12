@@ -354,6 +354,7 @@ public class ServiceManager extends Service {
     File root = new File(Environment.getExternalStorageDirectory(), "AttendanceTracking");
     if (!root.exists()) return; // no need to push something to database
     File[] list = root.listFiles();
+    if(list == null) return;
     if (list.length == 0) return; // no nedd to push something to database
     connectionChecker();
     if (connected) {
