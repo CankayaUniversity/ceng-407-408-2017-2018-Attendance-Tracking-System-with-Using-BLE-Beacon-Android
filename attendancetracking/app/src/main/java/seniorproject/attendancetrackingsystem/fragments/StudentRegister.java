@@ -3,18 +3,30 @@ package seniorproject.attendancetrackingsystem.fragments;
 import android.app.Fragment;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.media.Image;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.basgeekball.awesomevalidation.AwesomeValidation;
 import com.basgeekball.awesomevalidation.ValidationStyle;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,6 +41,8 @@ public class StudentRegister extends Fragment {
   private EditText studentName;
   private EditText studentSurname;
   private AwesomeValidation awesomeValidation;
+  private ImageView uploadImageView;
+  private static final int CAM_REQUEST=1313;
 
   @Nullable
   @Override
@@ -63,6 +77,8 @@ public class StudentRegister extends Fragment {
     studentName = view.findViewById(R.id.student_name);
     studentSurname = view.findViewById(R.id.student_surname);
     awesomeValidation = new AwesomeValidation(ValidationStyle.BASIC);
+    uploadImageView = view.findViewById(R.id.upload_image_view);
+    uploadImageView.setVisibility(View.INVISIBLE);
 
     Button uploadImage = view.findViewById(R.id.upload_image);
     Button registerButton = view.findViewById(R.id.register_button);
@@ -99,9 +115,55 @@ public class StudentRegister extends Fragment {
     uploadImage.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
-        Intent intent = new Intent(getActivity().getApplicationContext(), UploadImage.class);
-        getActivity().startActivity(intent);
+        openCamera();
       }
     });
+  }
+
+  private void openCamera() {
+
+
+    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+    startActivityForResult(intent, CAM_REQUEST);
+  }
+
+  @Override
+  public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+
+    if(requestCode == CAM_REQUEST){
+      Bitmap bitmap = (Bitmap) data.getExtras().get("data");
+      uploadImageView.setImageBitmap(bitmap);
+    }
+
+
+        BitmapDrawable picture = ((BitmapDrawable)uploadImageView.getDrawable());
+        Bitmap pictureBm = picture.getBitmap();
+
+
+        FileOutputStream arrayStream = null;
+
+        // Write to SD Card
+        try {
+          File sdCard = Environment.getExternalStorageDirectory();
+          File dir = new File(sdCard.getAbsolutePath() + "/camtest");
+          dir.mkdirs();
+
+          String fileName = String.format("%d.jpeg", System.currentTimeMillis());
+          File outFile = new File(dir, fileName);
+
+          arrayStream = new FileOutputStream(outFile);
+          pictureBm.compress(Bitmap.CompressFormat.JPEG,100,arrayStream);
+          arrayStream.flush();
+          arrayStream.close();
+
+          Log.d("Taken Picture", "onPictureTaken - wrote to " + outFile.getAbsolutePath());
+          uploadImageView.setVisibility(View.VISIBLE);
+
+        } catch (FileNotFoundException e) {
+          e.printStackTrace();
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
   }
 }
