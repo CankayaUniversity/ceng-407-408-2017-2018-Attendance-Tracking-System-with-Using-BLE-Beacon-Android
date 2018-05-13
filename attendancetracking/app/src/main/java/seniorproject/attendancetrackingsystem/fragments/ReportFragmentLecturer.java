@@ -545,6 +545,8 @@ public class ReportFragmentLecturer extends Fragment {
         holder = new StudentHolder();
         holder.txtName = row.findViewById(R.id.studentName);
         holder.txtNumber = row.findViewById(R.id.studentNo);
+        holder.txtLineNum = row.findViewById(R.id.lineNum);
+
 
         row.setTag(holder);
       } else {
@@ -553,9 +555,10 @@ public class ReportFragmentLecturer extends Fragment {
 
       StudentRow student = data.get(position);
 
-      String info = student.name + " [" + student.time / 60000 + " m]";
-      holder.txtName.setText(info);
+      //String info = student.name + " [" + student.time / 60000 + " m]";
+      holder.txtName.setText(student.name);
       holder.txtNumber.setText(String.valueOf(student.number));
+      holder.txtLineNum.setText(String.valueOf(position+1));
       if (student.state == 0) row.setBackgroundColor(getResources().getColor(R.color.stateRed));
       else if (student.state == 1)
         row.setBackgroundColor(getResources().getColor(R.color.stateYellow));
@@ -568,6 +571,7 @@ public class ReportFragmentLecturer extends Fragment {
     class StudentHolder {
       TextView txtNumber;
       TextView txtName;
+      TextView txtLineNum;
     }
   }
 }
