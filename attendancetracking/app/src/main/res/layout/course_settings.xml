@@ -2,16 +2,20 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:layout_gravity="bottom"
+    android:layout_marginBottom="60dp"
+    android:layout_marginTop="56dp"
+    android:background="@color/colorWhite">
 
     <TextView
         android:id="@+id/course_select"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
-        android:layout_marginTop="70dp"
+        android:layout_marginTop="10dp"
         android:text="Course Code"
-        android:textColor="@color/colorWhite"
+        android:textColor="@android:color/black"
         android:textSize="16sp" />
 
     <Spinner
@@ -21,7 +25,10 @@
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:layout_marginTop="20dp"
-        android:textAlignment="center" />
+        android:textAlignment="center"
+        android:background="@color/fewWhite"
+        android:backgroundTint="@color/fewWhite"
+        android:popupBackground="@color/fewWhite"/>
 
     <LinearLayout
         android:id="@+id/setting_layout"
@@ -38,7 +45,7 @@
             android:layout_marginRight="20dp"
             android:layout_marginTop="20dp"
             android:text="Nearly attended"
-            android:textColor="@color/colorWhite" />
+            android:textColor="@android:color/black" />
 
         <SeekBar
             android:id="@+id/nearly"
@@ -46,7 +53,10 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
-            android:layout_marginTop="20dp" />
+            android:layout_marginTop="20dp"
+            android:progressDrawable="@drawable/progress"
+            android:thumb="@drawable/thumb"
+            />
 
 
         <TextView
@@ -57,7 +67,7 @@
             android:layout_marginRight="20dp"
             android:layout_marginTop="20dp"
             android:text="Fully attended"
-            android:textColor="@color/colorWhite" />
+            android:textColor="@android:color/black" />
 
         <SeekBar
             android:id="@+id/attended"
@@ -65,17 +75,21 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"
             android:layout_marginRight="15dp"
-            android:layout_marginTop="20dp" />
+            android:layout_marginTop="20dp"
+            android:progressDrawable="@drawable/progress"
+            android:thumb="@drawable/thumb"/>
 
         <Button
             android:id="@+id/save_btn"
             style="@style/Widget.AppCompat.Button.Borderless"
+            android:textColor="@android:color/black"
             android:layout_width="170dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center|center_horizontal"
             android:layout_marginTop="20dp"
-            android:background="@drawable/button_border"
-            android:text="Save" />
+            android:background="@drawable/button_border2"
+            android:text="Save"
+            android:textSize="16sp"/>
 
     </LinearLayout>
 
