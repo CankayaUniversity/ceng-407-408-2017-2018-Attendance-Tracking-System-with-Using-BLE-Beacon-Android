@@ -2,11 +2,86 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
+    android:layout_gravity="bottom"
+    android:layout_marginBottom="60dp"
+    android:layout_marginTop="56dp"
+    android:background="@color/colorWhite"
+    android:orientation="vertical"
     tools:context="seniorproject.attendancetrackingsystem.fragments.ReportFragment">
 
+    <TextView
+        android:id="@+id/course_select"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="10dp"
+        android:text="Choose Course Code"
+        android:textColor="@android:color/black"
+        android:textSize="16sp" />
 
+    <Spinner
+        android:id="@+id/lecturelist"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/fewWhite"
+        android:backgroundTint="@color/fewWhite"
+        android:popupBackground="@color/fewWhite"
+        android:textAlignment="center" />
 
+    <FrameLayout
+        android:id="@+id/cal_container"
+        android:layout_width="match_parent"
+        android:layout_height="425dp"
+        android:layout_marginBottom="2dp" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:gravity="center">
 
+        <TextView
+            android:id="@+id/attendedpercentage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:text="Attended : %"
+            android:textColor="@color/stateGreen"
+            android:shadowColor="@android:color/black"
+            android:shadowDy="1"
+            android:shadowRadius="1"/>
+
+        <TextView
+            android:id="@+id/nearlypercentage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:text="Nearly : %"
+            android:textColor="@color/nearly"
+            android:shadowColor="@android:color/black"
+            android:shadowDy="1"
+            android:shadowRadius="1"
+            android:shadowDx="1"
+           />
+
+        <TextView
+            android:id="@+id/absentpercentage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:text="Absent : %"
+            android:textColor="@color/stateRed"
+            android:shadowColor="@android:color/black"
+            android:shadowDy="1"
+            android:shadowRadius="1"/>
+    </LinearLayout>
 </LinearLayout>

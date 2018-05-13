@@ -2,6 +2,8 @@ package seniorproject.attendancetrackingsystem.helpers;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -431,18 +433,32 @@ public class DatabaseManager {
   private void showDialog(final String message) {}
 
   public void execute(String action, Map<String, String> params) {
-    getmInstance(context).addToRequestQueue(createStringRequest(action, params));
+    if (connectionChecker())
+      getmInstance(context).addToRequestQueue(createStringRequest(action, params));
   }
 
   public void execute(String action, String param, ArrayList<String> array) {
-    getmInstance(context).addToRequestQueue(createStringRequest(action, param, array));
+    if (connectionChecker())
+      getmInstance(context).addToRequestQueue(createStringRequest(action, param, array));
   }
 
   public void execute(String action, String param) {
-    getmInstance(context).addToRequestQueue(createStringRequest(action, param));
+    if (connectionChecker())
+      getmInstance(context).addToRequestQueue(createStringRequest(action, param));
   }
 
   public void execute(StringRequest stringRequest) {
-    getmInstance(context).addToRequestQueue(stringRequest);
+    if (connectionChecker()) getmInstance(context).addToRequestQueue(stringRequest);
+  }
+
+  private boolean connectionChecker() {
+    ConnectivityManager connectivityManager =
+        (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+    assert connectivityManager != null;
+    // we are connected to a network
+    return connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState()
+            == NetworkInfo.State.CONNECTED
+        || connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI).getState()
+            == NetworkInfo.State.CONNECTED;
   }
 }

@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="seniorproject.attendancetrackingsystem.fragments.WelcomeFragment">
 
 
@@ -15,14 +16,20 @@
 
             android:orientation="vertical">
 
-            <ImageView
+            <com.github.siyamed.shapeimageview.CircularImageView
                 android:id="@+id/imageView"
                 android:layout_width="120dp"
                 android:layout_height="120dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="60dp"
                 android:contentDescription="avatar"
-                android:src="@drawable/unknown_trainer" />
+                android:src="@drawable/unknown_trainer"
+                app:siBorderColor="@android:color/darker_gray"
+                app:siBorderWidth="1dp"
+
+                />
+
+
 
             <TextView
                 android:id="@+id/w_user_name"

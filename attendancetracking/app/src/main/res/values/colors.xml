@@ -8,4 +8,9 @@
     <color name="gradientCenter">#ff42959a</color>
     <color name="colorWhite">#ffffff</color>
     <color name="colorWhiteTransparent">#80ffffff</color>
+    <color name="stateRed">#ac3931</color>
+    <color name="stateYellow">#f5e663</color>
+    <color name="stateGreen">#09814a</color>
+    <color name="fewWhite">#FFF59D</color>
+    <color name="nearly">#FDD835</color>
 </resources>

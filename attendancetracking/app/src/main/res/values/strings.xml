@@ -38,23 +38,29 @@
     <string name="password_register_lecturer">Password</string>
     <string name="name_lecturer_register">Name</string>
     <string name="surname_register_lecturer">Surname</string>
-    <string name="register_button_lecturer">Register</string>
+    <string name="register_button_lecturer">Regıster</string>
     <string name="school_id_login">School ID</string>
     <string name="password_login_student">Password</string>
-    <string name="login_student_button">Login</string>
+    <string name="login_student_button">Logın</string>
     <string name="school_id_register_id">School ID</string>
     <string name="password_student_register">Password</string>
     <string name="e_mail_register_student">E-mail</string>
     <string name="name_register_student">Name</string>
     <string name="surname_register_student">Surname</string>
-    <string name="register_student_button">Register</string>
+    <string name="register_student_button">Regıster</string>
     <string name="change_password">Change Password</string>
     <string name="reportProblem">Report Problem</string>
     <string name="beacon_conf">Beacon Configuration</string>
+    <string name="course_settings">Course Settings</string>
+    <string name="status_warning">Status</string>
     <string-array name="settings_items">
         <item>Withdraw from a course</item>
         <item>Change password</item>
         <item>Report a problem</item>
         <item>Logout</item>
     </string-array>
+    <string name="ok">OK</string>
+    <string name="permission_camera_rationale">Access to the camera is needed for detection</string>
+    <string name="no_camera_permission">This application cannot run because it does not have the camera permission.  The application will now exit.</string>
+    <string name="low_storage_error">Face detector dependencies cannot be downloaded due to low device storage</string>
 </resources>

@@ -12,6 +12,7 @@ if(isset($_COOKIE["user"])) header("location: index.php");
 <link rel="stylesheet" media="screen and (max-width: 1200px) and (min-width: 601px)" href="css/responsiveform1.css" />
 <link rel="stylesheet" media="screen and (max-width: 600px) and (min-width: 351px)" href="css/responsiveform2.css" />
 <link rel="stylesheet" media="screen and (max-width: 350px)" href="css/responsiveform3.css" />
+<link rel="stylesheet" type="text/css" href="css/style.css">
 </head>
 <body>
 <?php
@@ -22,13 +23,16 @@ if(isset($_COOKIE["user"])) header("location: index.php");
 			break;
 			default:
 ?>
+<div class="error-message"><?php if(isset($message)) { echo $message; } ?></div>
 <div id="envelope">
 <form action="login.php?page=submit" method="post">
 
 <label>Email</label>
-<input name="email" placeholder="..@cankaya.edu.tr" type="text">
+<input name="email" placeholder="..@cankaya.edu.tr" type="text"> 
 <label>Password</label>
 <input name="password" placeholder="* * * * * * * *" type="password">
+<input name="checker" type="checkbox" id="checker" value="1"><label>Remember Me</label>
+<a href="forgetpassword.php" class="rightf">Forget Password</a><br>
 <center><input id="submit" type="submit" value="Login"></center>
 
 </form>
