@@ -8,6 +8,7 @@ import android.content.SharedPreferences.Editor;
 import java.util.HashMap;
 
 import seniorproject.attendancetrackingsystem.activities.MainActivity;
+import seniorproject.attendancetrackingsystem.utils.RegularMode;
 
 public class SessionManager {
   public static final String KEY_USER_TYPE = "userType";
@@ -68,6 +69,8 @@ public class SessionManager {
     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
     context.startActivity(intent);
+    context.stopService(new Intent(context, ServiceManager.class));
+    context.stopService(new Intent(context, RegularMode.class));
   }
 
   public boolean isLoggedIn() {

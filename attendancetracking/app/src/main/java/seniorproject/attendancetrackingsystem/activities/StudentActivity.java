@@ -79,8 +79,41 @@ public class StudentActivity extends AppCompatActivity {
                 break;
 
               case R.id.logout:
-                SessionManager session = new SessionManager(getApplicationContext());
-                session.logoutUser();
+                if (new ServiceManager().isLogFileExists()) {
+                  Toast.makeText(
+                          StudentActivity.this,
+                          "While attendance tracking, you cannot " + "logout from the system",
+                          Toast.LENGTH_SHORT)
+                      .show();
+                  return false;
+                } else {
+                  final AlertDialog alertDialog =
+                      new AlertDialog.Builder(StudentActivity.this, AlertDialog.THEME_HOLO_LIGHT)
+                          .create();
+                  alertDialog.setTitle("Warning");
+                  alertDialog.setMessage("Are you sure to logout from the system?");
+                  alertDialog.setButton(
+                      DialogInterface.BUTTON_NEGATIVE,
+                      "Cancel",
+                      new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                          alertDialog.dismiss();
+                        }
+                      });
+                  alertDialog.setButton(
+                      DialogInterface.BUTTON_POSITIVE,
+                      "Logout",
+                      new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                          SessionManager session = new SessionManager(getApplicationContext());
+                          session.logoutUser();
+                        }
+                      });
+                  alertDialog.show();
+                }
+
                 break;
               default:
                 break;

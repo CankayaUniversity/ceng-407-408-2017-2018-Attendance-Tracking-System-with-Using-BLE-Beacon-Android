@@ -12,7 +12,6 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -40,6 +39,7 @@ import seniorproject.attendancetrackingsystem.utils.RegularMode;
 import seniorproject.attendancetrackingsystem.utils.Schedule;
 
 public class ServiceManager extends Service {
+  private static final String LOG_FOLDER = "AttendanceTracking";
   private static final String UPDATE = "09:00";
   private static final String START_REGULAR = "00:20";
   private static final String STOP_REGULAR = "23:59";
@@ -350,11 +350,19 @@ public class ServiceManager extends Service {
     sendBroadcast(intent);
   }
 
+  public boolean isLogFileExists() {
+    File root = new File(Environment.getExternalStorageDirectory(), LOG_FOLDER);
+    if (!root.exists()) return false;
+    File[] list = root.listFiles();
+    if (list == null) return false;
+    return list.length != 0;
+  }
+
   private void runCollector() {
-    File root = new File(Environment.getExternalStorageDirectory(), "AttendanceTracking");
+    File root = new File(Environment.getExternalStorageDirectory(), LOG_FOLDER);
     if (!root.exists()) return; // no need to push something to database
     File[] list = root.listFiles();
-    if(list == null) return;
+    if (list == null) return;
     if (list.length == 0) return; // no nedd to push something to database
     connectionChecker();
     if (connected) {
