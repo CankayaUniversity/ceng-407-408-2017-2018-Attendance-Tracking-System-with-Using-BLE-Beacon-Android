@@ -192,7 +192,7 @@ public class ReportFragment extends Fragment {
         new Runnable() {
           @Override
           public void run() {
-            final AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
+            final AlertDialog alertDialog = new AlertDialog.Builder(getActivity(),AlertDialog.THEME_HOLO_LIGHT).create();
             String title = course.course_code + " Information";
             alertDialog.setTitle(title);
             StringBuilder message = new StringBuilder();
