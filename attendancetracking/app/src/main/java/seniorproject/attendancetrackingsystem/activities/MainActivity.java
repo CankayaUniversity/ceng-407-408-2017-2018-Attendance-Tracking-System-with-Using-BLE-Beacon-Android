@@ -42,16 +42,18 @@ public class MainActivity extends AppCompatActivity {
   }
 
   private void checkPermissions() {
-    Permissions.check(
-        this,
-        Manifest.permission.ACCESS_COARSE_LOCATION,
-        null,
-        new PermissionHandler() {
-          @Override
-          public void onGranted() {
-            checkSession();
-            login.setOnClickListener(
-                new View.OnClickListener() {
+    Permissions.check(this, new String[]{Manifest.permission.CAMERA,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission
+                    .READ_EXTERNAL_STORAGE, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest
+                    .permission.READ_PHONE_STATE},
+            "This permissions are required to use Attendance Tracking System", new Permissions
+                    .Options()
+                    .setSettingsDialogTitle("Warning!").setRationaleDialogTitle("Info"),
+            new PermissionHandler() {
+              @Override
+              public void onGranted() {
+                checkSession();
+                login.setOnClickListener(new View.OnClickListener() {
                   @Override
                   public void onClick(View v) {
                     Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
@@ -59,17 +61,17 @@ public class MainActivity extends AppCompatActivity {
                   }
                 });
 
-            register.setOnClickListener(
-                new View.OnClickListener() {
-                  @Override
-                  public void onClick(View v) {
-                    Intent registerIntent =
-                        new Intent(MainActivity.this, RegistrationActivity.class);
-                    startActivity(registerIntent);
-                  }
-                });
-          }
-        });
+                register.setOnClickListener(
+                        new View.OnClickListener() {
+                          @Override
+                          public void onClick(View v) {
+                            Intent registerIntent =
+                                    new Intent(MainActivity.this, RegistrationActivity.class);
+                            startActivity(registerIntent);
+                          }
+                        });
+              }
+            });
   }
 
   private void checkSession() {
