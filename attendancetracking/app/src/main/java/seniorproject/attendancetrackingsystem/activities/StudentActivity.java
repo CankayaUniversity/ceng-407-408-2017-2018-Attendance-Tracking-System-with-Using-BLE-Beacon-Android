@@ -113,7 +113,7 @@ public class StudentActivity extends AppCompatActivity {
       Objects.requireNonNull(getSupportActionBar()).setLogo(R.drawable.kdefault);
       getSupportActionBar().setTitle("Ç.Ü. Attendance Tracking System");
       getSupportActionBar().setSubtitle("/Report Problem");
-      getFragmentManager().beginTransaction().replace(R.id.main_frame, f).commit();
+      getSupportFragmentManager().beginTransaction().replace(R.id.main_frame, f).commit();
     }
 
     return super.onOptionsItemSelected(item);

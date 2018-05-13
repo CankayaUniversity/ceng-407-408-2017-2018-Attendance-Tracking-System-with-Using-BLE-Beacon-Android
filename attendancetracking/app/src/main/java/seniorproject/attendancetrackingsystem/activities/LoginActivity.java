@@ -18,7 +18,7 @@ public class LoginActivity extends AppCompatActivity {
     setContentView(R.layout.activity_login);
     if (savedInstanceState == null) {
 
-      getFragmentManager()
+      getSupportFragmentManager()
           .beginTransaction()
           .replace(R.id.login_layout, new StudentLogin())
           .commit();
@@ -30,12 +30,12 @@ public class LoginActivity extends AppCompatActivity {
           @Override
           public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             if (roleSwitch.isChecked()) {
-              getFragmentManager()
+              getSupportFragmentManager()
                   .beginTransaction()
                   .replace(R.id.login_layout, new LecturerLogin())
                   .commit();
             } else {
-              getFragmentManager()
+              getSupportFragmentManager()
                   .beginTransaction()
                   .replace(R.id.login_layout, new StudentLogin())
                   .commit();

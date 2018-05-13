@@ -1,8 +1,8 @@
 package seniorproject.attendancetrackingsystem.activities;
 
 import android.app.AlertDialog;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.content.BroadcastReceiver;
@@ -121,7 +121,7 @@ public class LecturerActivity extends AppCompatActivity {
     }
 
     private void setFragment(Fragment fragment) {
-        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.main_frame, fragment);
         fragmentTransaction.commit();
     }
@@ -149,13 +149,13 @@ public class LecturerActivity extends AppCompatActivity {
             Objects.requireNonNull(getSupportActionBar()).setLogo(R.drawable.kdefault);
             getSupportActionBar().setTitle("Ç.Ü. Attendance Tracking System");
             getSupportActionBar().setSubtitle("/Course Settings");
-            getFragmentManager().beginTransaction().replace(R.id.main_frame, f).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.main_frame, f).commit();
         } else if(item.toString().equals("Report Problem")){
             ReportProblem f = new ReportProblem();
             Objects.requireNonNull(getSupportActionBar()).setLogo(R.drawable.kdefault);
             getSupportActionBar().setTitle("Ç.Ü. Attendance Tracking System");
             getSupportActionBar().setSubtitle("/Report Problem");
-            getFragmentManager().beginTransaction().replace(R.id.main_frame, f).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.main_frame, f).commit();
         }
         return super.onOptionsItemSelected(item);
     }

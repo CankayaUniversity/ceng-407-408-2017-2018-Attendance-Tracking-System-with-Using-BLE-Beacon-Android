@@ -17,7 +17,7 @@ public class RegistrationActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_registration);
     if (savedInstanceState == null) {
-      getFragmentManager()
+      getSupportFragmentManager()
           .beginTransaction()
           .replace(R.id.register_layout, new StudentRegister())
           .commit();
@@ -29,12 +29,12 @@ public class RegistrationActivity extends AppCompatActivity {
           @Override
           public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             if (roleSwitch.isChecked()) {
-              getFragmentManager()
+              getSupportFragmentManager()
                   .beginTransaction()
                   .replace(R.id.register_layout, new LecturerRegister())
                   .commit();
             } else {
-              getFragmentManager()
+              getSupportFragmentManager()
                   .beginTransaction()
                   .replace(R.id.register_layout, new StudentRegister())
                   .commit();
