@@ -2,8 +2,6 @@ package seniorproject.attendancetrackingsystem.activities;
 
 import android.app.ActivityManager;
 import android.app.AlertDialog;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,6 +10,8 @@ import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
@@ -91,7 +91,7 @@ public class StudentActivity extends AppCompatActivity {
   }
 
   private void setFragment(Fragment fragment) {
-    FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+    FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
     fragmentTransaction.replace(R.id.main_frame, fragment);
     fragmentTransaction.commit();
   }
