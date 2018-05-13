@@ -2,6 +2,30 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="seniorproject.attendancetrackingsystem.fragments.ReportFragment">
 
+    <TextView
+        android:id="@+id/course_select"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="70dp"
+        android:text="Course Code"
+        android:textColor="@color/colorWhite"
+        android:textSize="16sp" />
+
+    <Spinner
+        android:id="@+id/lecturelist"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="20dp"
+        android:textAlignment="center" />
+
+    <FrameLayout
+        android:id="@+id/cal_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </LinearLayout>

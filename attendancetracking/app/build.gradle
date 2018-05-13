@@ -34,4 +34,5 @@ dependencies {
     implementation 'com.nabinbhandari.android:permissions:3.5'
     implementation 'com.google.android.gms:play-services-vision:15.0.1'
     implementation 'com.github.halysongoncalves:pugnotification:1.8.1'
+    implementation 'com.roomorama:caldroid:3.0.1'
 }

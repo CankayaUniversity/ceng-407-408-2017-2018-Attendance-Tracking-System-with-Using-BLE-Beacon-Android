@@ -76,16 +76,16 @@ public class CourseSettings extends Fragment {
     attended_seek.setMax(100);
     course_spinner = view.findViewById(R.id.lecturelist);
     Button save_button = view.findViewById(R.id.save_btn);
-    save_button.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        if(current_course_id != 0) save();
-      }
-    });
+    save_button.setOnClickListener(
+        new View.OnClickListener() {
+          @Override
+          public void onClick(View v) {
+            if (current_course_id != 0) save();
+          }
+        });
     courses = new ArrayList<>();
     adapter =
-        new ArrayAdapter<>(
-            getActivity().getApplicationContext(), R.layout.spinner_item, courses);
+        new ArrayAdapter<>(getActivity().getApplicationContext(), R.layout.spinner_item, courses);
     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
     get_course_list();
 
@@ -157,52 +157,55 @@ public class CourseSettings extends Fragment {
           }
         });
   }
-private void save(){
+
+  private void save() {
     final int near = middle_seek.getProgress();
     final int full = attended_seek.getProgress();
 
-    StringRequest request = new StringRequest(Request.Method.POST, DatabaseManager.SetOperations, new Response.Listener<String>() {
-      @Override
-      public void onResponse(String response) {
-        try{
-          JSONObject jsonObject = new JSONObject(response);
-          boolean result = jsonObject.getBoolean("success");
-          if(result){
-            toastWithHandle("Course settings has been updated");
-          }else
-          {
-            toastWithHandle(jsonObject.getString("message"));
+    StringRequest request =
+        new StringRequest(
+            Request.Method.POST,
+            DatabaseManager.SetOperations,
+            new Response.Listener<String>() {
+              @Override
+              public void onResponse(String response) {
+                try {
+                  JSONObject jsonObject = new JSONObject(response);
+                  boolean result = jsonObject.getBoolean("success");
+                  if (result) {
+                    toastWithHandle("Course settings has been updated");
+                  } else {
+                    toastWithHandle(jsonObject.getString("message"));
+                  }
+                } catch (JSONException e) {
+                  e.printStackTrace();
+                }
+              }
+            },
+            new Response.ErrorListener() {
+              @Override
+              public void onErrorResponse(VolleyError error) {}
+            }) {
+          @Override
+          protected Map<String, String> getParams() {
+            Map<String, String> params = new HashMap<>();
+            params.put("operation", "preconditions");
+            params.put("course_id", String.valueOf(current_course_id));
+            params.put("middle", String.valueOf(near));
+            params.put("attended", String.valueOf(full));
+
+            return params;
           }
-        }catch (JSONException e){
-          e.printStackTrace();
-        }
-      }
-    }, new Response.ErrorListener() {
-      @Override
-      public void onErrorResponse(VolleyError error) {
-
-      }
-    }){
-      @Override
-      protected Map<String, String> getParams() {
-        Map<String,String> params = new HashMap<>();
-        params.put("operation", "preconditions");
-        params.put("course_id", String.valueOf(current_course_id));
-        params.put("middle", String.valueOf(near));
-        params.put("attended",String.valueOf(full));
-
-        return params;
-
-      }
-    };
+        };
 
     DatabaseManager.getmInstance(getActivity().getApplicationContext()).execute(request);
-}
+  }
+
   private void set_preconditions(double near, double full) {
     if (near > full) {
       return;
     }
-    if(full * 0.8 < near){
+    if (full * 0.8 < near) {
       near = Math.floor(full * 0.8);
     }
     middle_seek.setProgress((int) near);
@@ -211,8 +214,8 @@ private void save(){
     String f = FULLY_ATTENDED + ": " + String.valueOf(full) + "%";
     near_text.setText(n);
     full_text.setText(f);
-    pre_full = (int)full;
-    pre_middle = (int)near;
+    pre_full = (int) full;
+    pre_middle = (int) near;
   }
 
   private void get_preconditions(final int course_id) {
@@ -280,6 +283,7 @@ private void save(){
                             jsonObject.getInt("course_id"), jsonObject.getString("course_code"));
                     given_lectures.add(given_lecture_row);
                   }
+                  courses.clear();
                   for (Given_Lecture_Row x : given_lectures) {
                     courses.add(x.course_code);
                   }
