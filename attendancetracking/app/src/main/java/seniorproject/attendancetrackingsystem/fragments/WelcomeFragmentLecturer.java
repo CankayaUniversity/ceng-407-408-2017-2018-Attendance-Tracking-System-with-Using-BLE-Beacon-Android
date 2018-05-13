@@ -2,13 +2,13 @@ package seniorproject.attendancetrackingsystem.fragments;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.support.v4.app.Fragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -124,17 +124,20 @@ public class WelcomeFragmentLecturer extends Fragment {
               e.printStackTrace();
             }
             if (current.after(start) && current.before(stop)) {
-              if (!updated) {
-                Log.d("update:", "Gathering courses of the today");
-                handler.post(new Runnable() {
-                  @Override
-                  public void run() {
-                    updateSchedule();
-                  }
-                });
+              if (!noCourseForToday) {
+                if (!updated) {
+                  Log.d("update:", "Gathering courses of the today");
+                  handler.post(
+                      new Runnable() {
+                        @Override
+                        public void run() {
+                          updateSchedule();
+                        }
+                      });
+                }
               }
             }
-            if (updated) setItems(current);
+            if (updated || noCourseForToday) setItems(current);
             if (currentCourses.isEmpty()) secureModeSwitchVisibility(false);
             else if (token.equals("not_initialized")) secureModeSwitchVisibility(true);
           }
@@ -214,7 +217,7 @@ public class WelcomeFragmentLecturer extends Fragment {
     StringBuilder out = new StringBuilder();
 
     while (!digits.isEmpty()) token = String.format("%s%s", token, digits.pollFirst());
-    for(int i =0; i < token.length(); i++){
+    for (int i = 0; i < token.length(); i++) {
       out.append(token.charAt(i)).append("-");
     }
     out = new StringBuilder(out.substring(0, out.length() - 1)); // ignoring last '-' character
@@ -344,12 +347,11 @@ public class WelcomeFragmentLecturer extends Fragment {
                     return params;
                   }
                 };
-            try{
+            try {
               DatabaseManager.getmInstance(getActivity().getApplicationContext()).execute(request);
-            }catch (NullPointerException e){
-              //do nothing
+            } catch (NullPointerException e) {
+              // do nothing
             }
-
           }
         });
   }
@@ -369,7 +371,7 @@ public class WelcomeFragmentLecturer extends Fragment {
                 args.putIntegerArrayList("classrooms", courses);
                 ReportFragmentLecturer f = new ReportFragmentLecturer();
                 BottomNavigationView mainNav = getActivity().findViewById(R.id.main_nav);
-             mainNav.setSelectedItemId(R.id.nav_report);
+                mainNav.setSelectedItemId(R.id.nav_report);
                 f.setArguments(args);
                 getFragmentManager().beginTransaction().replace(R.id.main_frame, f).commit();
               }
@@ -388,6 +390,7 @@ public class WelcomeFragmentLecturer extends Fragment {
 
   private void currentCourse(Date currentTime) {
     currentCourses.clear();
+    if(schedule==null) return;
     for (Schedule.CourseInfo x : schedule.getCourses()) {
       String start = x.getHour();
       String end = x.getEnd_hour();
@@ -404,6 +407,20 @@ public class WelcomeFragmentLecturer extends Fragment {
 
   private void setItems(Date currentTime) {
     currentCourse(currentTime);
+    if(noCourseForToday){
+      items.clear();
+      String info = "There is no course for today";
+      items.add(info);
+      setOnclick(false);
+      handler.post(
+              new Runnable() {
+                @Override
+                public void run() {
+                  listView.setAdapter(adapter);
+                }
+              });
+      return;
+    }
     if (currentCourses.size() > 1) {
       items.clear();
       String course_code = currentCourses.get(0).getCourse_code();

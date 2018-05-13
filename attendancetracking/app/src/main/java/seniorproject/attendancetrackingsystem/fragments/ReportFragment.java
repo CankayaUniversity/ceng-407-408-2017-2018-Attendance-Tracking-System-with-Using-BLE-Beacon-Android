@@ -217,6 +217,7 @@ public class ReportFragment extends Fragment {
                       alertDialog.dismiss();
                     }
                   });
+              alertDialog.setCanceledOnTouchOutside(false);
               alertDialog.show();
             } catch (ParseException e) {
               // do nothing
