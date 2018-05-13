@@ -395,7 +395,6 @@ public class WelcomeFragment extends Fragment {
   }
 
   private void getLatestCoursesList() {
-    Log.d("get", "run");
     if (!isConnected()) return;
     StringRequest request =
         new StringRequest(
