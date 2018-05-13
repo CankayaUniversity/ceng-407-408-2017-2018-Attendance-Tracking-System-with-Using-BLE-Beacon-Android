@@ -23,6 +23,39 @@ form{
 width:70%;
 margin:4% 15%;
 }
+
+.attendance form{
+	margin: auto;
+}
+
+.attendance input[type=submit]{
+border-radius:5px;
+padding: 8px;
+border:1px solid #7ac9b7;
+background-color: #4180C5;
+color: aliceblue;
+font-size:15px;
+cursor:pointer;
+text-align: center;
+
+}
+
+.attendance2 form{
+	margin: 5px;
+}
+
+.attendance2 input[type=submit]{
+margin-bottom: 2px;
+padding: 8px;
+border-radius:5px;
+margin-top: 2px;
+border:1px solid #FE2E2E;
+background-color: #FF0000;
+color: #FFFFFF;
+font-size:15px;
+cursor:pointer;
+}
+
 header{
 background-color: #4180C5;
 text-align: center;
@@ -46,17 +79,16 @@ border:1px solid #7ac9b7;
 
 input[type=submit]
 {
-margin-bottom: 20px;
-width: 200px;
+width: 150px;
 padding: 15px;
 border-radius:5px;
-margin-top: 10px;
 border:1px solid #7ac9b7;
 background-color: #4180C5;
 color: aliceblue;
 font-size:15px;
 cursor:pointer;
 }
+
 
 #submit:hover
 {
