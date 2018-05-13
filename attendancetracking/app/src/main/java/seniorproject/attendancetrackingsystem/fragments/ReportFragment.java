@@ -71,7 +71,7 @@ public class ReportFragment extends Fragment {
     handler = new Handler(Looper.getMainLooper());
     course_spinner = view.findViewById(R.id.lecturelist);
     course_adapter =
-        new ArrayAdapter<>(getActivity().getApplicationContext(), R.layout.spinner_item, courses);
+        new ArrayAdapter<>(getActivity().getApplicationContext(), R.layout.spinner_item2, courses);
     course_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
     calendar_holder = view.findViewById(R.id.cal_container);
     course_spinner.setOnItemSelectedListener(
