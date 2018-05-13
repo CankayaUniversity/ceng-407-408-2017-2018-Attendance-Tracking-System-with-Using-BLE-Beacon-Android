@@ -51,6 +51,16 @@ public class StudentLogin extends Fragment implements View.OnClickListener {
       String studentID = etStudentId.getText().toString();
       String password = etPassword.getText().toString();
 
+      char first = studentID.charAt(0);
+      if(first == 'c' || first == 'C') {
+
+        String sub = studentID.substring(1);
+
+        String newStudentID = "20" + sub;
+        studentID = newStudentID;
+
+      }
+
       HashMap<String, String> postParameters = new HashMap<>();
       postParameters.put("username", studentID);
       postParameters.put("password", password);
