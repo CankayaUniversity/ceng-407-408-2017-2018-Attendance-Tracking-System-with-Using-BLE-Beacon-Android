@@ -2,12 +2,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_gravity="bottom"
+    android:layout_marginBottom="60dp"
+    android:layout_marginTop="56dp"
+    android:background="@color/colorWhite"
     android:orientation="vertical"
     tools:context="seniorproject.attendancetrackingsystem.fragments.ReportFragmentLecturer">
 
 
     <ListView
-
         android:id="@+id/studentlist"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
@@ -17,9 +20,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
-        android:layout_marginTop="70dp"
-        android:text="Course Code"
-        android:textColor="@color/colorWhite"
+        android:layout_marginTop="10dp"
+        android:text="Choose Course Code"
+        android:textColor="@android:color/black"
         android:textSize="16sp" />
 
     <Spinner
@@ -28,12 +31,63 @@
         android:layout_height="50dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/fewWhite"
+        android:backgroundTint="@color/fewWhite"
+        android:popupBackground="@color/fewWhite"
         android:textAlignment="center" />
 
     <FrameLayout
         android:id="@+id/cal_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="425dp"
+        android:layout_marginBottom="2dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/totallecture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:shadowColor="@android:color/black"
+            android:shadowDy="1"
+            android:shadowRadius="1"
+            android:text="Total Lecture: "
+            android:textColor="@color/gradientEnd"/>
+        <TextView
+            android:id="@+id/attendancepercentage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:text="Attendance: %"
+            android:textColor="@color/gradientEnd"
+            android:shadowColor="@android:color/black"
+            android:shadowDy="1"
+            android:shadowRadius="1"
+            android:shadowDx="1"
+            />
+        <TextView
+            android:id="@+id/totalstudent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:text="Total Student: "
+            android:textColor="@color/gradientEnd"
+            android:shadowColor="@android:color/black"
+            android:shadowDy="1"
+            android:shadowRadius="1"
+            android:shadowDx="1"
+            />
+
+    </LinearLayout>
 
 </LinearLayout>

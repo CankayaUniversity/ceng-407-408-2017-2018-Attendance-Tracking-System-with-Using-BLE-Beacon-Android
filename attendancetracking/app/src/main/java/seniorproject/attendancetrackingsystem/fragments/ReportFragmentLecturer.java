@@ -89,7 +89,7 @@ public class ReportFragmentLecturer extends Fragment {
     courseTxt = view.findViewById(R.id.course_select);
     calendar_hoder = view.findViewById(R.id.cal_container);
     course_adapter =
-        new ArrayAdapter<>(getActivity().getApplicationContext(), R.layout.spinner_item, courses);
+        new ArrayAdapter<>(getActivity().getApplicationContext(), R.layout.spinner_item2, courses);
     course_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
     handler = new Handler(Looper.getMainLooper());
     timer = new Timer();

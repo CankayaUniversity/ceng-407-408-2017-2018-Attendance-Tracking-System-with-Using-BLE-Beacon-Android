@@ -85,7 +85,7 @@ public class CourseSettings extends Fragment {
         });
     courses = new ArrayList<>();
     adapter =
-        new ArrayAdapter<>(getActivity().getApplicationContext(), R.layout.spinner_item, courses);
+        new ArrayAdapter<>(getActivity().getApplicationContext(), R.layout.spinner_item2, courses);
     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
     get_course_list();
 
