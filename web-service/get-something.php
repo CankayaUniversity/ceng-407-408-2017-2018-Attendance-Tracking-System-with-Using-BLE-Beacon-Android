@@ -369,32 +369,21 @@ INNER JOIN Classroom ON Taken_Lectures.course_id = Classroom.course_id
 LEFT JOIN Attended_Students ON Classroom.classroom_id = Attended_Students.classroom_id AND Taken_Lectures.student_id = Attended_Students.student_id 
 INNER JOIN Course ON Course.course_id = Taken_Lectures.course_id
 WHERE Taken_Lectures.student_id = '$user_id'
-ORDER BY Classroom.date DESC, Classroom.hour DESC";
-		$count = 0;
+ORDER BY Classroom.date DESC, Classroom.hour DESC
+LIMIT 15";
 		
 		$result =mysqli_query($con, $query);
 		if(mysqli_num_rows($result) > 0){
 			$json = array();
 			while($row = mysqli_fetch_assoc($result)){
+				$time = $rot["time"];
+				$time = substr($time,0,2);
+				$time = ($time+1).":10";
+				$date = $row["date"]." ".$time;
 				$current = new DateTime();
-				$time = $row["hour"];
-				$date = new DateTime($row["date"]);
-				$interval = $current->diff($date);
-				if($interval->format("%d")>0){
+				$lookDate = new Datetime($date);
+				if($current >= $lookDate)
 					$json[] = $row;
-					$count++;
-				}else{
-					$end = substr($time,0,2);
-					$end = ($end+1).":10";
-					$date = new DateTime($end);
-					$interval = $current->diff($date);
-					if($interval->format("%H")<0){
-						$json[] = $row;
-						$count++;
-					}
-				}
-				
-				if($count >= 6) break;
 			}
 		}else
 		{
@@ -447,7 +436,11 @@ ORDER BY Classroom.date DESC, Classroom.hour DESC";
 		$result = mysqli_query($con, $query);
 		$json = array();
 		while($row = mysqli_fetch_assoc($result)){
-			$json[] = $row;
+			$date = $row["date"]." ".$row["hour"];
+			$current = new DateTime();
+			$lookDate = new DateTime($date);
+			if($current>=$lookDate)
+				$json[] = $row;
 		}
 		echo json_encode($json);
 	break;
@@ -503,7 +496,11 @@ ORDER BY Classroom.hour DESC";
 		if(mysqli_num_rows($result)>0){
 			$json = array();
 			while($row = mysqli_fetch_assoc($result)){
-				$json[] = $row;
+				$date = $row["date"]." ".$row["hour"];
+				$current = new DateTime();
+				$lookDate = new DateTime($date);
+				if($current >= $lookDate)
+					$json[] = $row;
 			}
 		}else
 		{
