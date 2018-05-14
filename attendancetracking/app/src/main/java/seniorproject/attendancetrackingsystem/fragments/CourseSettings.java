@@ -1,5 +1,6 @@
 package seniorproject.attendancetrackingsystem.fragments;
 
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.os.Handler;
@@ -203,13 +204,15 @@ public class CourseSettings extends Fragment {
 
   private void set_preconditions(double near, double full) {
     if (near > full) {
+      attended_seek.setProgress(pre_full);
+      middle_seek.setProgress(pre_middle);
       return;
     }
-    if (full * 0.8 < near) {
+    if ((near!=full) && full * 0.8 < near) {
       near = Math.floor(full * 0.8);
     }
-    middle_seek.setProgress((int) near);
     attended_seek.setProgress((int) full);
+    middle_seek.setProgress((int) near);
     String n = NEARLY_ATTENDED + ": " + String.valueOf(near) + "%";
     String f = FULLY_ATTENDED + ": " + String.valueOf(full) + "%";
     near_text.setText(n);
@@ -287,7 +290,9 @@ public class CourseSettings extends Fragment {
                   for (Given_Lecture_Row x : given_lectures) {
                     courses.add(x.course_code);
                   }
+                  Parcelable state = course_spinner.onSaveInstanceState();
                   course_spinner.setAdapter(adapter);
+                  course_spinner.onRestoreInstanceState(state);
                   setLayoutVisibility(true);
                 } catch (JSONException e) {
                   e.printStackTrace();

@@ -452,7 +452,9 @@ public class ReportFragmentLecturer extends Fragment {
                     String course = temp.course_code + " - " + temp.section;
                     courses.add(course);
                   }
+                  Parcelable state = course_spinner.onSaveInstanceState();
                   course_spinner.setAdapter(course_adapter);
+                  course_spinner.onRestoreInstanceState(state);
                 } catch (JSONException e) {
                   e.printStackTrace();
                 }
