@@ -237,6 +237,24 @@ switch($_POST["operation"]){
 		}
 		echo json_encode($json);
 	break;
+	case 'cancel-classroom':
+		if(empty($_POST["classroom_id"])){
+			$json["message"] = "Empty field error";
+			$json["success"] = false;
+			echo json_encode($json);
+			exit(0);
+		}
+		$classroom_id = $_POST["classroom_id"];
+		$query = "UPDATE Classroom SET active = 0 WHERE classroom_id='$classroom_id'";
+		$result = mysqli_query($con, $query);
+		if($result)
+			$json["success"] = true;
+		else{
+			$json["message"] = "Error while updating database";
+			$json["success"] = false;
+		}
+		echo json_encode($json);
+	break;
 }
 
 ?>

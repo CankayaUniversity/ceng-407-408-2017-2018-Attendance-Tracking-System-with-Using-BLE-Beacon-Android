@@ -28,6 +28,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -71,6 +72,7 @@ public class ReportFragmentLecturer extends Fragment {
   private FrameLayout calendar_hoder;
   private ArrayList<CalendarColumn> calendarColumns = new ArrayList<>();
   private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.ENGLISH);
+  private int lastSelectedSection;
 
   public ReportFragmentLecturer() {
     // Required empty public constructor
@@ -118,6 +120,7 @@ public class ReportFragmentLecturer extends Fragment {
         new AdapterView.OnItemSelectedListener() {
           @Override
           public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            lastSelectedSection = givenLectures.get(position).section;
             fillCalendar(givenLectures.get(position));
           }
 
@@ -317,10 +320,68 @@ private String createPercent(double number){
     getFragmentManager().beginTransaction().replace(R.id.main_frame, f).commit();
   }
 
-  private void cancelClassroom(int classroom_id) {
-    // TODO cancel classroom
-  }
+  private void cancelClassroom(final int classroom_id) {
+    StringRequest request = new StringRequest(Request.Method.POST, DatabaseManager.SetOperations,
+            new Response.Listener<String>() {
+              @Override
+              public void onResponse(String response) {
+                try{
+                JSONObject jsonObject = new JSONObject(response);
+                boolean result = jsonObject.getBoolean("success");
+                if(result){
+                  toastWithHandler("The lecture cancelled");
+                  fillCalendar(givenLectures.get(course_spinner.getSelectedItemPosition()));
+                }else
+                {
+                  toastWithHandler(jsonObject.getString("message"));
+                }
+                }catch (JSONException e){
+                  e.printStackTrace();
+                }
+              }
+            }, new Response.ErrorListener() {
+      @Override
+      public void onErrorResponse(VolleyError error) {
 
+      }
+    }){
+      @Override
+      protected Map<String, String> getParams() {
+        Map<String,String> params = new HashMap<>();
+        params.put("operation", "cancel-classroom");
+        params.put("classroom_id", String.valueOf(classroom_id));
+        return params;
+      }
+    };
+    try{
+    DatabaseManager.getmInstance(getActivity().getApplicationContext()).execute(request);
+    }catch (NullPointerException e){
+      //do nothing
+    }
+  }
+private void showCancelAlert(final int classroom_id, String course, int section, String hour){
+    final AlertDialog alertDialog = new AlertDialog.Builder(getActivity(), AlertDialog
+            .THEME_HOLO_LIGHT).create();
+    alertDialog.setTitle("Warning!");
+    String message = "Are you sure to cancel this lecture?\nLecture info: " + course+" - " +
+            section +"  " + hour;
+    alertDialog.setMessage(message);
+    alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Dismiss", new DialogInterface
+            .OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+        alertDialog.dismiss();
+      }
+    });
+    alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "Cancel Lecture", new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+        cancelClassroom(classroom_id);
+        alertDialog.dismiss();
+      }
+    });
+    alertDialog.show();
+}
   private void buildAndShowAlert(final Date date) {
     handler.post(
         new Runnable() {
@@ -368,7 +429,7 @@ private String createPercent(double number){
                       new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                          cancelClassroom(x.classroom_id);
+                         showCancelAlert(x.classroom_id, x.course_code, lastSelectedSection, x.hour);
                           alertDialog.dismiss();
                         }
                       });
