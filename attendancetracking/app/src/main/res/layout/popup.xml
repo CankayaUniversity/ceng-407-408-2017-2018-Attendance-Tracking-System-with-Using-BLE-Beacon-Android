@@ -34,23 +34,25 @@
             app:siBorderWidth="1dp"
             android:layout_gravity="center"
             android:layout_marginTop="5dp"/>
+
         <TextView
+            android:id="@+id/student_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="5dp"
             android:text="201611672"
-            android:textStyle="bold"
             android:textColor="@android:color/black"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="5dp"
-            android:id="@+id/popupStudenNum"/>
+            android:textStyle="bold" />
+
         <TextView
+            android:id="@+id/student_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Berkan Gürel"
-            android:textColor="@android:color/black"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="5dp"
-            android:id="@+id/popupStudentName"/>
+            android:text="Berkan Gürel"
+            android:textColor="@android:color/black" />
     </LinearLayout>
     <LinearLayout
         android:layout_marginTop="15dp"
@@ -68,12 +70,12 @@
             android:layout_height="100dp">
 
             <TextView
+                android:id="@+id/nearlyPercent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="20%"
-                android:textSize="18sp"
                 android:textColor="@android:color/black"
-                android:id="@+id/nearlyAttendance"/>
+                android:textSize="18sp" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -90,18 +92,19 @@
             android:layout_height="100dp">
 
             <TextView
+                android:id="@+id/attendedPercent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="70%"
-                android:textSize="18sp"
                 android:textColor="@android:color/black"
-                android:id="@+id/totalAttendance"/>
+                android:textSize="18sp" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Total"
-                android:textSize="18sp"
-                android:textColor="@android:color/black"/>
+                android:text="Attended"
+                android:textColor="@android:color/black"
+                android:textSize="18sp" />
         </LinearLayout>
         <LinearLayout
             android:background="@color/stateRed"
@@ -112,12 +115,12 @@
             android:layout_height="100dp">
 
             <TextView
+                android:id="@+id/absentPercent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="10%"
-                android:textSize="18sp"
                 android:textColor="@android:color/black"
-                android:id="@+id/absentAttendance"/>
+                android:textSize="18sp" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

@@ -337,16 +337,48 @@ WHERE Given_Lectures.lecturer_id = '$user_id'";
 		}
 		$classroom_id = $_POST["classroom_id"];
 		
-			$query = "SELECT Student.name, Student.surname, Student.student_number, Taken_Lectures.student_id, COALESCE(Attended_Students.status,0) as status, COALESCE(Attended_Students.time, 0) as time FROM Taken_Lectures 	INNER JOIN Classroom ON Classroom.course_id = Taken_Lectures.course_id AND Classroom.section = Taken_Lectures.section 
-	LEFT JOIN Attended_Students ON Classroom.classroom_id = Attended_Students.classroom_id AND Taken_Lectures.student_id = Attended_Students.student_id 
-	INNER JOIN Student ON Taken_Lectures.student_id = Student.student_id WHERE Classroom.classroom_id = ".$classroom_id.
+			$query = "SELECT Student.name, Student.surname, Student.student_number, Taken_Lectures.student_id, COALESCE(Attended_Students.status,0) as status, COALESCE(Attended_Students.time, 0) as time, Classroom.course_id, Classroom.section 
+			FROM Taken_Lectures 
+			INNER JOIN Classroom ON Classroom.course_id = Taken_Lectures.course_id AND Classroom.section = Taken_Lectures.section 
+			LEFT JOIN Attended_Students ON Classroom.classroom_id = Attended_Students.classroom_id AND Taken_Lectures.student_id = Attended_Students.student_id 
+			INNER JOIN Student ON Taken_Lectures.student_id = Student.student_id WHERE Classroom.classroom_id = ".$classroom_id.
 	"
-	ORDER BY status DESC, Student.student_number ASC";
+			ORDER BY status DESC, Student.student_number ASC";
 	$result = mysqli_query($con, $query);
 
 	if(mysqli_num_rows($result)>0){
 			$json = array();
 		while($row = mysqli_fetch_assoc($result)){
+			$student_id = $row["student_id"];
+			$course_id = $row["course_id"];
+			$section = $row["section"];
+			
+			$attendanceQuery = "SELECT Classroom.*, COALESCE(Attended_Students.status, 0) as status 
+FROM Classroom 
+LEFT JOIN Attended_Students ON Classroom.classroom_id = Attended_Students.classroom_id and Attended_Students.student_id = '$student_id'
+WHERE Classroom.course_id = '$course_id' AND Classroom.section = '$section'";
+
+			$attendanceResult = mysqli_query($con, $attendanceQuery);
+			$attendedCount = 0;
+			$nearlyCount = 0;
+			$absentCount = 0;
+			while($aRow = mysqli_fetch_assoc($attendanceResult)){
+				$time = $aRow["hour"];
+				$time = substr($time,0,2);
+				$time = ($time + 1).":10";
+				$date = $aRow["date"];
+				$current = new DateTime();
+				$lookDate = new DateTime($date);
+				if($current >= $lookDate){
+					if($aRow["status"] == 2 || $aRow["status"] == 3) $attendedCount++;
+					else if($aRow["status"] == 1) $nearlyCount++;
+					else $absentCount++;
+				}
+			}
+			$row["attended"] = $attendedCount;
+			$row["nearly"] = $nearlyCount;
+			$row["absent"] = $absentCount;
+			if($row["status"]==3) $row["status"] = 2;
 			$json[]= $row;
 		}
 	}else{

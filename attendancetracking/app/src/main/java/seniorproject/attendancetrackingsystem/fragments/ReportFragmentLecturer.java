@@ -2,6 +2,7 @@ package seniorproject.attendancetrackingsystem.fragments;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
@@ -38,6 +39,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -123,8 +126,75 @@ public class ReportFragmentLecturer extends Fragment {
             changeVisiblity(calendar_hoder, false);
           }
         });
-  }
+    final Dialog popup = new Dialog(getActivity());
+    listView.setOnItemClickListener(
+        new AdapterView.OnItemClickListener() {
+          @Override
+          public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            popup.setContentView(R.layout.popup);
+            // getting UI elements
+            TextView student_number = popup.findViewById(R.id.student_number);
+            TextView student_name = popup.findViewById(R.id.student_name);
+            TextView close = popup.findViewById(R.id.txtclose);
+            TextView attended = popup.findViewById(R.id.attendedPercent);
+            TextView nearly = popup.findViewById(R.id.nearlyPercent);
+            TextView absent = popup.findViewById(R.id.absentPercent);
+            Button mark = popup.findViewById(R.id.mark);
+            // getting student info
+            StudentRow student = studentList.get(position);
+            // Calculating total lecture hour
+            double totalLecture = student.absent + student.nearly + student.attended;
+            // Calculating percentages
+            try{
+              double attendedPercent = (double)student.attended / totalLecture;
+            double absentPercent = (double)student.absent / totalLecture;
+            double nearlyPercent = (double)student.nearly / totalLecture;
+            attendedPercent = attendedPercent * 100;
+            absentPercent = absentPercent * 100;
+            nearlyPercent = nearlyPercent * 100;
+            // Formatting double numbers
 
+            String at = createPercent(attendedPercent);
+            String ab = createPercent(absentPercent);
+            String nr = createPercent(nearlyPercent);
+            // setting percentages
+            attended.setText(at);
+            nearly.setText(nr);
+            absent.setText(ab);
+}catch(ArithmeticException e){
+              attended.setText("0%");
+              nearly.setText("0%");
+              absent.setText("0%");
+            }
+            // if student is already attended, make invisible mark as attended button
+            if (student.state == 2) mark.setVisibility(View.INVISIBLE);
+            else mark.setVisibility(View.VISIBLE);
+
+            student_number.setText(String.valueOf(student.number));
+            student_name.setText(student.name);
+            close.setOnClickListener(
+                new View.OnClickListener() {
+                  @Override
+                  public void onClick(View v) {
+                    popup.dismiss();
+                  }
+                });
+            popup.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            popup.show();
+          }
+        });
+  }
+private String createPercent(double number){
+  NumberFormat formatter = new DecimalFormat("#0.0");
+    String result;
+    String parts[] = formatter.format(number).split(",");
+    if(parts[1].equals("0")) result = String.valueOf((int)number) + "%";
+    else {
+      result = formatter.format(number) + "%";
+      result = result.replace(',','.');
+    }
+    return result;
+}
   private void changeVisiblity(final View v, final boolean state) {
     handler.post(
         new Runnable() {
@@ -385,7 +455,10 @@ public class ReportFragmentLecturer extends Fragment {
                             jsonObject.getString("name") + " " + jsonObject.getString("surname"),
                             jsonObject.getInt("student_number"),
                             jsonObject.getInt("status"),
-                            jsonObject.getInt("time"));
+                            jsonObject.getInt("time"),
+                            jsonObject.getInt("attended"),
+                            jsonObject.getInt("nearly"),
+                            jsonObject.getInt("absent"));
                     studentList.add(studentRow);
                   }
                   listView.setAdapter(adapter);
@@ -503,16 +576,22 @@ public class ReportFragmentLecturer extends Fragment {
   }
 
   public class StudentRow {
-    public String name;
-    public int number;
-    public int state;
-    public int time;
+    String name;
+    int number;
+    int state;
+    int time;
+    int attended;
+    int nearly;
+    int absent;
 
-    public StudentRow(String name, int number, int state, int time) {
+    StudentRow(String name, int number, int state, int time, int attended, int nearly, int absent) {
       this.name = name;
       this.number = number;
       this.state = state;
       this.time = time;
+      this.attended = attended;
+      this.nearly = nearly;
+      this.absent = absent;
     }
 
     public StudentRow() {
@@ -547,7 +626,6 @@ public class ReportFragmentLecturer extends Fragment {
         holder.txtNumber = row.findViewById(R.id.studentNo);
         holder.txtLineNum = row.findViewById(R.id.lineNum);
 
-
         row.setTag(holder);
       } else {
         holder = (StudentHolder) row.getTag();
@@ -555,10 +633,10 @@ public class ReportFragmentLecturer extends Fragment {
 
       StudentRow student = data.get(position);
 
-      //String info = student.name + " [" + student.time / 60000 + " m]";
+      // String info = student.name + " [" + student.time / 60000 + " m]";
       holder.txtName.setText(student.name);
       holder.txtNumber.setText(String.valueOf(student.number));
-      holder.txtLineNum.setText(String.valueOf(position+1));
+      holder.txtLineNum.setText(String.valueOf(position + 1));
       if (student.state == 0) row.setBackgroundColor(getResources().getColor(R.color.stateRed));
       else if (student.state == 1)
         row.setBackgroundColor(getResources().getColor(R.color.stateYellow));
