@@ -1,6 +1,7 @@
 package seniorproject.attendancetrackingsystem.fragments;
 
 import android.app.AlertDialog;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -95,8 +96,9 @@ public class WelcomeFragment extends Fragment {
     adapter =
         new ArrayAdapter<>(
             getActivity().getApplicationContext(), R.layout.notification_item, messages);
-
+    Parcelable state = listView.onSaveInstanceState();
     listView.setAdapter(adapter);
+    listView.onRestoreInstanceState(state);
     showMessages();
     timer.scheduleAtFixedRate(
         new TimerTask() {
@@ -145,7 +147,9 @@ public class WelcomeFragment extends Fragment {
       messages.add("There is no course for today");
     }
     addAllLatestCourses();
+    Parcelable state = listView.onSaveInstanceState();
     listView.setAdapter(adapter);
+    listView.onRestoreInstanceState(state);
   }
 
   private void buildAlertDialog() {
@@ -390,7 +394,9 @@ public class WelcomeFragment extends Fragment {
   private void addAllLatestCourses() {
     for (LatestCourses x : latestCourses) {
       messages.add(x.toString());
+      Parcelable state = listView.onSaveInstanceState();
       listView.setAdapter(adapter);
+      listView.onRestoreInstanceState(state);
     }
   }
 

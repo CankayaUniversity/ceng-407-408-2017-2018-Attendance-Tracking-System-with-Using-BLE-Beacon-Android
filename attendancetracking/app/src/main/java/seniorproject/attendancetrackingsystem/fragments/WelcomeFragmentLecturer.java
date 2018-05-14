@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
@@ -416,7 +417,9 @@ public class WelcomeFragmentLecturer extends Fragment {
               new Runnable() {
                 @Override
                 public void run() {
+                  Parcelable state = listView.onSaveInstanceState();
                   listView.setAdapter(adapter);
+                  listView.onRestoreInstanceState(state);
                 }
               });
       return;
@@ -469,7 +472,9 @@ public class WelcomeFragmentLecturer extends Fragment {
         new Runnable() {
           @Override
           public void run() {
+            Parcelable state = listView.onSaveInstanceState();
             listView.setAdapter(adapter);
+            listView.onRestoreInstanceState(state);
           }
         });
   }
