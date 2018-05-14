@@ -421,7 +421,7 @@ public class WelcomeFragment extends Fragment {
                 }
                 try {
                   JSONArray jsonArray = new JSONArray(response);
-                  if (jsonArray.length() > 0) latestCourses.clear();
+                  if(jsonArray.length()>0) latestCourses.clear();
                   for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject jsonObject = jsonArray.getJSONObject(i);
                     LatestCourses temp =
@@ -432,7 +432,6 @@ public class WelcomeFragment extends Fragment {
                             jsonObject.getInt("status"));
                     latestCourses.add(temp);
                   }
-                  addAllLatestCourses();
                 } catch (JSONException e) {
                   e.printStackTrace();
                 }

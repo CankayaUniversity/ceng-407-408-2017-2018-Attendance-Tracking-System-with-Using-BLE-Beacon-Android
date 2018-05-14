@@ -376,7 +376,7 @@ LIMIT 15";
 		if(mysqli_num_rows($result) > 0){
 			$json = array();
 			while($row = mysqli_fetch_assoc($result)){
-				$time = $rot["time"];
+				$time = $row["hour"];
 				$time = substr($time,0,2);
 				$time = ($time+1).":10";
 				$date = $row["date"]." ".$time;
