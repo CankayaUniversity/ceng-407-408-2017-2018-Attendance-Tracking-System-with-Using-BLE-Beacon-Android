@@ -12,7 +12,6 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -137,6 +136,8 @@ public class ServiceManager extends Service {
                 updatedForToday = false;
                 noCourseForToday = false;
                 secure = false;
+                if (!new SessionManager(getBaseContext()).dailyNotificationState())
+                  new SessionManager(getBaseContext()).changeDailyNotificatonState(true);
               }
             } catch (ParseException e) {
               e.printStackTrace();
@@ -291,8 +292,12 @@ public class ServiceManager extends Service {
                               JsonHelper.getmInstance(getBaseContext()).parseSchedule(response);
                           if (schedule.getCourses().size() > 0) {
                             updatedForToday = true;
-                            simpleNotification(
-                                "Update", "Your daily schedule is updated", MainActivity.class);
+                            if (new SessionManager(getBaseContext()).dailyNotificationState()) {
+                              simpleNotification(
+                                  "Update", "Your daily schedule is updated", MainActivity.class);
+                              new SessionManager(getBaseContext())
+                                  .changeDailyNotificatonState(false);
+                            }
                           }
                         }
                       }
@@ -354,7 +359,7 @@ public class ServiceManager extends Service {
     File root = new File(Environment.getExternalStorageDirectory(), "AttendanceTracking");
     if (!root.exists()) return; // no need to push something to database
     File[] list = root.listFiles();
-    if(list == null) return;
+    if (list == null) return;
     if (list.length == 0) return; // no nedd to push something to database
     connectionChecker();
     if (connected) {
