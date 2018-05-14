@@ -379,6 +379,8 @@ WHERE Classroom.course_id = '$course_id' AND Classroom.section = '$section'";
 			$row["nearly"] = $nearlyCount;
 			$row["absent"] = $absentCount;
 			if($row["status"]==3) $row["status"] = 2;
+			
+			$row["classroom_id"] =$classroom_id;
 			$json[]= $row;
 		}
 	}else{

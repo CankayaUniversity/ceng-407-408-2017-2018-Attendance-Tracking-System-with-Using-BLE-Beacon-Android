@@ -255,6 +255,39 @@ switch($_POST["operation"]){
 		}
 		echo json_encode($json);
 	break;
+	case 'mark-as-attended':
+		if(empty($_POST["classroom_id"]) || empty($_POST["student_id"])){
+			$json["message"] = "Empty field error";
+			$json["success"] = false;
+			echo json_encode($json);
+			exit(0);
+		}
+		$classroom_id = $_POST["classroom_id"];
+		$student_id = $_POST["student_id"];
+		
+		$query = "SELECT * FROM Attended_Students WHERE classroom_id = '$classroom_id' AND student_id = '$student_id'";
+		
+		$result = mysqli_query($con, $query);
+		if(mysqli_num_rows($result)>0){
+			$query = "UPDATE Attended_Students SET status = '3' WHERE classroom_id = '$classroom_id' AND student_id = '$student_id'";
+			$result = mysqli_query($con, $query);
+			if($result) $json["success"] = true;
+			else{
+				$json["message"] = "Error while updating database";
+				$json["success"] = false;
+			}
+		}else
+		{
+			$query = "INSERT Attended_Students(classroom_id, student_id, status) VALUES('$classroom_id', '$student_id', '3')";
+			$result = mysqli_query($con, $query);
+			if($result) $json["success"] = true;
+			else {
+				$json["message"] = "Error while inserting database";
+				$json["success"] = false;
+			}
+		}
+		echo json_encode($json);
+	break;
 }
 
 ?>

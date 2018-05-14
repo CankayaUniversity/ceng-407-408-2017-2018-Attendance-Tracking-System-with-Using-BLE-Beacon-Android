@@ -28,7 +28,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -144,27 +143,27 @@ public class ReportFragmentLecturer extends Fragment {
             TextView absent = popup.findViewById(R.id.absentPercent);
             Button mark = popup.findViewById(R.id.mark);
             // getting student info
-            StudentRow student = studentList.get(position);
+            final StudentRow student = studentList.get(position);
             // Calculating total lecture hour
             double totalLecture = student.absent + student.nearly + student.attended;
             // Calculating percentages
-            try{
-              double attendedPercent = (double)student.attended / totalLecture;
-            double absentPercent = (double)student.absent / totalLecture;
-            double nearlyPercent = (double)student.nearly / totalLecture;
-            attendedPercent = attendedPercent * 100;
-            absentPercent = absentPercent * 100;
-            nearlyPercent = nearlyPercent * 100;
-            // Formatting double numbers
+            try {
+              double attendedPercent = (double) student.attended / totalLecture;
+              double absentPercent = (double) student.absent / totalLecture;
+              double nearlyPercent = (double) student.nearly / totalLecture;
+              attendedPercent = attendedPercent * 100;
+              absentPercent = absentPercent * 100;
+              nearlyPercent = nearlyPercent * 100;
+              // Formatting double numbers
 
-            String at = createPercent(attendedPercent);
-            String ab = createPercent(absentPercent);
-            String nr = createPercent(nearlyPercent);
-            // setting percentages
-            attended.setText(at);
-            nearly.setText(nr);
-            absent.setText(ab);
-}catch(ArithmeticException e){
+              String at = createPercent(attendedPercent);
+              String ab = createPercent(absentPercent);
+              String nr = createPercent(nearlyPercent);
+              // setting percentages
+              attended.setText(at);
+              nearly.setText(nr);
+              absent.setText(ab);
+            } catch (ArithmeticException e) {
               attended.setText("0%");
               nearly.setText("0%");
               absent.setText("0%");
@@ -172,7 +171,14 @@ public class ReportFragmentLecturer extends Fragment {
             // if student is already attended, make invisible mark as attended button
             if (student.state == 2) mark.setVisibility(View.INVISIBLE);
             else mark.setVisibility(View.VISIBLE);
-
+            mark.setOnClickListener(
+                new View.OnClickListener() {
+                  @Override
+                  public void onClick(View v) {
+                    markAsAttended(student.classroom_id, student.student_id);
+                    popup.dismiss();
+                  }
+                });
             student_number.setText(String.valueOf(student.number));
             student_name.setText(student.name);
             close.setOnClickListener(
@@ -187,17 +193,61 @@ public class ReportFragmentLecturer extends Fragment {
           }
         });
   }
-private String createPercent(double number){
-  NumberFormat formatter = new DecimalFormat("#0.0");
+
+  private String createPercent(double number) {
+    NumberFormat formatter = new DecimalFormat("#0.0");
     String result;
     String parts[] = formatter.format(number).split(",");
-    if(parts[1].equals("0")) result = String.valueOf((int)number) + "%";
+    if (parts[1].equals("0")) result = String.valueOf((int) number) + "%";
     else {
       result = formatter.format(number) + "%";
-      result = result.replace(',','.');
+      result = result.replace(',', '.');
     }
     return result;
-}
+  }
+
+  private void markAsAttended(final int classroom_id, final int student_id) {
+    final StringRequest request =
+        new StringRequest(
+            Request.Method.POST,
+            DatabaseManager.SetOperations,
+            new Response.Listener<String>() {
+              @Override
+              public void onResponse(String response) {
+                try {
+                  JSONObject jsonObject = new JSONObject(response);
+                  boolean result = jsonObject.getBoolean("success");
+                  if (result) {
+                    toastWithHandler("Student has been marked as attended");
+                    getStudentList(classroom_id);
+                  } else {
+                    toastWithHandler(jsonObject.getString("message"));
+                  }
+                } catch (JSONException e) {
+                  e.printStackTrace();
+                }
+              }
+            },
+            new Response.ErrorListener() {
+              @Override
+              public void onErrorResponse(VolleyError error) {}
+            }) {
+          @Override
+          protected Map<String, String> getParams() {
+            Map<String, String> params = new HashMap<>();
+            params.put("operation", "mark-as-attended");
+            params.put("student_id", String.valueOf(student_id));
+            params.put("classroom_id", String.valueOf(classroom_id));
+            return params;
+          }
+        };
+    try {
+      DatabaseManager.getmInstance(getActivity().getApplicationContext()).execute(request);
+    } catch (NullPointerException e) {
+      // do nothing
+    }
+  }
+
   private void changeVisiblity(final View v, final boolean state) {
     handler.post(
         new Runnable() {
@@ -321,67 +371,80 @@ private String createPercent(double number){
   }
 
   private void cancelClassroom(final int classroom_id) {
-    StringRequest request = new StringRequest(Request.Method.POST, DatabaseManager.SetOperations,
+    StringRequest request =
+        new StringRequest(
+            Request.Method.POST,
+            DatabaseManager.SetOperations,
             new Response.Listener<String>() {
               @Override
               public void onResponse(String response) {
-                try{
-                JSONObject jsonObject = new JSONObject(response);
-                boolean result = jsonObject.getBoolean("success");
-                if(result){
-                  toastWithHandler("The lecture cancelled");
-                  fillCalendar(givenLectures.get(course_spinner.getSelectedItemPosition()));
-                }else
-                {
-                  toastWithHandler(jsonObject.getString("message"));
-                }
-                }catch (JSONException e){
+                try {
+                  JSONObject jsonObject = new JSONObject(response);
+                  boolean result = jsonObject.getBoolean("success");
+                  if (result) {
+                    toastWithHandler("The lecture cancelled");
+                    fillCalendar(givenLectures.get(course_spinner.getSelectedItemPosition()));
+                  } else {
+                    toastWithHandler(jsonObject.getString("message"));
+                  }
+                } catch (JSONException e) {
                   e.printStackTrace();
                 }
               }
-            }, new Response.ErrorListener() {
-      @Override
-      public void onErrorResponse(VolleyError error) {
-
-      }
-    }){
-      @Override
-      protected Map<String, String> getParams() {
-        Map<String,String> params = new HashMap<>();
-        params.put("operation", "cancel-classroom");
-        params.put("classroom_id", String.valueOf(classroom_id));
-        return params;
-      }
-    };
-    try{
-    DatabaseManager.getmInstance(getActivity().getApplicationContext()).execute(request);
-    }catch (NullPointerException e){
-      //do nothing
+            },
+            new Response.ErrorListener() {
+              @Override
+              public void onErrorResponse(VolleyError error) {}
+            }) {
+          @Override
+          protected Map<String, String> getParams() {
+            Map<String, String> params = new HashMap<>();
+            params.put("operation", "cancel-classroom");
+            params.put("classroom_id", String.valueOf(classroom_id));
+            return params;
+          }
+        };
+    try {
+      DatabaseManager.getmInstance(getActivity().getApplicationContext()).execute(request);
+    } catch (NullPointerException e) {
+      // do nothing
     }
   }
-private void showCancelAlert(final int classroom_id, String course, int section, String hour){
-    final AlertDialog alertDialog = new AlertDialog.Builder(getActivity(), AlertDialog
-            .THEME_HOLO_LIGHT).create();
+
+  private void showCancelAlert(final int classroom_id, String course, int section, String hour) {
+    final AlertDialog alertDialog =
+        new AlertDialog.Builder(getActivity(), AlertDialog.THEME_HOLO_LIGHT).create();
     alertDialog.setTitle("Warning!");
-    String message = "Are you sure to cancel this lecture?\nLecture info: " + course+" - " +
-            section +"  " + hour;
+    String message =
+        "Are you sure to cancel this lecture?\nLecture info: "
+            + course
+            + " - "
+            + section
+            + "  "
+            + hour;
     alertDialog.setMessage(message);
-    alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Dismiss", new DialogInterface
-            .OnClickListener() {
-      @Override
-      public void onClick(DialogInterface dialog, int which) {
-        alertDialog.dismiss();
-      }
-    });
-    alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, "Cancel Lecture", new DialogInterface.OnClickListener() {
-      @Override
-      public void onClick(DialogInterface dialog, int which) {
-        cancelClassroom(classroom_id);
-        alertDialog.dismiss();
-      }
-    });
+    alertDialog.setButton(
+        DialogInterface.BUTTON_NEGATIVE,
+        "Dismiss",
+        new DialogInterface.OnClickListener() {
+          @Override
+          public void onClick(DialogInterface dialog, int which) {
+            alertDialog.dismiss();
+          }
+        });
+    alertDialog.setButton(
+        DialogInterface.BUTTON_POSITIVE,
+        "Cancel Lecture",
+        new DialogInterface.OnClickListener() {
+          @Override
+          public void onClick(DialogInterface dialog, int which) {
+            cancelClassroom(classroom_id);
+            alertDialog.dismiss();
+          }
+        });
     alertDialog.show();
-}
+  }
+
   private void buildAndShowAlert(final Date date) {
     handler.post(
         new Runnable() {
@@ -429,7 +492,8 @@ private void showCancelAlert(final int classroom_id, String course, int section,
                       new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                         showCancelAlert(x.classroom_id, x.course_code, lastSelectedSection, x.hour);
+                          showCancelAlert(
+                              x.classroom_id, x.course_code, lastSelectedSection, x.hour);
                           alertDialog.dismiss();
                         }
                       });
@@ -513,6 +577,8 @@ private void showCancelAlert(final int classroom_id, String course, int section,
                     JSONObject jsonObject = jsonArray.getJSONObject(i);
                     StudentRow studentRow =
                         new StudentRow(
+                            jsonObject.getInt("student_id"),
+                            jsonObject.getInt("classroom_id"),
                             jsonObject.getString("name") + " " + jsonObject.getString("surname"),
                             jsonObject.getInt("student_number"),
                             jsonObject.getInt("status"),
@@ -644,8 +710,19 @@ private void showCancelAlert(final int classroom_id, String course, int section,
     int attended;
     int nearly;
     int absent;
+    int student_id;
+    int classroom_id;
 
-    StudentRow(String name, int number, int state, int time, int attended, int nearly, int absent) {
+    StudentRow(
+        int student_id,
+        int classroom_id,
+        String name,
+        int number,
+        int state,
+        int time,
+        int attended,
+        int nearly,
+        int absent) {
       this.name = name;
       this.number = number;
       this.state = state;
@@ -653,6 +730,8 @@ private void showCancelAlert(final int classroom_id, String course, int section,
       this.attended = attended;
       this.nearly = nearly;
       this.absent = absent;
+      this.student_id = student_id;
+      this.classroom_id = classroom_id;
     }
 
     public StudentRow() {
