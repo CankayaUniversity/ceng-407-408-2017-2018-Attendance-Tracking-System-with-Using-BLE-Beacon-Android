@@ -39,9 +39,9 @@ import seniorproject.attendancetrackingsystem.utils.RegularMode;
 import seniorproject.attendancetrackingsystem.utils.Schedule;
 
 public class ServiceManager extends Service {
-  private static final String UPDATE = "09:00";
-  private static final String START_REGULAR = "00:20";
-  private static final String STOP_REGULAR = "23:59";
+  private static final String UPDATE = "08:30"; // updating at 08:30
+  private static final String START_REGULAR = "09:20"; // starting regular mode at 09:20
+  private static final String STOP_REGULAR = "17:10"; // stoping regular mode at 17:10
   private boolean updatedForToday = false;
   private boolean noCourseForToday = false;
   private Schedule schedule = null;
@@ -77,10 +77,12 @@ public class ServiceManager extends Service {
               regularStart = dateFormat.parse(START_REGULAR);
               regularEnd = dateFormat.parse(STOP_REGULAR);
               updateDate = dateFormat.parse(UPDATE);
-              if (currentDate.after(updateDate) && currentDate.before(regularStart)) {
+              if (currentDate.compareTo(updateDate) >= 0
+                  && currentDate.compareTo(regularStart) < 0) {
                 // Log.i("ACTION", "UPDATE");
                 updateSchedule();
-              } else if (currentDate.after(regularStart) && currentDate.before(regularEnd)) {
+              } else if (currentDate.compareTo(regularStart) >= 0
+                  && currentDate.compareTo(regularEnd) < 0) {
                 //  Log.i("ACTION", "START REGULAR MODE");
                 if (!noCourseForToday) {
                   if (updatedForToday) {
@@ -106,7 +108,7 @@ public class ServiceManager extends Service {
                       }
                     } else {
                       // BREAK TIME RUNS ONCE
-                      if (breakTime != null && currentDate.after(breakTime)) {
+                      if (breakTime != null && currentDate.compareTo(breakTime) >= 0) {
                         BluetoothAdapter.getDefaultAdapter().disable();
                         stopRegularMode();
                         allowNotification = true;
@@ -128,10 +130,10 @@ public class ServiceManager extends Service {
                   // IF THERE IS NOT ANY COURSE FOR TODAY
                   broadcastCourseInfo("no_course_for_today");
                 }
-              } else if (currentDate.after(regularEnd)) {
+              } else {
                 // Log.i("ACTION", "STOP REGULAR MODE");
                 // bluetoothChecker.interrupt();
-                broadcastRegularModeInfo(false);
+                broadcastCourseInfo("end_of_the_day");
                 if (isServiceIsRunning(RegularMode.class)) stopRegularMode();
                 updatedForToday = false;
                 noCourseForToday = false;
@@ -157,8 +159,8 @@ public class ServiceManager extends Service {
             if (currentDate != null
                 && regularStart != null
                 && regularEnd != null
-                && currentDate.after(regularStart)
-                && currentDate.before(regularEnd)) {
+                && currentDate.compareTo(regularStart) >= 0
+                && currentDate.compareTo(regularEnd) < 0) {
               connectionChecker();
               if (connected && currentCourse != null) tokenListener();
             }
@@ -348,13 +350,6 @@ public class ServiceManager extends Service {
     sendBroadcast(intent);
   }
 
-  private void broadcastRegularModeInfo(boolean status) {
-    Intent intent = new Intent();
-    intent.setAction("RegularModeStatus");
-    intent.putExtra("status", status);
-    sendBroadcast(intent);
-  }
-
   private void runCollector() {
     File root = new File(Environment.getExternalStorageDirectory(), "AttendanceTracking");
     if (!root.exists()) return; // no need to push something to database
@@ -386,8 +381,8 @@ public class ServiceManager extends Service {
       String start = x.getHour();
       String end = x.getEnd_hour();
       try {
-        if (currentTime.after(dateFormat.parse(start))
-            && currentTime.before(dateFormat.parse(end))) {
+        if (currentTime.compareTo(dateFormat.parse(start)) >= 0
+            && currentTime.compareTo(dateFormat.parse(end)) < 0) {
           current = x;
         }
       } catch (ParseException e) {

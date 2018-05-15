@@ -1,8 +1,6 @@
 package seniorproject.attendancetrackingsystem.fragments;
 
 import android.app.AlertDialog;
-import android.os.Parcelable;
-import android.support.v4.app.Fragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -13,11 +11,12 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
+import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,6 +60,7 @@ public class WelcomeFragment extends Fragment {
   private String course_code = "";
   private boolean secure_mode = false;
   private boolean expired = false;
+  private boolean regular_mode = false;
   private Timer timer;
   private ArrayList<LatestCourses> latestCourses = new ArrayList<>();
 
@@ -137,6 +137,8 @@ public class WelcomeFragment extends Fragment {
       else if (secure_mode) {
         messages.add(0,"Current Course: " + course_code + " \n(Secure Mode - Expired)");
       } else messages.add(0,"Current Course: " + course_code);
+    } else if(course_code.equals("end_of_the_day")){
+      messages.add(0, "End of the day");
     } else if (course_code.equals("null")) {
       secure_mode = false;
       expired = false;
@@ -476,6 +478,7 @@ public class WelcomeFragment extends Fragment {
       course_code = intent.getStringExtra("course_code");
       classroom_id = intent.getIntExtra("classroom_id", 0);
       secure_mode = intent.getBooleanExtra("secure", false);
+      regular_mode = intent.getBooleanExtra("regular",true);
       expired = intent.getBooleanExtra("expired", false);
       if (secure_mode && !expired) {
         listView.setOnItemClickListener(

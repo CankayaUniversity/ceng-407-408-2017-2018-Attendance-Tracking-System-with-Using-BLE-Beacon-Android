@@ -119,12 +119,12 @@ public class WelcomeFragmentLecturer extends Fragment {
           public void run() {
             try {
               current = dateFormat.parse(dateFormat.format(new Date()));
-              start = dateFormat.parse("00:00");
-              stop = dateFormat.parse("23:59");
+              start = dateFormat.parse("09:20");
+              stop = dateFormat.parse("17:10");
             } catch (ParseException e) {
               e.printStackTrace();
             }
-            if (current.after(start) && current.before(stop)) {
+            if (current.compareTo(start) >= 0 && current.compareTo(stop) < 0) {
               if (!noCourseForToday) {
                 if (!updated) {
                   Log.d("update:", "Gathering courses of the today");
@@ -137,6 +137,20 @@ public class WelcomeFragmentLecturer extends Fragment {
                       });
                 }
               }
+            }else{
+              updated = false;
+              noCourseForToday = false;
+              items.clear();
+              items.add("End of the day");
+              handler.post(new Runnable() {
+                @Override
+                public void run() {
+                  Parcelable state = listView.onSaveInstanceState();
+                  listView.setAdapter(adapter);
+                  listView.onRestoreInstanceState(state);
+                  currentCourses.clear();
+                }
+              });
             }
             if (updated || noCourseForToday) setItems(current);
             if (currentCourses.isEmpty()) secureModeSwitchVisibility(false);
@@ -396,8 +410,8 @@ public class WelcomeFragmentLecturer extends Fragment {
       String start = x.getHour();
       String end = x.getEnd_hour();
       try {
-        if (currentTime.after(dateFormat.parse(start))
-            && currentTime.before(dateFormat.parse(end))) {
+        if (currentTime.compareTo(dateFormat.parse(start)) >= 0
+            && currentTime.compareTo(dateFormat.parse(end))< 0) {
           currentCourses.add(x);
         }
       } catch (ParseException e) {

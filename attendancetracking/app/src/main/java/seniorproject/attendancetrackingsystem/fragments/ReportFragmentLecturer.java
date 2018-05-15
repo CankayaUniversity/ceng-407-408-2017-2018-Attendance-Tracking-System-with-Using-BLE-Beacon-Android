@@ -341,7 +341,7 @@ public class ReportFragmentLecturer extends Fragment {
           }
         },
         0,
-        10000); // 2 minutes
+        60000); // every one minute
   }
 
   private void toastWithHandler(final String text) {
