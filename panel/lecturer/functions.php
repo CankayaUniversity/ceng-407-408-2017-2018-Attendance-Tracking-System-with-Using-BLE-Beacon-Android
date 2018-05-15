@@ -343,22 +343,17 @@ function get_attended_student_list($classroom){
 
 function delete_attended($classroom_id){
 	global $db;
-	$query = "DELETE FROM Attended_Students WHERE classroom_id = '$classroom_id'";
-	$result = $db->query($query);
-	if($result){
-		$query = "DELETE FROM Classroom WHERE classroom_id = '$classroom_id'";
-		$result = $db->query($query);
-		if($result){
-			// DELETION SUCCESSFUL
-		}
-		else
-		{
-			// DELETION FAILED
-		}
-	}else
-	{
-		// DELETION FAILED
+	if(empty($classroom_id)){
+		call_loader("An error has been occured!", "index.php");
+		return;
 	}
+	
+	$query = "UPDATE Classroom SET active = 0 WHERE classroom_id = '$classroom_id'";
+	$result = $db->query($query);
+	if($result)
+		call_loader("The classroom has been successfully canceled", "index.php?page=report_interface");
+	else
+		call_loader("An error has been occured while canceling lecture", "index.php?page=report_interface");
 }
 	
 

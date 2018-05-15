@@ -1,15 +1,15 @@
 package seniorproject.attendancetrackingsystem.fragments;
 
-import android.support.v4.app.Fragment;
+import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
-import android.media.Image;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
@@ -18,7 +18,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.basgeekball.awesomevalidation.AwesomeValidation;
 import com.basgeekball.awesomevalidation.ValidationStyle;
@@ -31,7 +30,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import seniorproject.attendancetrackingsystem.R;
-import seniorproject.attendancetrackingsystem.activities.UploadImage;
 import seniorproject.attendancetrackingsystem.helpers.DatabaseManager;
 
 public class StudentRegister extends Fragment {
@@ -58,7 +56,10 @@ public class StudentRegister extends Fragment {
     awesomeValidation.addValidation(
         getActivity(), R.id.student_schoolID, "^20[0-9]{7}$", R.string.studentIDerror);
     awesomeValidation.addValidation(
-        getActivity(), R.id.student_e_mail, Patterns.EMAIL_ADDRESS, R.string.emailerror);
+        getActivity(),
+        R.id.student_e_mail,
+        "^([c]|(20))[0-9]{7}@student.cankaya.edu.tr$",
+        R.string.emailerror);
     awesomeValidation.addValidation(
         getActivity(), R.id.student_name, "^[a-zA-Z]+$", R.string.nameerror);
     awesomeValidation.addValidation(
@@ -84,6 +85,7 @@ public class StudentRegister extends Fragment {
     Button registerButton = view.findViewById(R.id.register_button);
     registerButton.setOnClickListener(
         new View.OnClickListener() {
+          @SuppressLint("HardwareIds")
           @Override
           public void onClick(View v) {
             if (awesomeValidation.validate()) {

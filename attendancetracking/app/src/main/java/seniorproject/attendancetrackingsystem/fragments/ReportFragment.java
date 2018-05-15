@@ -6,6 +6,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -260,7 +261,9 @@ public class ReportFragment extends Fragment {
                     for (Taken_Lecture_Row x : takenLectures) {
                       courses.add(x.course_code);
                     }
+                    Parcelable state = course_spinner.onSaveInstanceState();
                     course_spinner.setAdapter(course_adapter);
+                    course_spinner.onRestoreInstanceState(state);
                   }
                 } catch (JSONException e) {
                   e.printStackTrace();
