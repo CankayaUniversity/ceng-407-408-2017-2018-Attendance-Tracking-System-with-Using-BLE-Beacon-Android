@@ -9,6 +9,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
@@ -98,7 +99,9 @@ public class ReportFragmentLecturer extends Fragment {
       classrooms = args.getIntegerArrayList("classrooms");
 
       adapter = new StudentAdapter(getActivity(), R.layout.liststudent, studentList);
+      Parcelable state = listView.onSaveInstanceState();
       listView.setAdapter(adapter);
+      listView.onRestoreInstanceState(state);
       changeVisiblity(course_spinner, false);
       changeVisiblity(courseTxt, false);
       changeVisiblity(calendar_hoder, false);
@@ -338,7 +341,7 @@ public class ReportFragmentLecturer extends Fragment {
           }
         },
         0,
-        10000); // 2 minutes
+        60000); // every one minute
   }
 
   private void toastWithHandler(final String text) {
@@ -388,7 +391,9 @@ public class ReportFragmentLecturer extends Fragment {
                             jsonObject.getInt("time"));
                     studentList.add(studentRow);
                   }
+                  Parcelable state = listView.onSaveInstanceState();
                   listView.setAdapter(adapter);
+                  listView.onRestoreInstanceState(state);
                 } catch (JSONException e) {
                   e.printStackTrace();
                 }
@@ -447,7 +452,9 @@ public class ReportFragmentLecturer extends Fragment {
                     String course = temp.course_code + " - " + temp.section;
                     courses.add(course);
                   }
+                  Parcelable state = course_spinner.onSaveInstanceState();
                   course_spinner.setAdapter(course_adapter);
+                  course_spinner.onRestoreInstanceState(state);
                 } catch (JSONException e) {
                   e.printStackTrace();
                 }

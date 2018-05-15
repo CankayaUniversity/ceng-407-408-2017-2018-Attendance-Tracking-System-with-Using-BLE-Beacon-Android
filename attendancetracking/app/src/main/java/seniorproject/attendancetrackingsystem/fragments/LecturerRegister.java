@@ -1,10 +1,9 @@
 package seniorproject.attendancetrackingsystem.fragments;
 
 import android.app.AlertDialog;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Patterns;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,7 +45,10 @@ public class LecturerRegister extends Fragment {
     super.onViewCreated(view, savedInstanceState);
     initElements(view);
     awesomeValidation.addValidation(
-        getActivity(), R.id.lecturer_e_mail, Patterns.EMAIL_ADDRESS, R.string.emailerror);
+        getActivity(),
+        R.id.lecturer_e_mail,
+        "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@cankaya.edu.tr$",
+        R.string.emailerror);
     awesomeValidation.addValidation(
         getActivity(), R.id.lecturer_name, "^[a-zA-Z]+$", R.string.nameerror);
     awesomeValidation.addValidation(
@@ -79,7 +81,7 @@ public class LecturerRegister extends Fragment {
     }
 
     ArrayAdapter<String> adapter =
-            new ArrayAdapter<>(getActivity(), R.layout.spinner_item, departments);
+        new ArrayAdapter<>(getActivity(), R.layout.spinner_item, departments);
     departmentList.setAdapter(adapter);
     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
     departmentList.setAdapter(adapter);

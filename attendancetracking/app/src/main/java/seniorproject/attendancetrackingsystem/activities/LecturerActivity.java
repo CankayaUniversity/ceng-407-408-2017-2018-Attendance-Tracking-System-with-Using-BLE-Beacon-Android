@@ -35,6 +35,7 @@ import java.util.Objects;
 
 import seniorproject.attendancetrackingsystem.R;
 import seniorproject.attendancetrackingsystem.fragments.CourseSettings;
+import seniorproject.attendancetrackingsystem.fragments.ReportFragment;
 import seniorproject.attendancetrackingsystem.fragments.ReportFragmentLecturer;
 import seniorproject.attendancetrackingsystem.fragments.ReportProblem;
 import seniorproject.attendancetrackingsystem.fragments.WelcomeFragmentLecturer;
@@ -156,6 +157,7 @@ public class LecturerActivity extends AppCompatActivity {
             getSupportActionBar().setTitle("Ç.Ü. Attendance Tracking System");
             getSupportActionBar().setSubtitle("/Report Problem");
             getSupportFragmentManager().beginTransaction().replace(R.id.main_frame, f).commit();
+            mainNav.setSelectedItemId(R.id.nav_report);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -241,8 +243,15 @@ public class LecturerActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        setFragment(welcomeFragmentLecturer);
-        mainNav.setSelectedItemId(R.id.nav_home);
+      Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_frame);
+    if (f instanceof ReportFragmentLecturer) {
+      setFragment(reportFragmentLecturer);
+      mainNav.setSelectedItemId(R.id.nav_report);
+    }
+    else {
+      setFragment(welcomeFragmentLecturer);
+      mainNav.setSelectedItemId(R.id.nav_home);
+        }
     }
 
     private void showProgressDialog() {

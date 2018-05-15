@@ -16,6 +16,7 @@ public class SessionManager {
   public static final String KEY_USER_MAIL = "mail";
   public static final String KEY_USER_ID = "user_id";
   private static final String IS_LOGIN = "IsLoggedIn";
+  private static final String KEY_NOTIFICATION = "AllowNotification";
   private static final int PRIVATE_MODE = 0;
   private final Context context;
   private SharedPreferences pref;
@@ -35,6 +36,7 @@ public class SessionManager {
     editor.putString(KEY_USER_MAIL, mail);
     editor.putInt(KEY_USER_ID, id);
     editor.putString(KEY_USER_TYPE, userType);
+    editor.putBoolean(KEY_NOTIFICATION,true);
 
     editor.apply();
   }
@@ -74,5 +76,14 @@ public class SessionManager {
     pref = context.getSharedPreferences("user-info", PRIVATE_MODE);
     return pref.getBoolean(IS_LOGIN, false);
   }
-
+public boolean dailyNotificationState(){
+    pref = context.getSharedPreferences("user-info", PRIVATE_MODE);
+    return pref.getBoolean(KEY_NOTIFICATION, true);
+}
+public void changeDailyNotificatonState(boolean state){
+    pref = context.getSharedPreferences("user-info", PRIVATE_MODE);
+    editor = pref.edit();
+    editor.putBoolean(KEY_NOTIFICATION, state);
+    editor.apply();
+}
 }

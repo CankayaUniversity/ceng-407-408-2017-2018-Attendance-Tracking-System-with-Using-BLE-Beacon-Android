@@ -60,7 +60,7 @@ public class RegularMode extends Service implements BeaconConsumer {
         .add(new BeaconParser().setBeaconLayout(BeaconParser.ALTBEACON_LAYOUT));
     beaconManager.setBackgroundMode(true);
     beaconManager.setBackgroundScanPeriod(30000); // 30 seconds
-    beaconManager.setBackgroundBetweenScanPeriod(60 * 1000 * 2); // 5 minutes
+    beaconManager.setBackgroundBetweenScanPeriod(60 * 1000 + 30000); // 1 minutes and 30 seconds
     try {
       beaconManager.updateScanPeriods();
     } catch (RemoteException e) {

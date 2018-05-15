@@ -93,9 +93,9 @@ public class Logger extends IntentService {
       String time = times.dequeue();
       if (last == null) last = time;
       try {
-        if (format.parse(time).after(format.parse(start))
-            && format.parse(time).before(format.parse(stop))) {
-          if (!format.parse(time).before(format.parse(last))) newQueue.enqueue(time);
+        if (format.parse(time).compareTo(format.parse(start)) >= 0
+            && format.parse(time).compareTo(format.parse(stop)) < 0) {
+          if (format.parse(time).compareTo(format.parse(last))>=0) newQueue.enqueue(time);
         }
       } catch (ParseException e) {
         e.printStackTrace();
