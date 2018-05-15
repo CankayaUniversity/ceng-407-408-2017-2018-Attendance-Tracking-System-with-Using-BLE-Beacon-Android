@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Switch;
 
 import com.basgeekball.awesomevalidation.AwesomeValidation;
 import com.basgeekball.awesomevalidation.ValidationStyle;
@@ -41,8 +42,12 @@ public class LecturerLogin extends Fragment implements View.OnClickListener {
   }
 
   private void initElements(View view) {
+    Switch roleSwitch = getActivity().findViewById(R.id.role_switch);
+    roleSwitch.setVisibility(View.VISIBLE);
     Button loginButton = view.findViewById(R.id.login_button);
     loginButton.setOnClickListener(this);
+    Button forgotPassword = view.findViewById(R.id.missing_password);
+    forgotPassword.setOnClickListener(this);
     etMail = view.findViewById(R.id.input_email);
     etPassword = view.findViewById(R.id.input_password);
     awesomeValidation = new AwesomeValidation(ValidationStyle.BASIC);
@@ -50,17 +55,29 @@ public class LecturerLogin extends Fragment implements View.OnClickListener {
 
   @Override
   public void onClick(View v) {
-    if (awesomeValidation.validate() && !etPassword.getText().toString().isEmpty()) {
-      String mail = etMail.getText().toString();
-      String password = etPassword.getText().toString();
-      HashMap<String, String> postParameters = new HashMap<>();
-      postParameters.put("username", mail);
-      postParameters.put("password", password);
-      postParameters.put("type", "lecturerLogin");
-      DatabaseManager.getmInstance(getActivity()).execute("login", postParameters);
+    if (v.getId() == R.id.login_button) {
+      if (awesomeValidation.validate() && !etPassword.getText().toString().isEmpty()) {
+        String mail = etMail.getText().toString();
+        String password = etPassword.getText().toString();
+        HashMap<String, String> postParameters = new HashMap<>();
+        postParameters.put("username", mail);
+        postParameters.put("password", password);
+        postParameters.put("type", "lecturerLogin");
+        DatabaseManager.getmInstance(getActivity()).execute("login", postParameters);
 
-    } else if (etPassword.getText().toString().isEmpty()) {
-      etPassword.setError("Enter your password");
+      } else if (etPassword.getText().toString().isEmpty()) {
+        etPassword.setError("Enter your password");
+      }
+    } else if (v.getId() == R.id.missing_password) {
+      ForgotPassword f = new ForgotPassword();
+      Bundle bundle = new Bundle();
+      bundle.putString("user_type", "lecturer");
+      f.setArguments(bundle);
+      getActivity()
+          .getSupportFragmentManager()
+          .beginTransaction()
+          .replace(R.id.login_layout, f)
+          .commit();
     }
   }
 }

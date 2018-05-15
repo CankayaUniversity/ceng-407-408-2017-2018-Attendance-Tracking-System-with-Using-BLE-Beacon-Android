@@ -1,13 +1,14 @@
 package seniorproject.attendancetrackingsystem.fragments;
 
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Switch;
 
 import com.basgeekball.awesomevalidation.AwesomeValidation;
 import com.basgeekball.awesomevalidation.ValidationStyle;
@@ -38,7 +39,11 @@ public class StudentLogin extends Fragment implements View.OnClickListener {
   }
 
   private void initElements(View view) {
+    Switch roleSwitch = getActivity().findViewById(R.id.role_switch);
+    roleSwitch.setVisibility(View.VISIBLE);
     Button loginButton = view.findViewById(R.id.login_button);
+    Button forgotPassword = view.findViewById(R.id.missing_password);
+    forgotPassword.setOnClickListener(this);
     loginButton.setOnClickListener(this);
     etStudentId = view.findViewById(R.id.input_school_id);
     etPassword = view.findViewById(R.id.input_password);
@@ -47,27 +52,34 @@ public class StudentLogin extends Fragment implements View.OnClickListener {
 
   @Override
   public void onClick(View v) {
-    if (awesomeValidation.validate() && !etPassword.getText().toString().isEmpty()) {
-      String studentID = etStudentId.getText().toString();
-      String password = etPassword.getText().toString();
+    if (v.getId() == R.id.login_button) {
+      if (awesomeValidation.validate() && !etPassword.getText().toString().isEmpty()) {
+        String studentID = etStudentId.getText().toString();
+        String password = etPassword.getText().toString();
+        char first = studentID.charAt(0);
+        if (first == 'c' || first == 'C') {
+          String sub = studentID.substring(1);
+          String newStudentID = "20" + sub;
+          studentID = newStudentID;
+        }
+        HashMap<String, String> postParameters = new HashMap<>();
+        postParameters.put("username", studentID);
+        postParameters.put("password", password);
+        postParameters.put("type", "studentLogin");
+        DatabaseManager.getmInstance(getActivity()).execute("login", postParameters);
 
-      char first = studentID.charAt(0);
-      if(first == 'c' || first == 'C') {
-
-        String sub = studentID.substring(1);
-
-        String newStudentID = "20" + sub;
-        studentID = newStudentID;
-
-      }
-
-      HashMap<String, String> postParameters = new HashMap<>();
-      postParameters.put("username", studentID);
-      postParameters.put("password", password);
-      postParameters.put("type", "studentLogin");
-      DatabaseManager.getmInstance(getActivity()).execute("login", postParameters);
-
-    } else if (etPassword.getText().toString().isEmpty())
-      etPassword.setError("Enter your password");
+      } else if (etPassword.getText().toString().isEmpty())
+        etPassword.setError("Enter your password");
+    } else if (v.getId() == R.id.missing_password) {
+      ForgotPassword f = new ForgotPassword();
+      Bundle bundle = new Bundle();
+      bundle.putString("user_type", "student");
+      f.setArguments(bundle);
+      getActivity()
+          .getSupportFragmentManager()
+          .beginTransaction()
+          .replace(R.id.login_layout, f)
+          .commit();
+    }
   }
 }
