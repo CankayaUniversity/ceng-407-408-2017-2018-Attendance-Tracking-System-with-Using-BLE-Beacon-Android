@@ -25,6 +25,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -68,7 +69,9 @@ public class ReportFragmentLecturer extends Fragment {
   private ArrayList<String> courses = new ArrayList<>();
   private ArrayAdapter<String> course_adapter;
   private Spinner course_spinner;
+  private ScrollView scroll_report;
   private TextView courseTxt;
+  private LinearLayout generalReport;
   private FrameLayout calendar_hoder;
   private ArrayList<CalendarColumn> calendarColumns = new ArrayList<>();
   private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.ENGLISH);
@@ -93,6 +96,8 @@ public class ReportFragmentLecturer extends Fragment {
     course_spinner = view.findViewById(R.id.lecturelist);
     courseTxt = view.findViewById(R.id.course_select);
     calendar_hoder = view.findViewById(R.id.cal_container);
+    generalReport = view.findViewById(R.id.general_report);
+    scroll_report = view.findViewById(R.id.scroll_report);
     course_adapter =
         new ArrayAdapter<>(getActivity().getApplicationContext(), R.layout.spinner_item2, courses);
     course_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -106,15 +111,13 @@ public class ReportFragmentLecturer extends Fragment {
       Parcelable state = listView.onSaveInstanceState();
       listView.setAdapter(adapter);
       listView.onRestoreInstanceState(state);
-      changeVisiblity(course_spinner, false);
-      changeVisiblity(courseTxt, false);
-      changeVisiblity(calendar_hoder, false);
-      changeVisiblity(listView, true);
+      changeVisibility(listView, true);
+      changeVisibility(scroll_report, false);
+      changeVisibility(generalReport, false);
       studentListListener();
     } else {
-      changeVisiblity(listView, false);
-      changeVisiblity(course_spinner, true);
-      changeVisiblity(courseTxt, true);
+      changeVisibility(listView, false);
+      changeVisibility(scroll_report,true);
       fillCourseList();
     }
 
@@ -128,7 +131,7 @@ public class ReportFragmentLecturer extends Fragment {
 
           @Override
           public void onNothingSelected(AdapterView<?> parent) {
-            changeVisiblity(calendar_hoder, false);
+            changeVisibility(calendar_hoder, false);
           }
         });
     final Dialog popup = new Dialog(getActivity());
@@ -251,7 +254,7 @@ public class ReportFragmentLecturer extends Fragment {
     }
   }
 
-  private void changeVisiblity(final View v, final boolean state) {
+  private void changeVisibility(final View v, final boolean state) {
     handler.post(
         new Runnable() {
           @Override
@@ -263,7 +266,7 @@ public class ReportFragmentLecturer extends Fragment {
   }
 
   private void getCalendar() {
-    changeVisiblity(calendar_hoder, true);
+    changeVisibility(generalReport, true);
     final CaldroidFragment caldroidFragment = new CaldroidFragment();
     Bundle args = new Bundle();
     args.putInt(CaldroidFragment.START_DAY_OF_WEEK, CaldroidFragment.MONDAY);
