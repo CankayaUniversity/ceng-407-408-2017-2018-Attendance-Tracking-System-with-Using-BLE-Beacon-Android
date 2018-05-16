@@ -73,6 +73,12 @@ public class ReportFragmentLecturer extends Fragment {
   private TextView courseTxt;
   private LinearLayout generalReport;
   private FrameLayout calendar_hoder;
+
+  private TextView totalstudent;
+  private TextView attendedstudent;
+  private TextView nearlystudent;
+  private TextView absentstudent;
+
   private ArrayList<CalendarColumn> calendarColumns = new ArrayList<>();
   private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.ENGLISH);
   private int lastSelectedSection;
@@ -92,6 +98,12 @@ public class ReportFragmentLecturer extends Fragment {
   @Override
   public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
+
+    totalstudent = view.findViewById(R.id.totalstudent);
+    absentstudent = view.findViewById(R.id.absentstudent);
+    attendedstudent = view.findViewById(R.id.attendedstudent);
+    nearlystudent = view.findViewById(R.id.nearlystudent);
+
     listView = view.findViewById(R.id.studentlist);
     course_spinner = view.findViewById(R.id.lecturelist);
     courseTxt = view.findViewById(R.id.course_select);
@@ -106,7 +118,6 @@ public class ReportFragmentLecturer extends Fragment {
     Bundle args = getArguments();
     if (args != null) {
       classrooms = args.getIntegerArrayList("classrooms");
-
       adapter = new StudentAdapter(getActivity(), R.layout.liststudent, studentList);
       Parcelable state = listView.onSaveInstanceState();
       listView.setAdapter(adapter);
@@ -117,7 +128,7 @@ public class ReportFragmentLecturer extends Fragment {
       studentListListener();
     } else {
       changeVisibility(listView, false);
-      changeVisibility(scroll_report,true);
+      changeVisibility(scroll_report, true);
       fillCourseList();
     }
 
@@ -339,6 +350,7 @@ public class ReportFragmentLecturer extends Fragment {
                     calendarColumns.add(column);
                   }
                   getCalendar();
+
                 } catch (JSONException e) {
                   e.printStackTrace();
                 }
@@ -594,6 +606,24 @@ public class ReportFragmentLecturer extends Fragment {
                             jsonObject.getInt("absent"));
                     studentList.add(studentRow);
                   }
+
+                  int attended = 0;
+                  int absent = 0;
+                  int nearly = 0;
+                  for (StudentRow x : studentList) {
+                    if (x.state == 0) {
+                      absent++;
+                    } else if (x.state == 1) {
+                      nearly++;
+                    } else {
+                      attended++;
+                    }
+                  }
+                  totalstudent.setText(" Total Student: " + studentList.size());
+                  attendedstudent.setText(" Attended: " + attended);
+                  absentstudent.setText(" Absent: " + absent);
+                  nearlystudent.setText(" Nearly: " + nearly);
+
                   Parcelable state = listView.onSaveInstanceState();
                   listView.setAdapter(adapter);
                   listView.onRestoreInstanceState(state);
