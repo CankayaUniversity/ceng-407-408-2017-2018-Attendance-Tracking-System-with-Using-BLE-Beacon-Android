@@ -158,7 +158,7 @@ public class RegularMode extends Service implements BeaconConsumer {
             + currentCourse.getClassroom_id()
             + "_"
             + dateFormat.format(new Date())
-            + ".txt";
+            + ".log";
     return START_NOT_STICKY;
   }
 }
