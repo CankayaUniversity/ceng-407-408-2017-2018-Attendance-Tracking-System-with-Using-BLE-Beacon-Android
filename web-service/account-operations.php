@@ -39,7 +39,7 @@ switch($_POST["operation"]){
 	case "register": 
 		if(empty($_POST["type"])) exit(0);
 		if($_POST["type"] == "studentRegister"){
-			if(empty($_POST["schoolID"]) || empty($_POST["password"]) || empty($_POST["mail"]) || empty($_POST["name"]) || empty($_POST["surname"])) {
+			if(empty($_POST["schoolID"]) || empty($_POST["password"]) || empty($_POST["mail"]) || empty($_POST["name"]) || empty($_POST["surname"]) || empty($_POST["image"])) {
 				$json ["success"] = false;
 				$json["message"] = "Empty field error";
 				echo json_encode($json);
@@ -51,6 +51,7 @@ switch($_POST["operation"]){
 			$name = $_POST["name"];
 			$surname = $_POST["surname"];
 			$bluetoothMAC = $_POST["BluetoothMAC"];
+			$image = $_POST["image"];
 			$query = "SELECT * FROM Student WHERE student_number = '$studentNumber'";
 			$result = mysqli_query($con, $query);
 			$exists = false;
@@ -69,7 +70,11 @@ switch($_POST["operation"]){
 			if($exists){
 				$query = "UPDATE Student SET student_number='$studentNumber', name='$name', surname='$surname', bluetooth_mac, '$bluetoothMAC', mail_address='$email', password='$password' WHERE student_id='$student_id'";
 				$result = mysqli_query($con, $query);
-				if($result) $json["success"] = true;
+				if($result) {
+					$json["success"] = true;
+					$path = "student_images/$student_id.jpg";
+					file_put_contents($path, base64_decode($image));
+				}
 				else{
 					$json["message"] = "An error has been occurred while doing update operation";
 					$json["success"] = false;
@@ -80,8 +85,12 @@ switch($_POST["operation"]){
 			
 			$query = "INSERT INTO Student(student_number, name, surname, bluetooth_mac, mail_address, password) VALUES('$studentNumber', '$name', '$surname', '$bluetoothMAC', '$email', '$password')";
 			$result = mysqli_query($con, $query);
-			if($result) 
+			if($result) {
 				$json ["success"] = true;
+				$last = mysqli_insert_id($con);
+				$path = "student_images/$last.jpg";
+				file_put_contents($path, base64_decode($image));
+			}
 			else{
 				$json ["success"] = false;
 				$json ["message"] = "An error has occured while doing insert operation";

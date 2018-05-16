@@ -5,13 +5,14 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Base64;
 import android.util.Log;
-import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,8 @@ import android.widget.ImageView;
 import com.basgeekball.awesomevalidation.AwesomeValidation;
 import com.basgeekball.awesomevalidation.ValidationStyle;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -33,6 +36,7 @@ import seniorproject.attendancetrackingsystem.R;
 import seniorproject.attendancetrackingsystem.helpers.DatabaseManager;
 
 public class StudentRegister extends Fragment {
+  private static final int CAM_REQUEST = 1313;
   private EditText studentId;
   private EditText studentPassword;
   private EditText studentMail;
@@ -40,7 +44,6 @@ public class StudentRegister extends Fragment {
   private EditText studentSurname;
   private AwesomeValidation awesomeValidation;
   private ImageView uploadImageView;
-  private static final int CAM_REQUEST=1313;
 
   @Nullable
   @Override
@@ -81,24 +84,25 @@ public class StudentRegister extends Fragment {
     uploadImageView = view.findViewById(R.id.upload_image_view);
     uploadImageView.setVisibility(View.INVISIBLE);
 
-    Button uploadImage = view.findViewById(R.id.upload_image);
+    final Button uploadImage = view.findViewById(R.id.upload_image);
     Button registerButton = view.findViewById(R.id.register_button);
     registerButton.setOnClickListener(
         new View.OnClickListener() {
           @SuppressLint("HardwareIds")
           @Override
           public void onClick(View v) {
-            if (awesomeValidation.validate()) {
+            if (awesomeValidation.validate() && hasImage(uploadImageView)) {
               String schoolId = studentId.getText().toString();
               String password = studentPassword.getText().toString();
               String mail = studentMail.getText().toString();
               String name = studentName.getText().toString();
               String surname = studentSurname.getText().toString();
+              Bitmap bitmap = ((BitmapDrawable)uploadImageView.getDrawable()).getBitmap();
               String bluetoothMac = "NULL";
 
               BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
               if (bluetoothAdapter != null) {
-                  bluetoothMac = bluetoothAdapter.getAddress();
+                bluetoothMac = bluetoothAdapter.getAddress();
               }
               Map<String, String> postParameters = new HashMap<>();
               postParameters.put("schoolID", schoolId);
@@ -108,64 +112,81 @@ public class StudentRegister extends Fragment {
               postParameters.put("surname", surname);
               postParameters.put("BluetoothMAC", bluetoothMac);
               postParameters.put("type", "studentRegister");
+              postParameters.put("image", getStringImage(bitmap));
 
               DatabaseManager.getmInstance(getActivity()).execute("register", postParameters);
             }
           }
         });
 
-    uploadImage.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        openCamera();
-      }
-    });
+    uploadImage.setOnClickListener(
+        new View.OnClickListener() {
+          @Override
+          public void onClick(View v) {
+            openCamera();
+          }
+        });
   }
 
-  private void openCamera() {
+  private String getStringImage(Bitmap img){
+    ByteArrayOutputStream bm = new ByteArrayOutputStream();
+    img.compress(Bitmap.CompressFormat.JPEG, 100, bm);
+    byte[] imageByte = bm.toByteArray();
+    String encode = Base64.encodeToString(imageByte, Base64.DEFAULT);
+    return encode;
 
+  }
+  private void openCamera() {
 
     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
     startActivityForResult(intent, CAM_REQUEST);
   }
 
+  private boolean hasImage(ImageView view) {
+    Drawable drawable = view.getDrawable();
+    boolean hasImage = (drawable != null);
+
+    if (hasImage && (drawable instanceof BitmapDrawable)) {
+      hasImage = ((BitmapDrawable)drawable).getBitmap() != null;
+    }
+
+    return hasImage;
+  }
   @Override
   public void onActivityResult(int requestCode, int resultCode, Intent data) {
     super.onActivityResult(requestCode, resultCode, data);
 
-    if(requestCode == CAM_REQUEST){
+    if (requestCode == CAM_REQUEST) {
       Bitmap bitmap = (Bitmap) data.getExtras().get("data");
       uploadImageView.setImageBitmap(bitmap);
     }
 
+    BitmapDrawable picture = ((BitmapDrawable) uploadImageView.getDrawable());
+    Bitmap pictureBm = picture.getBitmap();
 
-        BitmapDrawable picture = ((BitmapDrawable)uploadImageView.getDrawable());
-        Bitmap pictureBm = picture.getBitmap();
+    FileOutputStream arrayStream = null;
 
+    // Write to SD Card
+    try {
+      File sdCard = Environment.getExternalStorageDirectory();
+      File dir = new File(sdCard.getAbsolutePath() + "/camtest");
+      dir.mkdirs();
 
-        FileOutputStream arrayStream = null;
+      String fileName = String.format("%d.jpeg", System.currentTimeMillis());
+      File outFile = new File(dir, fileName);
 
-        // Write to SD Card
-        try {
-          File sdCard = Environment.getExternalStorageDirectory();
-          File dir = new File(sdCard.getAbsolutePath() + "/camtest");
-          dir.mkdirs();
+      arrayStream = new FileOutputStream(outFile);
+      pictureBm.compress(Bitmap.CompressFormat.JPEG, 100, arrayStream);
+      arrayStream.flush();
+      arrayStream.close();
 
-          String fileName = String.format("%d.jpeg", System.currentTimeMillis());
-          File outFile = new File(dir, fileName);
+      Log.d("Taken Picture", "onPictureTaken - wrote to " + outFile.getAbsolutePath());
+      uploadImageView.setVisibility(View.VISIBLE);
 
-          arrayStream = new FileOutputStream(outFile);
-          pictureBm.compress(Bitmap.CompressFormat.JPEG,100,arrayStream);
-          arrayStream.flush();
-          arrayStream.close();
-
-          Log.d("Taken Picture", "onPictureTaken - wrote to " + outFile.getAbsolutePath());
-          uploadImageView.setVisibility(View.VISIBLE);
-
-        } catch (FileNotFoundException e) {
-          e.printStackTrace();
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 }
