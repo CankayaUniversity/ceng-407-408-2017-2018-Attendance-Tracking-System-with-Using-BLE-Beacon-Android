@@ -68,12 +68,12 @@ switch($_POST["operation"]){
 				}
 			}
 			if($exists){
-				$query = "UPDATE Student SET student_number='$studentNumber', name='$name', surname='$surname', bluetooth_mac, '$bluetoothMAC', mail_address='$email', password='$password' WHERE student_id='$student_id'";
+				$path = "student_images/$student_id.jpg";
+					file_put_contents($path, base64_decode($image));
+				$query = "UPDATE Student SET student_number='$studentNumber', name='$name', surname='$surname', bluetooth_mac, '$bluetoothMAC', mail_address='$email', password='$password' img = '$path' WHERE student_id='$student_id'";
 				$result = mysqli_query($con, $query);
 				if($result) {
 					$json["success"] = true;
-					$path = "student_images/$student_id.jpg";
-					file_put_contents($path, base64_decode($image));
 				}
 				else{
 					$json["message"] = "An error has been occurred while doing update operation";
@@ -86,10 +86,18 @@ switch($_POST["operation"]){
 			$query = "INSERT INTO Student(student_number, name, surname, bluetooth_mac, mail_address, password) VALUES('$studentNumber', '$name', '$surname', '$bluetoothMAC', '$email', '$password')";
 			$result = mysqli_query($con, $query);
 			if($result) {
-				$json ["success"] = true;
 				$last = mysqli_insert_id($con);
 				$path = "student_images/$last.jpg";
 				file_put_contents($path, base64_decode($image));
+				$query = "UPDATE Student SET img = '$path' WHERE student_id='$last'";
+				$result = mysqli_query($con, $query);
+				if($result){
+					$json ["success"] = true;
+				}else
+				{
+					$json["success"] = false;
+					$json["message"] = "An error has been occurred while doing update operation";
+				}
 			}
 			else{
 				$json ["success"] = false;
