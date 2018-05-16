@@ -126,6 +126,51 @@ switch($_POST["operation"]){
 		}
 		echo json_encode($json);
 	break;
+	case "recovery":
+		if(empty($_POST["mail_address"]) || empty($_POST["user_type"])){
+			$json["message"] = "Empty field error";
+			$json["success"] = false;
+			echo json_encode($json);
+			exit(0);
+		}
+		$user_type = $_POST["user_type"];
+		$mail_address = $_POST["mail_address"];
+		if($user_type == "student") $query = "SELECT name, surname FROM Student WHERE mail_address = '$mail_address'";
+		else if($user_type == "lecturer") $query = "SELECT name, surname FROM Lecturer WHERE mail_address = '$mail_address'";
+		
+		$result = mysqli_query($con, $query);
+		if(mysqli_num_rows($result)>0){
+			$row = mysqli_fetch_assoc($result);
+			if($user_type == "student") $u_type = 1;
+			else if($user_type == "lecturer") $u_type = 2;
+			
+			$characters = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+			$charactersLength = strlen($characters);
+			$random = '';
+			 
+			for($i = 0; $i < $charactersLength; $i++){
+			$random .= $characters[rand(0,$charactersLength-1)];
+			}
+			
+			$token = md5($random);
+			
+			$query = "INSERT INTO Recovery_Keys(user_type, mail_address, token, valid) VALUES('$u_type', '$mail_address', '$token', '1')";
+			$result = mysqli_query($con, $query);
+			if($result){
+				include 'mail.php';
+				send_recovery_mail($mail_address, $row["name"], $row["surname"], $token);
+				$json["success"] = true;
+			}else
+			{
+				$json["message"] = "An error has been occurred while doing your action";
+				$json["success"] = false;
+			}
+		}else{
+			$json["message"] = "There is not any user that has e-mail address you entered";
+			$json["success"] = false;
+		}
+		echo json_encode($json);
+	break;
 }
 mysqli_close($con);
 ?>
