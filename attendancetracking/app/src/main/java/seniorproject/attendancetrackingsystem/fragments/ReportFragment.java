@@ -17,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -30,6 +31,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -52,6 +55,9 @@ public class ReportFragment extends Fragment {
   private Spinner course_spinner;
   private ArrayAdapter<String> course_adapter;
   private FrameLayout calendar_holder;
+  private TextView attended_percentage;
+  private TextView absent_percentage;
+  private TextView nearly_percentage;
   private ArrayList<CalendarColumn> columnList = new ArrayList<>();
 
   public ReportFragment() {
@@ -69,6 +75,9 @@ public class ReportFragment extends Fragment {
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
+    attended_percentage = view.findViewById(R.id.attended_percentage);
+    nearly_percentage = view.findViewById(R.id.nearly_percentage);
+    absent_percentage = view.findViewById(R.id.absent_percentage);
     handler = new Handler(Looper.getMainLooper());
     course_spinner = view.findViewById(R.id.lecturelist);
     course_adapter =
@@ -193,7 +202,8 @@ public class ReportFragment extends Fragment {
         new Runnable() {
           @Override
           public void run() {
-            final AlertDialog alertDialog = new AlertDialog.Builder(getActivity(),AlertDialog.THEME_HOLO_LIGHT).create();
+            final AlertDialog alertDialog =
+                new AlertDialog.Builder(getActivity(), AlertDialog.THEME_HOLO_LIGHT).create();
             String title = course.course_code + " Information";
             alertDialog.setTitle(title);
             StringBuilder message = new StringBuilder();
@@ -324,6 +334,42 @@ public class ReportFragment extends Fragment {
                     columnList.add(column);
                   }
                   getCalendar();
+                  int sizetotal = columnList.size();
+                  int absent = 0;
+                  int attended = 0;
+                  int nearly = 0;
+                  double absentpercentage;
+                  double attendedpercentage;
+                  double nearlypercentage;
+                  for (CalendarColumn x : columnList) {
+                    if (x.status == 0) {
+                      absent++;
+                    } else if (x.status == 1) {
+                      nearly++;
+                    } else {
+                      attended++;
+                    }
+                  }
+                  try {
+                    absentpercentage = (double) absent / sizetotal;
+                    absentpercentage = absentpercentage * 100;
+                    attendedpercentage = (double) attended / sizetotal;
+                    attendedpercentage = attendedpercentage * 100;
+                    nearlypercentage = (double) nearly / sizetotal;
+                    nearlypercentage = nearlypercentage * 100;
+
+                    String abc = createPercent(absentpercentage);
+                    String def = createPercent(attendedpercentage);
+                    String ghj = createPercent(nearlypercentage);
+
+                    absent_percentage.setText(" Absent: " + abc + " ");
+                    attended_percentage.setText(" Attended: " + def + " ");
+                    nearly_percentage.setText(" Nearly: " + ghj + " ");
+                  } catch (ArithmeticException e) {
+                    absent_percentage.setText(" Absent: 0% ");
+                    attended_percentage.setText(" Attended: 0% ");
+                    nearly_percentage.setText(" Nearly: 0% ");
+                  }
                 } catch (JSONException e) {
                   e.printStackTrace();
                 }
@@ -352,6 +398,18 @@ public class ReportFragment extends Fragment {
     } catch (NullPointerException e) {
       // do nothing
     }
+  }
+
+  private String createPercent(double number) {
+    NumberFormat formatter = new DecimalFormat("#0.0");
+    String result;
+    String parts[] = formatter.format(number).split(",");
+    if (parts[1].equals("0")) result = String.valueOf((int) number) + "%";
+    else {
+      result = formatter.format(number) + "%";
+      result = result.replace(',', '.');
+    }
+    return result;
   }
 
   class Taken_Lecture_Row {
