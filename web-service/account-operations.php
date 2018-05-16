@@ -51,7 +51,33 @@ switch($_POST["operation"]){
 			$name = $_POST["name"];
 			$surname = $_POST["surname"];
 			$bluetoothMAC = $_POST["BluetoothMAC"];
-
+			$query = "SELECT * FROM Student WHERE student_number = '$studentNumber'";
+			$result = mysqli_query($con, $query);
+			$exists = false;
+			$student_id = 0;
+			if(mysqli_num_rows($result) > 0){
+				$exists = true;
+				$student_id= $row["student_id"];
+				$row = mysqli_fetch_assoc($result);
+				if($row["allow_register"] == 0){
+					$json["message"] = "The user already exists on the system";
+					$json["success"] = false;
+					echo json_encode($json);
+					exit(0);
+				}
+			}
+			if($exists){
+				$query = "UPDATE Student SET student_number='$studentNumber', name='$name', surname='$surname', bluetooth_mac, '$bluetoothMAC', mail_address='$email', password='$password' WHERE student_id='$student_id'";
+				$result = mysqli_query($con, $query);
+				if($result) $json["success"] = true;
+				else{
+					$json["message"] = "An error has been occurred while doing update operation";
+					$json["success"] = false;
+				}
+				echo json_encode($json);
+				exit(0);
+			}
+			
 			$query = "INSERT INTO Student(student_number, name, surname, bluetooth_mac, mail_address, password) VALUES('$studentNumber', '$name', '$surname', '$bluetoothMAC', '$email', '$password')";
 			$result = mysqli_query($con, $query);
 			if($result) 

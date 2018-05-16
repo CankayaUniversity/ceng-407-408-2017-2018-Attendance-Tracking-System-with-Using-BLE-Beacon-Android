@@ -206,19 +206,13 @@ function save_student_list($json){
 		$result = $db->query($query);
 		if($result->num_rows == 0){
 			//create account
-			$query = "INSERT INTO Student(student_number, name, surname) VALUES('$student->student_number', '$student->student_name', '$student->student_surname')";
+			$query = "INSERT INTO Student(student_number, name, surname, allow_register) VALUES('$student->student_number', '$student->student_name', '$student->student_surname', '1')";
 			$result = $db->query($query);
 			if(!$result){
 				call_loader("An error has been occured while inserting to database", "index.php");
 				return;
 			}
-			$student_id = $db->insert_id;
-			$query = "INSERT INTO Allow_Register(student_id) VALUES('$student_id')";	
-			$result = $db->query($query);
-			if(!$result){
-				call_loader("An error has been occured while inserting to database", "index.php");
-				return;
-			}			
+			$student_id = $db->insert_id;						
 		}else
 		{
 			//Already exists
