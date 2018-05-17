@@ -16,6 +16,7 @@ check_login();
       <link rel="stylesheet" media="screen and (max-width: 600px) and (min-width: 351px)" href="css/responsiveform2.css" />
       <link rel="stylesheet" media="screen and (max-width: 350px)" href="css/responsiveform3.css" />
       <link rel="stylesheet" href="css/style.css">
+      <link rel="stylesheet" href="css/popup.css">
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
       <link href="https://fonts.googleapis.com/css?family=Montserrat:400,600" rel="stylesheet">
 

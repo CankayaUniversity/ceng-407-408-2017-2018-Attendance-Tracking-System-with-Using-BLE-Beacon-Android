@@ -206,13 +206,19 @@ function save_student_list($json){
 		$result = $db->query($query);
 		if($result->num_rows == 0){
 			//create account
-			$query = "INSERT INTO Student(student_number, name, surname, allow_register) VALUES('$student->student_number', '$student->student_name', '$student->student_surname', '1')";
+			$query = "INSERT INTO Student(student_number, name, surname) VALUES('$student->student_number', '$student->student_name', '$student->student_surname')";
 			$result = $db->query($query);
 			if(!$result){
 				call_loader("An error has been occured while inserting to database", "index.php");
 				return;
 			}
-			$student_id = $db->insert_id;						
+			$student_id = $db->insert_id;
+			$query = "INSERT INTO Allow_Register(student_id) VALUES('$student_id')";	
+			$result = $db->query($query);
+			if(!$result){
+				call_loader("An error has been occured while inserting to database", "index.php");
+				return;
+			}			
 		}else
 		{
 			//Already exists
@@ -287,24 +293,18 @@ if($result->num_rows){
 function get_attended_student_list($classroom){
 	global $db;
 	$id=1;
-	$query = "SELECT Student.name, Student.surname, Student.student_number, Taken_Lectures.student_id, COALESCE(Attended_Students.status,0) as status, COALESCE(Attended_Students.time, 0) as time FROM Taken_Lectures 	INNER JOIN Classroom ON Classroom.course_id = Taken_Lectures.course_id AND Classroom.section = Taken_Lectures.section 
+	$query = "SELECT Student.name, Student.surname, Student.student_number,Student.img, Taken_Lectures.student_id, COALESCE(Attended_Students.status,0) as status, COALESCE(Attended_Students.time, 0) as time FROM Taken_Lectures 	INNER JOIN Classroom ON Classroom.course_id = Taken_Lectures.course_id AND Classroom.section = Taken_Lectures.section 
 	LEFT JOIN Attended_Students ON Classroom.classroom_id = Attended_Students.classroom_id AND Taken_Lectures.student_id = Attended_Students.student_id 
-	INNER JOIN Student ON Taken_Lectures.student_id = Student.student_id WHERE Classroom.classroom_id = ".$classroom;
+	INNER JOIN Student ON Taken_Lectures.student_id = Student.student_id WHERE Classroom.classroom_id = ".$classroom." ORDER BY status DESC,student_number ASC";
 
 	$result = $db->query($query);
+	$students = array();
+	$attended_count = 0;
+	$nearly_count = 0; 
+	$absent_count = 0;
 	if($result->num_rows){
-		echo "<center><table class='listofstudents'>
-							<thead><tr>
-							<th>#</th>
-							<th width='180'>Student Photo</th>
-							<th width='200'>Student Number</th>
-							<th>Name</th>
-							<th>Surname</th>
-							<th>Time</th>
-							<th width='250'></th>
-							</tr></thead>";
-		while($row = $result->fetch_object()){
-			$time = $row->time;
+		while($row = $result->fetch_assoc()){
+			$time = $row["time"];
 			if($time > 60000){
 				$mins = floor($time / 60000);
 				$secs  = ($time - ( $mins * 60000))/1000;
@@ -314,40 +314,83 @@ function get_attended_student_list($classroom){
 			}
 			if($mins <=9) $mins="0".$mins;
 			if($secs <=9) $secs = "0".$secs;
-			echo "<tr class='status".$row->status."'><td>".$id."</td>
-			<td width='180'><center><img src='img/default.png' height='100' width='100'/></center></td>
-			<td width='200'>".$row->student_number.
-			"</td><td>".$row->name.
-			"</td><td>".$row->surname.
-			"</td><td>".$mins.":".$secs.
+			$row["time"] = $mins.":".$secs;
+			if($row["status"] == 0) $absent_count++;
+			else if($row["status"] == 1) $nearly_count++;
+			else $attended_count++;
+			$students[] = $row;
+		}
+
+	}
+	$number_of_students = $absent_count + $nearly_count + $attended_count;
+	echo "								<script language='Javascript'>
+											$(document).ready(function() {
+											$('#example tr').click(function() {
+											var href = $(this).find('a').attr('href');
+												if(href) {
+													alert(href);
+													return false;
+												window.location = href;
+												}
+											});
+										});
+										</script>
+										<center><table border=0 cellpadding='8' cellspacing='8'><tr><td class='absent'> Absent: $absent_count</td><td class='nearly'> Nearly: $nearly_count</td><td class='attended'> Attended: $attended_count</td><td class='total'> Total student: $number_of_students </td></tr></table></center>";
+	echo "<center><table class='listofstudents'  id='example'>
+							<thead><tr>
+							<th>#</th>
+							<th width='180'>Student Photo</th>
+							<th width='200'>Student Number</th>
+							<th>Name</th>
+							<th>Surname</th>
+							<th>Time</th>
+							<th width='250'></th>
+							</tr></thead>";
+
+	foreach($students as $student){
+		if(empty($student["img"])){
+			$student["img"]="default.png";
+		
+			}
+		echo "<tr class='status".$student["status"]."'><td>".$id."</td>
+			<td width='180'><center><a href='Attended: 0% Nearly: 0% Absent: 0%'><img src='img/".$student["img"]."' height='100' width='100' class='round'/></a></center></td>
+			<td width='200'>".$student["student_number"].
+			"</td><td>".$student["name"].
+			"</td><td>".$student["surname"].
+	"</td><td>".$student["time"].
 			"</td><td width='250'>";
 			$id++;
-			 if ($row->status!=2 && $row->status!=3) {
+			 if ($student["status"]!=2 && $student["status"]!=3) {
 				echo "<center><form action= 'index.php?page=report_interface&classroom=".$classroom."&action=update' method='post' class='attendance'>
-				<input type='hidden' name='student_id' value='".$row->student_id."'/>
+				<input type='hidden' name='student_id' value='".$student["student_id"]."'/>
 				<input type='submit' value='Mark as attended' class='attendance'></form></center></td></tr>";
 				}else echo "</td></tr>";
-		}
-		echo "<tr><td colspan=7 class='attendance2'><center><form action= 'index.php?page=report_interface&classroom=".$classroom."&action=delete' method='post' class='attendance2'>
+	}
+
+				echo "<tr><td colspan=7 class='attendance2'><center><form action= 'index.php?page=report_interface&classroom=".$classroom."&action=delete' method='post' class='attendance2'>
 										<input type='hidden' name='student_id' value='".$row->classroom_id."'/>
 										<input type='submit' value='Cancel a Lecture' class='attendance2'></form></center>
-										</td></tr></table></center>";
-	}
+										</td></tr></table></center>"; 
 }
 
 function delete_attended($classroom_id){
 	global $db;
-	if(empty($classroom_id)){
-		call_loader("An error has been occured!", "index.php");
-		return;
-	}
-	
-	$query = "UPDATE Classroom SET active = 0 WHERE classroom_id = '$classroom_id'";
+	$query = "DELETE FROM Attended_Students WHERE classroom_id = '$classroom_id'";
 	$result = $db->query($query);
-	if($result)
-		call_loader("The classroom has been successfully canceled", "index.php?page=report_interface");
-	else
-		call_loader("An error has been occured while canceling lecture", "index.php?page=report_interface");
+	if($result){
+		$query = "DELETE FROM Classroom WHERE classroom_id = '$classroom_id'";
+		$result = $db->query($query);
+		if($result){
+			// DELETION SUCCESSFUL
+		}
+		else
+		{
+			// DELETION FAILED
+		}
+	}else
+	{
+		// DELETION FAILED
+	}
 }
 	
 
@@ -379,6 +422,8 @@ function set_attended($classroom_id, $student_id){
 		}
 	}
 }
+
+
 ?>
 
 

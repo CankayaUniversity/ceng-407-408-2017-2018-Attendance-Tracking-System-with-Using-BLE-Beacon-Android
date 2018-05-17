@@ -18,6 +18,10 @@ header {
 
 }
 
+img.round{
+    border-radius: 50%;
+}
+
 .content {
       width: 94%;
       margin: 4em auto;
@@ -36,7 +40,31 @@ header {
       font-size: 20px;
       letter-spacing: 2px;
 }
+.absent{
+  color: #E57373;
+  font-weight: bold;
+  text-align: center;
+  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}
 
+.attended{
+  color: #81C784;
+  font-weight: bold;
+  text-align: center;
+  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}
+
+.nearly{
+  color: #DCE775;
+  font-weight: bold;
+  text-align: center;
+  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}
+.total{
+  font-weight: bold;
+  text-align: center;
+  color: #336699;
+}
 
 #calendar{
 position: absolute;
