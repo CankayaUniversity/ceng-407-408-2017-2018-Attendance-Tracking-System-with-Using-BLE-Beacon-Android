@@ -528,7 +528,7 @@ public class WelcomeFragment extends Fragment {
       if (status == 0) {
         output = output + " [Absent]";
       } else if (status == 1) {
-        output = output + " [Nearly-Attended]";
+        output = output + " [Nearly]";
       } else if (status == 2 || status == 3) {
         output = output + " [Attended]";
       }

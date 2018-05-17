@@ -265,7 +265,7 @@ function course_list(){
 function lecture_calendar(){
 	global $db;
 	
-$query = "SELECT Classroom.*, Course.course_code FROM Classroom INNER JOIN Course on Classroom.course_id = Course.course_id INNER JOIN Given_Lectures ON Given_Lectures.course_id = Course.course_id WHERE Given_Lectures.lecturer_id = " . $_COOKIE["user"];
+$query = "SELECT Classroom.*, Course.course_code FROM Classroom INNER JOIN Course on Classroom.course_id = Course.course_id INNER JOIN Given_Lectures ON Given_Lectures.course_id = Course.course_id WHERE Classroom.active = 1 AND Given_Lectures.lecturer_id = " . $_COOKIE["user"];
 
 $result = $db->query($query);
 if($result->num_rows){

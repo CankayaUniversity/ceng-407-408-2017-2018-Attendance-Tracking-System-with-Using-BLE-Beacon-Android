@@ -50,9 +50,9 @@ public class LecturerRegister extends Fragment {
         "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@cankaya.edu.tr$",
         R.string.emailerror);
     awesomeValidation.addValidation(
-        getActivity(), R.id.lecturer_name, "^[a-zA-Z]+$", R.string.nameerror);
+        getActivity(), R.id.lecturer_name, "^[a-zA-ZğüşöçİĞÜŞÖÇ]+$", R.string.nameerror);
     awesomeValidation.addValidation(
-        getActivity(), R.id.lecturer_surname, "^[a-zA-Z]+$", R.string.surnameerror);
+        getActivity(), R.id.lecturer_surname, "^[a-zA-ZğüşöçİĞÜŞÖÇ]+$", R.string.surnameerror);
     awesomeValidation.addValidation(
         getActivity(),
         R.id.lecturer_password,

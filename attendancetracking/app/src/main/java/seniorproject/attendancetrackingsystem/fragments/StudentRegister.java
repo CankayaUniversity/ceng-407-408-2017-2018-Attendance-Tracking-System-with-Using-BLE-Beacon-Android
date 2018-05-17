@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import seniorproject.attendancetrackingsystem.R;
@@ -67,16 +68,26 @@ public class StudentRegister extends Fragment {
         "^([c]|(20))[0-9]{7}@student.cankaya.edu.tr$",
         R.string.emailerror);
     awesomeValidation.addValidation(
-        getActivity(), R.id.student_name, "^[a-zA-Z]+$", R.string.nameerror);
+        getActivity(), R.id.student_name, "^[a-zA-ZğüşöçİĞÜŞÖÇ]+$", R.string.nameerror);
     awesomeValidation.addValidation(
-        getActivity(), R.id.student_surname, "^[a-zA-Z]+$", R.string.surnameerror);
+        getActivity(), R.id.student_surname, "^[a-zA-ZğüşöçİĞÜŞÖÇ]+$", R.string.surnameerror);
     awesomeValidation.addValidation(
         getActivity(),
         R.id.student_password,
         "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!_*.-]).{6,}$",
         R.string.passworderror);
   }
+  private static String toTitleCase(String givenString) {
+    String[] arr = givenString.split(" ");
+    StringBuilder sb = new StringBuilder();
 
+    for (int i = 0; i < arr.length; i++) {
+      arr[i] = arr[i].toUpperCase(new Locale("tr","TR"));
+      sb.append(arr[i].substring(0,1).toUpperCase(new Locale("tr","TR"))).append(arr[i]
+              .substring(1)).append(" ");
+    }
+    return sb.toString().trim();
+  }
   private void initElements(View view) {
     studentId = view.findViewById(R.id.student_schoolID);
     studentPassword = view.findViewById(R.id.student_password);
@@ -102,7 +113,8 @@ public class StudentRegister extends Fragment {
               String surname = studentSurname.getText().toString();
               Bitmap bitmap = ((BitmapDrawable) uploadImageView.getDrawable()).getBitmap();
               String bluetoothMac = "NULL";
-
+              name = toTitleCase(name);
+              surname = surname.toUpperCase(new Locale("tr","TR"));
               BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
               if (bluetoothAdapter != null) {
                 bluetoothMac = bluetoothAdapter.getAddress();

@@ -341,8 +341,7 @@ WHERE Given_Lectures.lecturer_id = '$user_id'";
 			FROM Taken_Lectures 
 			INNER JOIN Classroom ON Classroom.course_id = Taken_Lectures.course_id AND Classroom.section = Taken_Lectures.section 
 			LEFT JOIN Attended_Students ON Classroom.classroom_id = Attended_Students.classroom_id AND Taken_Lectures.student_id = Attended_Students.student_id 
-			INNER JOIN Student ON Taken_Lectures.student_id = Student.student_id WHERE Classroom.classroom_id = ".$classroom_id.
-	"
+			INNER JOIN Student ON Taken_Lectures.student_id = Student.student_id WHERE Classroom.classroom_id = ".$classroom_id."
 			ORDER BY status DESC, Student.student_number ASC";
 	$result = mysqli_query($con, $query);
 
@@ -356,7 +355,7 @@ WHERE Given_Lectures.lecturer_id = '$user_id'";
 			$attendanceQuery = "SELECT Classroom.*, COALESCE(Attended_Students.status, 0) as status 
 FROM Classroom 
 LEFT JOIN Attended_Students ON Classroom.classroom_id = Attended_Students.classroom_id and Attended_Students.student_id = '$student_id'
-WHERE Classroom.course_id = '$course_id' AND Classroom.section = '$section'";
+WHERE Classroom.course_id = '$course_id' AND Classroom.section = '$section' AND Classroom.active = '1'";
 
 			$attendanceResult = mysqli_query($con, $attendanceQuery);
 			$attendedCount = 0;
@@ -402,7 +401,7 @@ WHERE Classroom.course_id = '$course_id' AND Classroom.section = '$section'";
 INNER JOIN Classroom ON Taken_Lectures.course_id = Classroom.course_id 
 LEFT JOIN Attended_Students ON Classroom.classroom_id = Attended_Students.classroom_id AND Taken_Lectures.student_id = Attended_Students.student_id 
 INNER JOIN Course ON Course.course_id = Taken_Lectures.course_id
-WHERE Taken_Lectures.student_id = '$user_id'
+WHERE Taken_Lectures.student_id = '$user_id' AND Classroom.active = '1'
 ORDER BY Classroom.date DESC, Classroom.hour DESC
 LIMIT 15";
 		
@@ -465,7 +464,7 @@ WHERE Taken_Lectures.student_id = '$user_id'";
 INNER JOIN Classroom ON Taken_Lectures.course_id = Classroom.course_id 
 LEFT JOIN Attended_Students ON Classroom.classroom_id = Attended_Students.classroom_id AND Taken_Lectures.student_id = Attended_Students.student_id 
 INNER JOIN Course ON Course.course_id = Taken_Lectures.course_id
-WHERE Taken_Lectures.student_id = '$user_id' AND Classroom.course_id = '$course_id' AND Classroom.section='$section'
+WHERE Taken_Lectures.student_id = '$user_id' AND Classroom.course_id = '$course_id' AND Classroom.section='$section' AND Classroom.active = '1'
 ORDER BY Classroom.date DESC, Classroom.hour DESC";
 		$result = mysqli_query($con, $query);
 		$json = array();
@@ -523,7 +522,7 @@ ORDER BY Course.course_code ASC";
 		
 		$query = "SELECT Classroom.classroom_id, Classroom.date, Classroom.hour, Course.course_code FROM Classroom
 INNER JOIN Course ON Classroom.course_id = Course.course_id
-WHERE Classroom.course_id = '$course_id' AND Classroom.section = '$section'
+WHERE Classroom.course_id = '$course_id' AND Classroom.section = '$section' AND Classroom.active = '1'
 ORDER BY Classroom.hour DESC";
 
 		$result = mysqli_query($con, $query);
