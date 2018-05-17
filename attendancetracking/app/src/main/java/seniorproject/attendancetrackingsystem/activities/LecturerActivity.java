@@ -173,12 +173,12 @@ public class LecturerActivity extends AppCompatActivity {
       getSupportActionBar().setSubtitle("/Course Settings");
       getSupportFragmentManager().beginTransaction().replace(R.id.main_frame, f).commit();
     } else if (item.toString().equals("Report Problem")) {
+      mainNav.getMenu().findItem(R.id.nav_report).setChecked(true);
       ReportProblem f = new ReportProblem();
       Objects.requireNonNull(getSupportActionBar()).setLogo(R.drawable.kdefault);
       getSupportActionBar().setTitle("Ç.Ü. Attendance Tracking System");
       getSupportActionBar().setSubtitle("/Report Problem");
       getSupportFragmentManager().beginTransaction().replace(R.id.main_frame, f).commit();
-      mainNav.setSelectedItemId(R.id.nav_report);
     }
     return super.onOptionsItemSelected(item);
   }

@@ -1,5 +1,26 @@
 <?php
 require_once 'db.php';
+
+
+
+function send_error($text){
+	$json["success"] = false;
+	$json["message"]= $text;
+	echo json_encode($json);
+	exit(0);
+}
+
+function empty_field_error(){
+	send_error("Empty field error");
+}
+
+function send_success(){
+	$json["success"] = true;
+	echo json_encode($json);
+	exit(0);
+}
+
+
 if($_SERVER["REQUEST_METHOD"]!= "POST") exit(0);
 if(empty($_POST["operation"])) exit(0);
 
@@ -7,10 +28,7 @@ switch($_POST["operation"]){
 	//Login
 	case "login": 
 		if(empty($_POST["type"]) || empty($_POST["username"]) || empty($_POST["password"])) {
-				$json ["success"] = false;
-				$json["message"] = "Empty field error";
-				echo json_encode($json);
-				exit(0);
+				empty_field_error();
 			}
 
 		$type = $_POST["type"];
@@ -24,14 +42,17 @@ switch($_POST["operation"]){
 		$result = mysqli_query($con, $query);
 		if(mysqli_num_rows($result) > 0){
 			$row = mysqli_fetch_assoc($result);
+			if($row["active"] == 0){
+				send_error("Account is not active");
+			}else{
 			$json = $row;
 			$json ["success"] = true;
 			if($type == "studentLogin") $json ["user_type"] = "student";
 			else if($type == "lecturerLogin") $json ["user_type"] = "lecturer";
+			}
 		}
 		else{
-			$json ["success"] = false;
-			$json ["message"] = "Wrong username or password";
+			send_error("Wrong username or password");
 		}
 		echo json_encode($json);
 	break;
@@ -40,10 +61,7 @@ switch($_POST["operation"]){
 		if(empty($_POST["type"])) exit(0);
 		if($_POST["type"] == "studentRegister"){
 			if(empty($_POST["schoolID"]) || empty($_POST["password"]) || empty($_POST["mail"]) || empty($_POST["name"]) || empty($_POST["surname"]) || empty($_POST["image"])) {
-				$json ["success"] = false;
-				$json["message"] = "Empty field error";
-				echo json_encode($json);
-				exit(0);
+				empty_field_error();
 			}
 			$studentNumber = $_POST["schoolID"];
 			$password = md5($_POST["password"]);
@@ -61,10 +79,13 @@ switch($_POST["operation"]){
 				$student_id= $row["student_id"];
 				$row = mysqli_fetch_assoc($result);
 				if($row["allow_register"] == 0){
-					$json["message"] = "The user already exists on the system";
-					$json["success"] = false;
-					echo json_encode($json);
-					exit(0);
+					send_error("The user already exists on the system");
+				}
+				
+				$query = "SELECT * FROM Student WHERE mail_address='$mail_address'";
+				$result = mysqli_query($con, $query);
+				if(mysqli_num_rows($result) > 0){
+					send_error("Mail address already exists in database");				
 				}
 			}
 			if($exists){
@@ -73,14 +94,11 @@ switch($_POST["operation"]){
 				$query = "UPDATE Student SET student_number='$studentNumber', name='$name', surname='$surname', bluetooth_mac, '$bluetoothMAC', mail_address='$email', password='$password' img = '$path' WHERE student_id='$student_id'";
 				$result = mysqli_query($con, $query);
 				if($result) {
-					$json["success"] = true;
+					send_success();
 				}
 				else{
-					$json["message"] = "An error has been occurred while doing update operation";
-					$json["success"] = false;
+					send_error("An error has been occurred while doing update operation");
 				}
-				echo json_encode($json);
-				exit(0);
 			}
 			
 			$query = "INSERT INTO Student(student_number, name, surname, bluetooth_mac, mail_address, password) VALUES('$studentNumber', '$name', '$surname', '$bluetoothMAC', '$email', '$password')";
@@ -92,26 +110,21 @@ switch($_POST["operation"]){
 				$query = "UPDATE Student SET img = '$path' WHERE student_id='$last'";
 				$result = mysqli_query($con, $query);
 				if($result){
-					$json ["success"] = true;
+					send_success();
 				}else
 				{
-					$json["success"] = false;
-					$json["message"] = "An error has been occurred while doing update operation";
+					send_error("An error has been occurred while doing update operation");
 				}
 			}
 			else{
-				$json ["success"] = false;
-				$json ["message"] = "An error has occured while doing insert operation";
+				send_error("An error has occured while doing insert operation");
 			}
 			
 			echo json_encode($json);
 		}
 		else if($_POST["type"] == "lecturerRegister"){
 			if(empty($_POST["mail"]) || empty($_POST["password"]) || empty($_POST["name"]) || empty($_POST["surname"])) {
-				$json ["success"] = false;
-				$json["message"] = "Empty field error";
-				echo json_encode($json);
-				exit(0);
+				empty_field_error();
 			}
 
 			$email = $_POST["mail"];
@@ -123,21 +136,16 @@ switch($_POST["operation"]){
 			$query = "INSERT INTO Lecturer(name, surname, department_id, mail_address, password) VALUES('$name', '$surname', '$departmentID', '$email', '$password')";
 			$result = mysqli_query($con, $query);
 			if($result) 
-				$json ["success"] = true;
+				send_success();
 			else{
-				$json ["success"] = false;
-				$json ["message"] = "An error has been occured while doing insert operation";
+				send_error("An error has been occured while doing insert operation");
 			}
-			echo json_encode($json);
 		}
 	break;
 	case "change-password":
 		if(empty($_POST["old_password"]) || empty($_POST["user_id"]) || empty($_POST["user_type"]) || empty($_POST["new_password"]))
 		{
-			$json ["success"] = false;
-			$json ["message"] = "Empty field error";
-			echo json_encode($json);
-			exit(0);
+			empty_field_error();
 		}
 		$oldPassword = md5($_POST["old_password"]);
 		$userId = $_POST["user_id"];
@@ -150,10 +158,7 @@ switch($_POST["operation"]){
 			$query = "SELECT lecturer_id FROM Lecturer WHERE lecturer_id = '$userId' AND password = '$oldPassword'";
 		$result = mysqli_query($con, $query);
 		if(mysqli_num_rows($result) <= 0){
-			$json ["success"] = false;
-			$json ["message"] = "Password does not match with your old password";
-			echo json_encode($json);
-			exit(0);
+			send_error("Password does not match with your old password");
 		}
 		if($userType == "student")
 			$query = "UPDATE Student SET password = '$newPassword' WHERE student_id = '$userId'";
@@ -162,19 +167,14 @@ switch($_POST["operation"]){
 		$result = mysqli_query($con, $query);
 
 		if($result)
-			$json ["success"] = true;
+			send_success();
 		else{
-			$json ["success"] = false;
-			$json ["message"] = "An error has been occured while doing update operation";
+			send_error("An error has been occured while doing update operation");
 		}
-		echo json_encode($json);
 	break;
 	case "recovery":
 		if(empty($_POST["mail_address"]) || empty($_POST["user_type"])){
-			$json["message"] = "Empty field error";
-			$json["success"] = false;
-			echo json_encode($json);
-			exit(0);
+			empty_field_error();
 		}
 		$user_type = $_POST["user_type"];
 		$mail_address = $_POST["mail_address"];
@@ -202,17 +202,14 @@ switch($_POST["operation"]){
 			if($result){
 				include 'mail.php';
 				send_recovery_mail($mail_address, $row["name"], $row["surname"], $token);
-				$json["success"] = true;
+				send_success();
 			}else
 			{
-				$json["message"] = "An error has been occurred while doing your action";
-				$json["success"] = false;
+				send_error("An error has been occurred while doing your action");
 			}
 		}else{
-			$json["message"] = "There is not any user that has e-mail address you entered";
-			$json["success"] = false;
+			send_error("There is not any user that has e-mail address you entered");
 		}
-		echo json_encode($json);
 	break;
 }
 mysqli_close($con);

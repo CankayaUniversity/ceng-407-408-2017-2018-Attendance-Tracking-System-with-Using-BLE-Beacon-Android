@@ -1,5 +1,25 @@
 <?php
 require_once 'db.php';
+
+
+function send_error($text){
+	$json["success"] = false;
+	$json["message"]= $text;
+	echo json_encode($json);
+	exit(0);
+}
+
+function empty_field_error(){
+	send_error("Empty field error");
+}
+
+function send_success(){
+	$json["success"] = true;
+	echo json_encode($json);
+	exit(0);
+}
+
+
 if($_SERVER["REQUEST_METHOD"]!= "POST") exit(0);
 if(empty($_POST["operation"])) exit(0);
 switch($_POST["operation"]){
@@ -53,16 +73,13 @@ switch($_POST["operation"]){
 		}
 		else
 		{
-			$json ["success"] = false;
-			$json ["message"] = "User is not found";
+			send_error("User is not found");
 		}
 		echo json_encode($json);
 	break;
 	case 'taken-courses':
 		if(empty($_POST["user_id"])){
-			$json ["message"] = "Empty field error";
-			echo json_encode($json);
-			exit(0);
+			empty_field_error();
 		}
 		$user_id = $_POST["user_id"];
 		$query = "SELECT * FROM Taken_Lectures WHERE student_id = '$user_id'";
@@ -80,9 +97,7 @@ switch($_POST["operation"]){
 	break;
 	case 'given-courses':
 		if(empty($_POST["user_id"])){
-			$json ["message"] = "Empty field error";
-			echo json_encode($json);
-			exit(0);
+			empty_field_error();
 		}
 		$user_id = $_POST["user_id"];
 		$query = "SELECT * FROM Given_Lectures WHERE lecturer_id = '$user_id'";
@@ -99,9 +114,7 @@ switch($_POST["operation"]){
 	break;
 	case 'beacon-taken-courses':
 		if(empty($_POST["user_id"])){
-			$json ["message"] = "Empty field error";
-			echo json_encode($json);
-			exit(0);
+			empty_field_error();
 		}
 		$user_id = $_POST["user_id"];
 		$query = "SELECT Lecturer.beacon_mac FROM Lecturer 
@@ -121,9 +134,7 @@ switch($_POST["operation"]){
 	break;
 	case 'schedule':
 		if(empty($_POST["user_id"])){
-			$json ["message"] = "Empty field error";
-			echo json_encode($json);
-			exit(0);
+			empty_field_error();
 		}
 		$day = date("w");
 		$week = array("sunday","monday","tuesday","wednesday","thursday","friday","saturday");
@@ -166,9 +177,7 @@ switch($_POST["operation"]){
 	break;
 	case 'precondition';
 	if(empty($_POST["course_id"])){
-			$json ["message"] = "Empty field error";
-			echo json_encode($json);
-			exit(0);
+			empty_field_error();
 		}
 	$course_id = $_POST["course_id"];
 	
@@ -185,10 +194,7 @@ switch($_POST["operation"]){
 	break;
 	case 'coursetime':
 	if(empty($_POST["classroom_id"])){
-		$json ["message"] = "Empty field error";
-		$json ["success"] = false;
-		echo json_encode($json);
-		exit(0);
+		empty_field_error();
 	}
 	$classroom_id = $_POST["classroom_id"];
 	
@@ -206,9 +212,7 @@ switch($_POST["operation"]){
 	break;
 	case 'lecturer-schedule':
 	if(empty($_POST["user_id"])){
-			$json ["message"] = "Empty field error";
-			echo json_encode($json);
-			exit(0);
+			empty_field_error();
 		}
 		
 		$day = date("w");
@@ -250,10 +254,7 @@ WHERE Schedule.week_day = '$week_day' AND Given_Lectures.lecturer_id = '$user_id
 	break;
 	case "get-token-status":
 		if(empty($_POST["classroom_id"])){
-			$json ["message"] = "Empty field error";
-			$json ["success"]  =false;
-			echo json_encode($json);
-			exit(0);
+			empty_field_error();
 		}
 		
 		$classroom_id = $_POST["classroom_id"];
@@ -279,10 +280,7 @@ WHERE Schedule.week_day = '$week_day' AND Given_Lectures.lecturer_id = '$user_id
 	break;
 	case "given-lectures":
 		if(empty($_POST["user_id"])){
-			$json ["message"] = "Empty field error";
-			$json ["success"] = false;
-			echo json_encode($json);
-			exit(0);
+			empty_field_error();
 		}
 		$user_id = $_POST["user_id"];
 		$query = "SELECT Course.course_id, course_code FROM Course
@@ -297,17 +295,13 @@ WHERE Given_Lectures.lecturer_id = '$user_id'";
 			}
 		}else
 		{
-			$json ["message"] = "There is no lecture";
-			$json["success"] = false;
+			send_error("There is no lecture");
 		}
 		echo json_encode($json);
 	break;
 	case "preconditions":
 		if(empty($_POST["course_id"])){
-			$json["message"] = "Empty field error";
-			$json ["success"] = false;
-			echo json_encode($json);
-			exit(0);
+			empty_field_error();
 		}
 		$course_id = $_POST["course_id"];
 		$middle = 0;
@@ -330,10 +324,7 @@ WHERE Given_Lectures.lecturer_id = '$user_id'";
 	break;
 	case "attendance-list":
 		if(empty($_POST["classroom_id"])){
-			$json["message"] = "Empty field error";
-			$json["success"] = false;
-			echo json_encode($json);
-			exit(0);
+			empty_field_error();
 		}
 		$classroom_id = $_POST["classroom_id"];
 		
@@ -383,17 +374,13 @@ WHERE Classroom.course_id = '$course_id' AND Classroom.section = '$section' AND 
 			$json[]= $row;
 		}
 	}else{
-		$json["message"] = "There is not any classroom information on the database";
-		$json["success"] = false;
+		send_error("There is not any classroom information on the database");
 	}
 	echo json_encode($json);
 	break;
 	case "last-15-lectures":
 		if(empty($_POST["user_id"])){
-			$json["message"] = "Empty field error";
-			$json["success"] = false;
-			echo json_encode($json);
-			exit(0);
+			empty_field_error();
 		}
 		
 		$user_id = $_POST["user_id"];
@@ -426,10 +413,7 @@ LIMIT 15";
 	break;
 	case "taken-lectures":
 		if(empty($_POST["user_id"])){
-			$json["message"] = "Empty field error";
-			$json["success"] = false;
-			echo json_encode($json);
-			exit(0);
+			empty_field_error();
 		}
 		
 		$user_id = $_POST["user_id"];
@@ -452,10 +436,7 @@ WHERE Taken_Lectures.student_id = '$user_id'";
 	break;
 	case "attendance-info-calendar":
 		if(empty($_POST["user_id"]) || empty($_POST["course_id"]) || empty($_POST["section"])){
-			$json["message"] = "Empty field error";
-			$json["success"] = false;
-			echo json_encode($json);
-			exit(0);
+			empty_field_error();
 		}
 		$user_id = $_POST["user_id"];
 		$course_id = $_POST["course_id"];
@@ -479,9 +460,7 @@ ORDER BY Classroom.date DESC, Classroom.hour DESC";
 	break;
 	case 'given-lectures-seperate-sections':
 		if(empty($_POST["user_id"])){
-			$json["message"] = "Empty field error";
-			$json["success"] = false;
-			echo json_encode($json);
+			empty_field_error();
 			exit(0);
 		}
 		$user_id = $_POST["user_id"];
@@ -505,17 +484,13 @@ ORDER BY Course.course_code ASC";
 			}
 		}else
 		{
-			$json["success"] = false;
-			$json["message"] = "There is no course information";
+			send_error("There is no course information");
 		}
 		echo json_encode($json);
 	break;
 	case 'classrooms':
 		if(empty($_POST["course_id"]) || empty($_POST["section"])){
-			$json["message"] = "Empty field error";
-			$json["success"]= false;
-			echo json_encode($json);
-			exit(0);
+			empty_field_error();
 		}
 		$course_id = $_POST["course_id"];
 		$section = $_POST["section"];
@@ -537,8 +512,7 @@ ORDER BY Classroom.hour DESC";
 			}
 		}else
 		{
-			$json["message"] = "There is no classroom information";
-			$json["success"] = false;
+			send_error("There is no classroom information");
 		}
 		echo json_encode($json);
 	break;
