@@ -76,6 +76,7 @@ $mail->MsgHTML('
                     <td align="left" valign="top" colspan="2" style="padding-top: 10px;">
 
                         <span style="font-size: 12px; line-height: 1.5; color: #333333;">
+						Dear '.$name.' '.$surname.'<br/><br/>
 
                             We have sent you this email in response to your request to reset your password on Attendance Tracking System. 
 
@@ -86,6 +87,11 @@ $mail->MsgHTML('
                             <a href="http://attendancesystem.xyz/attendancetracking/recovery.php?mail='.$secure_mail.'&token='.$token.'">Link</a>
 
                             <br/><br/>
+							If your browser does not support this link, please copy the token below and enter it from the web page below.
+							<br/>
+							Token :  '.$token.'<br/>
+							<a href="http://attendancesystem.xyz/attendancetracking/recovery.php">Link</a>
+							<br/> <br/>
 
                             We recommend that you keep your password secure and not share it with anyone.If you feel your password has been compromised, you can change it by going to settings menu on your Android application.
 
@@ -111,6 +117,10 @@ $mail->MsgHTML('
 
 </html>');
 $mail->send();
+}
+
+function send_register_validation_mail($to, $name, $surname){
+	
 }
 
 

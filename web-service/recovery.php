@@ -41,13 +41,37 @@ function show_form($mail, $token, $user_type){
 	<?php
 }
 
+function show_mail_and_token_form(){
+	?>
+	<html>
+	<body>
+	<form action="recovery.php?submit=show_form" method="post">
+	<table border="0">
+	<tr>
+	<td>Mail Address:</td><td><input type="text" name="mail"/></td>
+	</tr>
+	<tr>
+	<td>Token:</td><td><input type="password" name="token"/></td>
+	</tr>
+	<tr>
+	<td colspan="2" align="center"><input type="submit" value="Change Password"/></td>
+	</tr>
+	</table>
+	</form>
+	</body>
+	</html>
+	<?php
+}
+
 @$submit = $_GET["submit"];
 
 if(!isset($submit)){
 	@$mail =$_GET["mail"];
 	@$token = $_GET["token"];
-	//if(!isset($mail) || !isset($token)) header("location:http://attendancesystem.xyz");
-
+	if(!isset($mail) || !isset($token)) {
+		show_mail_and_token_form();
+		exit;
+	}
 	$mail = str_replace("__at__","@",$mail);
 
 
@@ -71,8 +95,41 @@ if(!isset($submit)){
 		header("refresh:2 ;url=".$link);
 		exit(0);
 	}
-}else
-{
+}else if($submit == "show_form"){
+	$mail = $_POST["mail"];
+	$token = $_POST["token"];
+	if(empty($mail) || empty($token)){
+		echo "<center><b>Empty field error</b></center>";
+		$link="http://attendancesystem.xyz/attendancetracking/recovery.php";
+		header("refresh:2 ;url=".$link);
+		exit(0);
+	}
+	
+	$mail = str_replace("__at__","@",$mail);
+
+
+	$query = "SELECT * FROM Recovery_Keys WHERE mail_address = '$mail' AND token='$token'";
+	$result = mysqli_query($con, $query);
+	if(mysqli_num_rows($result)>0){
+		$row = mysqli_fetch_assoc($result);
+		if($row["valid"] == 1)
+			show_form($mail, $token, $row["user_type"]);
+		else
+		{
+		echo "<center><b>Invalid token</b></center>";
+		$link="http://attendancesystem.xyz";
+		header("refresh:2 ;url=".$link);
+		exit(0);
+		}
+	}else
+	{
+		echo "<center><b>Invalid token</b></center>";
+		$link="http://attendancesystem.xyz";
+		header("refresh:2 ;url=".$link);
+		exit(0);
+	}
+}
+else{
 	$user_type =$_POST["user_type"];
 	$mail = $_POST["mail"];
 	$token = $_POST["token"];
