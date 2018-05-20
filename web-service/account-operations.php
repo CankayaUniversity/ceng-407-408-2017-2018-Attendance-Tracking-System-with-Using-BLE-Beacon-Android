@@ -59,6 +59,16 @@ switch($_POST["operation"]){
 	//Registration 
 	case "register": 
 		if(empty($_POST["type"])) exit(0);
+			
+			$characters = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+			$charactersLength = strlen($characters);
+			$random = '';
+			for($i = 0; $i < $charactersLength; $i++){
+			$random .= $characters[rand(0,$charactersLength-1)];
+			}
+			
+			$token = md5($random);			
+		
 		if($_POST["type"] == "studentRegister"){
 			if(empty($_POST["schoolID"]) || empty($_POST["password"]) || empty($_POST["mail"]) || empty($_POST["name"]) || empty($_POST["surname"]) || empty($_POST["image"])) {
 				empty_field_error();
@@ -81,20 +91,31 @@ switch($_POST["operation"]){
 				if($row["allow_register"] == 0){
 					send_error("The user already exists on the system");
 				}
-				
-				$query = "SELECT * FROM Student WHERE mail_address='$mail_address'";
+			}
+			if(!$exists){
+				$query = "SELECT * FROM Student WHERE mail_address='$email'";
 				$result = mysqli_query($con, $query);
 				if(mysqli_num_rows($result) > 0){
 					send_error("Mail address already exists in database");				
 				}
 			}
+			
 			if($exists){
 				$path = "student_images/$student_id.jpg";
 					file_put_contents($path, base64_decode($image));
 				$query = "UPDATE Student SET student_number='$studentNumber', name='$name', surname='$surname', bluetooth_mac, '$bluetoothMAC', mail_address='$email', password='$password' img = '$path' WHERE student_id='$student_id'";
 				$result = mysqli_query($con, $query);
 				if($result) {
+					include 'mail.php';
+					$query = "INSERT INTO Activation_Keys(user_type, mail_address, token, valid) VALUES('1', '$email', '$token', '1')";
+					$result = mysqli_query($con, $query);
+					if($result){
+					send_register_validation_mail($email, $name, $surname, $token);
 					send_success();
+					}else
+					{
+						send_error("Error while registration. Please try again");
+					}
 				}
 				else{
 					send_error("An error has been occurred while doing update operation");
@@ -110,7 +131,16 @@ switch($_POST["operation"]){
 				$query = "UPDATE Student SET img = '$path' WHERE student_id='$last'";
 				$result = mysqli_query($con, $query);
 				if($result){
+					include 'mail.php';
+					$query = "INSERT INTO Activation_Keys(user_type, mail_address, token, valid) VALUES('1', '$email', '$token', '1')";
+					$result = mysqli_query($con, $query);
+					if($result){
+					send_register_validation_mail($email, $name, $surname, $token);
 					send_success();
+					}else
+					{
+						send_error("Error while registration. Please try again");
+					}
 				}else
 				{
 					send_error("An error has been occurred while doing update operation");
@@ -132,11 +162,27 @@ switch($_POST["operation"]){
 			$surname = $_POST["surname"];
 			$password = md5($_POST["password"]);
 			$departmentID = $_POST["departmentID"];
+			
+			$query = "SELECT * FROM Lecturer WHERE mail_address = '$email'";
+			$result = mysqli_query($con, $query);
+			if(mysqli_num_rows($result) > 0){
+				send_error("The user already exists on the system");
+			}
 
 			$query = "INSERT INTO Lecturer(name, surname, department_id, mail_address, password) VALUES('$name', '$surname', '$departmentID', '$email', '$password')";
 			$result = mysqli_query($con, $query);
-			if($result) 
-				send_success();
+			if($result){ 
+				include 'mail.php';
+				$query = "INSERT INTO Activation_Keys(user_type, mail_address, token, valid) VALUES('1', '$email', '$token', '1')";
+					$result = mysqli_query($con, $query);
+					if($result){
+					send_register_validation_mail($email, $name, $surname, $token);
+					send_success();
+					}else
+					{
+						send_error("Error while registration. Please try again");
+					}
+			}
 			else{
 				send_error("An error has been occured while doing insert operation");
 			}

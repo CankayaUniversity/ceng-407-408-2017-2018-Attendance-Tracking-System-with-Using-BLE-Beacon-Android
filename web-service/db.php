@@ -1,10 +1,9 @@
 <?php
 header('Content-Type: application/json; charset: utf8');
-//Database Information of the Web Service is hidden by from the community.
-define('DB_USER', "");
-define ('DB_PASSWORD','');
-define('DB_DATABASE','');
-define('DB_SERVER','');
+define('DB_USER', "rolatten_admin");
+define ('DB_PASSWORD','Meloteam06');
+define('DB_DATABASE','rolatten_attendancetracking');
+define('DB_SERVER','localhost');
 
 $con = mysqli_connect(DB_SERVER,DB_USER,DB_PASSWORD, DB_DATABASE) or die(mysql_error());
 
