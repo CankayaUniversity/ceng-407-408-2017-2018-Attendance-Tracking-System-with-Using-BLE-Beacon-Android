@@ -36,3 +36,8 @@ Android version 5.0 or more
 -After the application is opened in your phone you do not need to make a connection between your phone and your computer because it should be installed to your phone.
 
 
+You can access our user manuel document by clicking the link below:
+
+[User Manual for Attendance Tracking System](http://attendancesystem.xyz/documents/UserManual.pdf)
+
+
