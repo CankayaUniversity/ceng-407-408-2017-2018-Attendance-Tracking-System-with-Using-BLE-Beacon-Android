@@ -214,7 +214,7 @@ public class ReportFragmentLecturer extends Fragment {
   private String createPercent(double number) {
     NumberFormat formatter = new DecimalFormat("#0.0");
     String result;
-    String parts[] = formatter.format(number).split(",");
+    String parts[] = formatter.format(number).split("[.,]");
     if (parts[1].equals("0")) result = String.valueOf((int) number) + "%";
     else {
       result = formatter.format(number) + "%";
