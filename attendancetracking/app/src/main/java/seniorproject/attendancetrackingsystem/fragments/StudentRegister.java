@@ -10,11 +10,9 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.FileProvider;
 import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.basgeekball.awesomevalidation.AwesomeValidation;
 import com.basgeekball.awesomevalidation.ValidationStyle;
@@ -29,6 +28,7 @@ import com.basgeekball.awesomevalidation.ValidationStyle;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -48,6 +48,20 @@ public class StudentRegister extends Fragment {
   private EditText studentSurname;
   private AwesomeValidation awesomeValidation;
   private ImageView uploadImageView;
+  private Uri photoURI;
+
+  private static String toTitleCase(String givenString) {
+    String[] arr = givenString.split(" ");
+    StringBuilder sb = new StringBuilder();
+
+    for (int i = 0; i < arr.length; i++) {
+      arr[i] = arr[i].toUpperCase(new Locale("tr", "TR"));
+      sb.append(arr[i].substring(0, 1).toUpperCase(new Locale("tr", "TR")))
+          .append(arr[i].substring(1))
+          .append(" ");
+    }
+    return sb.toString().trim();
+  }
 
   @Nullable
   @Override
@@ -77,17 +91,7 @@ public class StudentRegister extends Fragment {
         "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!_*.-]).{6,}$",
         R.string.passworderror);
   }
-  private static String toTitleCase(String givenString) {
-    String[] arr = givenString.split(" ");
-    StringBuilder sb = new StringBuilder();
 
-    for (int i = 0; i < arr.length; i++) {
-      arr[i] = arr[i].toUpperCase(new Locale("tr","TR"));
-      sb.append(arr[i].substring(0,1).toUpperCase(new Locale("tr","TR"))).append(arr[i]
-              .substring(1)).append(" ");
-    }
-    return sb.toString().trim();
-  }
   private void initElements(View view) {
     studentId = view.findViewById(R.id.student_schoolID);
     studentPassword = view.findViewById(R.id.student_password);
@@ -111,10 +115,25 @@ public class StudentRegister extends Fragment {
               String mail = studentMail.getText().toString();
               String name = studentName.getText().toString();
               String surname = studentSurname.getText().toString();
-              Bitmap bitmap = ((BitmapDrawable) uploadImageView.getDrawable()).getBitmap();
+              Bitmap bitmap = null;
+              try {
+                InputStream is = getActivity().getContentResolver().openInputStream(photoURI);
+                bitmap = BitmapFactory.decodeStream(is);
+                bitmap = Bitmap.createScaledBitmap(bitmap, 400, 500, false);
+                is.close();
+
+              } catch (IOException e) {
+                e.printStackTrace();
+                Toast.makeText(
+                        getActivity().getApplicationContext(),
+                        "An error has been " + "occurred",
+                        Toast.LENGTH_SHORT)
+                    .show();
+                return;
+              }
               String bluetoothMac = "NULL";
               name = toTitleCase(name);
-              surname = surname.toUpperCase(new Locale("tr","TR"));
+              surname = surname.toUpperCase(new Locale("tr", "TR"));
               BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
               if (bluetoothAdapter != null) {
                 bluetoothMac = bluetoothAdapter.getAddress();
@@ -145,17 +164,16 @@ public class StudentRegister extends Fragment {
 
   private String getStringImage(Bitmap img) {
     ByteArrayOutputStream bm = new ByteArrayOutputStream();
-    img.compress(Bitmap.CompressFormat.JPEG, 100, bm);
+    img.compress(Bitmap.CompressFormat.JPEG, 80, bm);
     byte[] imageByte = bm.toByteArray();
-    String encode = Base64.encodeToString(imageByte, Base64.DEFAULT);
-    return encode;
+    return Base64.encodeToString(imageByte, Base64.DEFAULT);
   }
 
   private File createImageFile() throws IOException {
     // Create an image file name
     String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
     String imageFileName = "JPEG_" + timeStamp + "_";
-    File storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+    File storageDir = getActivity().getExternalFilesDir("Pictures");
     File image =
         File.createTempFile(
             imageFileName, /* prefix */ ".jpg", /* suffix */ storageDir /* directory */);
@@ -175,8 +193,7 @@ public class StudentRegister extends Fragment {
       e.printStackTrace();
     }
     if (photoFile != null) {
-      Uri photoURI =
-          FileProvider.getUriForFile(getActivity(), "com.example.android.fileprovider", photoFile);
+      photoURI = Uri.fromFile(photoFile);
       intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
       startActivityForResult(intent, CAM_REQUEST);
     }
@@ -198,21 +215,8 @@ public class StudentRegister extends Fragment {
     super.onActivityResult(requestCode, resultCode, data);
     if (resultCode == Activity.RESULT_OK) {
       if (requestCode == CAM_REQUEST) {
-        int targetW = uploadImageView.getWidth();
-        int targetH = uploadImageView.getHeight();
-
-        BitmapFactory.Options bmoptions = new BitmapFactory.Options();
-        bmoptions.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(mCurrentPhotoPath, bmoptions);
-        int photoW = bmoptions.outWidth;
-        int photoH = bmoptions.outHeight;
-
-        int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
-
-        bmoptions.inJustDecodeBounds = false;
-        bmoptions.inSampleSize = scaleFactor;
-        Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmoptions);
-        uploadImageView.setImageBitmap(bitmap);
+        uploadImageView.setImageURI(photoURI);
+        uploadImageView.setVisibility(View.VISIBLE);
       }
     }
   }
