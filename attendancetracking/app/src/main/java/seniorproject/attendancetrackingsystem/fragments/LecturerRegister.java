@@ -17,6 +17,7 @@ import com.basgeekball.awesomevalidation.ValidationStyle;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -59,7 +60,18 @@ public class LecturerRegister extends Fragment {
         "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!_*.-]).{6,}$",
         R.string.passworderror);
   }
+  private static String toTitleCase(String givenString) {
 
+    String[] arr = givenString.split(" ");
+    StringBuilder sb = new StringBuilder();
+
+    for (String anArr : arr) {
+      sb.append(anArr.substring(0, 1).toUpperCase(new Locale("tr", "TR")))
+              .append(anArr.substring(1))
+              .append(" ");
+    }
+    return sb.toString().trim();
+  }
   private void initElements(View view) {
     departmentList = view.findViewById(R.id.departments);
     lecturerMail = view.findViewById(R.id.lecturer_e_mail);
@@ -111,6 +123,9 @@ public class LecturerRegister extends Fragment {
                   break;
                 }
               }
+
+              name = toTitleCase(name);
+              surname = surname.toUpperCase(new Locale("tr","TR"));
               Map<String, String> postParameters = new HashMap<>();
               postParameters.put("mail", mail);
               postParameters.put("name", name);
