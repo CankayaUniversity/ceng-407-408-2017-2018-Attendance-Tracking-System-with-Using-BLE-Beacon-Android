@@ -100,15 +100,16 @@
                 android:background="@drawable/button_border"
                 android:text="Take Pıcture" />
 
-            <ImageView
+            <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/upload_image_view"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
+                android:layout_width="125dp"
+                android:layout_height="133dp"
                 android:layout_above="@+id/register_button"
-                android:layout_alignParentEnd="true"
-                android:layout_marginBottom="50dp"
-                android:layout_marginLeft="25dp"
-                android:layout_marginTop="10dp" />
+                android:layout_marginLeft="55dp"
+                android:layout_marginTop="20dp"
+                android:contentDescription="avatar"
+                app:siBorderColor="@android:color/darker_gray"
+                app:siBorderWidth="3dp" />
         </LinearLayout>
 
         <Button

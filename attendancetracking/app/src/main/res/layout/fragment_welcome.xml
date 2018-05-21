@@ -25,7 +25,7 @@
                 android:contentDescription="avatar"
                 android:src="@drawable/unknown_trainer"
                 app:siBorderColor="@android:color/darker_gray"
-                app:siBorderWidth="1dp"
+                app:siBorderWidth="3dp"
 
                 />
 
