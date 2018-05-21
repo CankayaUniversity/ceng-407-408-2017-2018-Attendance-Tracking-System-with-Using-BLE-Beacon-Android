@@ -95,6 +95,7 @@ public class BeaconBuilder extends Service implements BeaconConsumer {
               Intent  intent = new Intent();
               intent.setAction(ACTION);
               intent.putExtra("MAC", beacons.get(getFirstBeacon()).getBluetoothAddress());
+              intent.putExtra("NAME", beacons.get(getFirstBeacon()).getBluetoothName());
               sendBroadcast(intent);
             }
           }

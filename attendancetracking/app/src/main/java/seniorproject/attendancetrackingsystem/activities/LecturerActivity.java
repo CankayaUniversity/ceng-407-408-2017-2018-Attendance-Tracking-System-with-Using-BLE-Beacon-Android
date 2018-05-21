@@ -29,13 +29,13 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
 import seniorproject.attendancetrackingsystem.R;
 import seniorproject.attendancetrackingsystem.fragments.CourseSettings;
-import seniorproject.attendancetrackingsystem.fragments.ReportFragment;
 import seniorproject.attendancetrackingsystem.fragments.ReportFragmentLecturer;
 import seniorproject.attendancetrackingsystem.fragments.ReportProblem;
 import seniorproject.attendancetrackingsystem.fragments.WelcomeFragmentLecturer;
@@ -269,7 +269,6 @@ public class LecturerActivity extends AppCompatActivity {
     return alert;
   }
 
-
   private void showProgressDialog() {
     progressDialog.setTitle("Beacon syncronizer");
     progressDialog.setMessage("Searching nearyby beacons");
@@ -289,24 +288,25 @@ public class LecturerActivity extends AppCompatActivity {
     progressDialog.show();
   }
 
-    @Override
-    public void onBackPressed() {
-      Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_frame);
+  @Override
+  public void onBackPressed() {
+    Fragment f = getSupportFragmentManager().findFragmentById(R.id.main_frame);
     if (f instanceof ReportFragmentLecturer) {
       setFragment(reportFragmentLecturer);
       mainNav.setSelectedItemId(R.id.nav_report);
-    }
-    else {
+    } else {
       setFragment(welcomeFragmentLecturer);
       mainNav.setSelectedItemId(R.id.nav_home);
-        }
     }
-    
-  private void showAlertDialog(final String mac) {
+  }
+
+  private void showAlertDialog(final String mac, final String name) {
     if (mac == null || mac.isEmpty() || mac.equals("null")) return;
     progressDialog.hide();
     alertDialog.setTitle("Found Beacon");
-    alertDialog.setMessage("MAC: " + mac);
+    DecimalFormat formatter = new DecimalFormat("#0.00");
+    String info = "Name: " + name + "\n\nMAC Address: " + mac;
+    alertDialog.setMessage(info);
     alertDialog.setButton(
         DialogInterface.BUTTON_NEGATIVE,
         "Ignore",
@@ -355,7 +355,6 @@ public class LecturerActivity extends AppCompatActivity {
     progressDialog.hide();
     alertDialog.hide();
     unregisterReceiver(mReceiver);
-    Log.i("reciever", "unregistered");
   }
 
   @Override
@@ -365,13 +364,13 @@ public class LecturerActivity extends AppCompatActivity {
     IntentFilter filter = new IntentFilter();
     filter.addAction(BeaconBuilder.ACTION);
     registerReceiver(mReceiver, filter);
-    Log.i("receiver", "registered");
   }
 
   private class Receiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-      if (intent.getStringExtra("MAC") != null) showAlertDialog(intent.getStringExtra("MAC"));
+      if (intent.getStringExtra("MAC") != null)
+        showAlertDialog(intent.getStringExtra("MAC"), intent.getStringExtra("NAME"));
     }
   }
 }
