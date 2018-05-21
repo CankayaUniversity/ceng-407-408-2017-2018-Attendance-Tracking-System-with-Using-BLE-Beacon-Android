@@ -10,7 +10,6 @@ import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,6 +62,7 @@ public class WelcomeFragmentLecturer extends Fragment {
   private ArrayList<Schedule.CourseInfo> currentCourses = new ArrayList<>();
   private SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
   private Switch secureSwitch;
+  private SessionManager session;
 
   public WelcomeFragmentLecturer() {
     // Required empty public constructor
@@ -81,7 +81,7 @@ public class WelcomeFragmentLecturer extends Fragment {
     handler = new Handler(Looper.getMainLooper());
     timer = new Timer();
 
-    SessionManager session = new SessionManager(getActivity().getApplicationContext());
+    session = new SessionManager(getActivity().getApplicationContext());
     HashMap<String, String> userInfo = session.getUserDetails();
     TextView nameSurnameField = getActivity().findViewById(R.id.w_user_name);
     TextView description = getActivity().findViewById(R.id.w_user_mail);
@@ -127,7 +127,6 @@ public class WelcomeFragmentLecturer extends Fragment {
             if (current.compareTo(start) >= 0 && current.compareTo(stop) < 0) {
               if (!noCourseForToday) {
                 if (!updated) {
-                  Log.d("update:", "Gathering courses of the today");
                   handler.post(
                       new Runnable() {
                         @Override
@@ -137,24 +136,35 @@ public class WelcomeFragmentLecturer extends Fragment {
                       });
                 }
               }
-            }else{
+            } else {
               updated = false;
               noCourseForToday = false;
               items.clear();
               items.add("End of the day");
-              handler.post(new Runnable() {
-                @Override
-                public void run() {
-                  Parcelable state = listView.onSaveInstanceState();
-                  listView.setAdapter(adapter);
-                  listView.onRestoreInstanceState(state);
-                  currentCourses.clear();
-                }
-              });
+              session.turnOffSecure();
+              handler.post(
+                  new Runnable() {
+                    @Override
+                    public void run() {
+                      Parcelable state = listView.onSaveInstanceState();
+                      listView.setAdapter(adapter);
+                      listView.onRestoreInstanceState(state);
+                      currentCourses.clear();
+                    }
+                  });
             }
-            if (updated || noCourseForToday) setItems(current);
-            if (currentCourses.isEmpty()) secureModeSwitchVisibility(false);
-            else if (token.equals("not_initialized")) secureModeSwitchVisibility(true);
+            if (updated || noCourseForToday) {
+              setItems(current);
+              if (currentCourses.isEmpty()) {
+                secureModeSwitchVisibility(false);
+                session.turnOffSecure();
+              }
+            }
+
+            if (currentCourses.isEmpty()) {
+              secureModeSwitchVisibility(false);
+            } else if (!session.isSecureMode()) secureModeSwitchVisibility(true);
+            else secureModeSwitchVisibility(false);
           }
         },
         0,
@@ -237,6 +247,7 @@ public class WelcomeFragmentLecturer extends Fragment {
     }
     out = new StringBuilder(out.substring(0, out.length() - 1)); // ignoring last '-' character
     setToken(token);
+    session.turnOnSecure(token);
     showAlertDialog(out.toString());
   }
 
@@ -283,7 +294,7 @@ public class WelcomeFragmentLecturer extends Fragment {
             final AlertDialog alertDialog =
                 new AlertDialog.Builder(getActivity(), AlertDialog.THEME_HOLO_LIGHT).create();
             alertDialog.setTitle("Secure Mode");
-            alertDialog.setMessage("Token: " + token);
+            alertDialog.setMessage("Token: " + session.getToken());
             alertDialog.setCanceledOnTouchOutside(false);
             alertDialog.setButton(
                 Dialog.BUTTON_NEUTRAL,
@@ -353,11 +364,7 @@ public class WelcomeFragmentLecturer extends Fragment {
                   @Override
                   protected Map<String, String> getParams() {
                     Map<String, String> params = new HashMap<>();
-                    params.put(
-                        "user_id",
-                        new SessionManager(getActivity().getBaseContext())
-                            .getUserDetails()
-                            .get(SessionManager.KEY_USER_ID));
+                    params.put("user_id", session.getUserDetails().get(SessionManager.KEY_USER_ID));
                     params.put("operation", "lecturer-schedule");
                     return params;
                   }
@@ -389,6 +396,8 @@ public class WelcomeFragmentLecturer extends Fragment {
                 mainNav.setSelectedItemId(R.id.nav_report);
                 f.setArguments(args);
                 getFragmentManager().beginTransaction().replace(R.id.main_frame, f).commit();
+              } else if (position == 1) {
+                if (session.isSecureMode()) showAlertDialog(session.getToken());
               }
             }
           });
@@ -405,13 +414,13 @@ public class WelcomeFragmentLecturer extends Fragment {
 
   private void currentCourse(Date currentTime) {
     currentCourses.clear();
-    if(schedule==null) return;
+    if (schedule == null) return;
     for (Schedule.CourseInfo x : schedule.getCourses()) {
       String start = x.getHour();
       String end = x.getEnd_hour();
       try {
         if (currentTime.compareTo(dateFormat.parse(start)) >= 0
-            && currentTime.compareTo(dateFormat.parse(end))< 0) {
+            && currentTime.compareTo(dateFormat.parse(end)) < 0) {
           currentCourses.add(x);
         }
       } catch (ParseException e) {
@@ -422,20 +431,20 @@ public class WelcomeFragmentLecturer extends Fragment {
 
   private void setItems(Date currentTime) {
     currentCourse(currentTime);
-    if(noCourseForToday){
+    if (noCourseForToday) {
       items.clear();
       String info = "There is no course for today";
       items.add(info);
       setOnclick(false);
       handler.post(
-              new Runnable() {
-                @Override
-                public void run() {
-                  Parcelable state = listView.onSaveInstanceState();
-                  listView.setAdapter(adapter);
-                  listView.onRestoreInstanceState(state);
-                }
-              });
+          new Runnable() {
+            @Override
+            public void run() {
+              Parcelable state = listView.onSaveInstanceState();
+              listView.setAdapter(adapter);
+              listView.onRestoreInstanceState(state);
+            }
+          });
       return;
     }
     if (currentCourses.size() > 1) {
@@ -450,6 +459,7 @@ public class WelcomeFragmentLecturer extends Fragment {
       StringBuilder info = new StringBuilder("Current Course: " + course_code);
       for (int x : sections) info.append(" - ").append(String.valueOf(x));
       items.add(info.toString());
+      if (session.isSecureMode()) items.add("Click here to display Secure Token");
       setOnclick(true);
     } else if (currentCourses.size() == 1) {
       items.clear();
@@ -459,6 +469,7 @@ public class WelcomeFragmentLecturer extends Fragment {
               + " - "
               + currentCourses.get(0).getSection();
       items.add(info);
+      if (session.isSecureMode()) items.add("Click here to display Secure Token");
       setOnclick(true);
     } else {
       items.clear();
@@ -473,6 +484,7 @@ public class WelcomeFragmentLecturer extends Fragment {
                         "Secure is " + "deactivated.",
                         Toast.LENGTH_SHORT)
                     .show();
+                session.turnOffSecure();
               }
             });
         secureSwitch.setChecked(false);
