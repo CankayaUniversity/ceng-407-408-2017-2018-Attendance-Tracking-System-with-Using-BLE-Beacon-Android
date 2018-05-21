@@ -24,6 +24,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -33,6 +34,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -51,6 +53,7 @@ import seniorproject.attendancetrackingsystem.utils.RegularMode;
 
 /* A simple {@link Fragment} subclass. */
 public class WelcomeFragment extends Fragment {
+  private static String IMG_PREF = "http://attendancesystem.xyz/attendancetracking/";
   ArrayAdapter<String> adapter;
   private Receiver mReceiver;
   private ArrayList<String> messages;
@@ -82,6 +85,17 @@ public class WelcomeFragment extends Fragment {
     timer = new Timer();
     SessionManager session = new SessionManager(getActivity().getApplicationContext());
     HashMap<String, String> userInfo = session.getUserDetails();
+    ImageView avatar = getActivity().findViewById(R.id.avatar);
+    if (userInfo.get(SessionManager.KEY_USER_IMG).isEmpty()
+        || userInfo.get(SessionManager.KEY_USER_IMG) == null) {
+      avatar.setImageResource(R.drawable.unknown_trainer);
+    } else {
+      Picasso.with(getActivity())
+          .load(IMG_PREF + userInfo.get(SessionManager.KEY_USER_IMG))
+          .fit()
+          .centerCrop()
+          .into(avatar);
+    }
     TextView nameSurnameField = getActivity().findViewById(R.id.w_user_name);
     TextView description = getActivity().findViewById(R.id.w_user_mail);
     String nameText =
@@ -133,11 +147,11 @@ public class WelcomeFragment extends Fragment {
     Date currentDate = new Date();*/
     if (classroom_id != 0) {
       if (secure_mode && !expired)
-        messages.add(0,"Current Course: " + course_code + " \n(Secure Mode)");
+        messages.add(0, "Current Course: " + course_code + " \n(Secure Mode)");
       else if (secure_mode) {
-        messages.add(0,"Current Course: " + course_code + " \n(Secure Mode - Expired)");
-      } else messages.add(0,"Current Course: " + course_code);
-    } else if(course_code.equals("end_of_the_day")){
+        messages.add(0, "Current Course: " + course_code + " \n(Secure Mode - Expired)");
+      } else messages.add(0, "Current Course: " + course_code);
+    } else if (course_code.equals("end_of_the_day")) {
       messages.add(0, "End of the day");
     } else if (course_code.equals("null")) {
       secure_mode = false;
@@ -352,8 +366,8 @@ public class WelcomeFragment extends Fragment {
                         Intent imageUpload =
                             new Intent(
                                 getActivity().getApplicationContext(),
-                                seniorproject.attendancetrackingsystem.activities
-                                    .UploadImage.class);
+                                seniorproject.attendancetrackingsystem.activities.UploadImage
+                                    .class);
                         startActivity(imageUpload);
                       } else {
                         toastMessageWithHandle("Secure mod is expired");
@@ -423,7 +437,7 @@ public class WelcomeFragment extends Fragment {
                 }
                 try {
                   JSONArray jsonArray = new JSONArray(response);
-                  if(jsonArray.length()>0) latestCourses.clear();
+                  if (jsonArray.length() > 0) latestCourses.clear();
                   for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject jsonObject = jsonArray.getJSONObject(i);
                     LatestCourses temp =
@@ -478,7 +492,7 @@ public class WelcomeFragment extends Fragment {
       course_code = intent.getStringExtra("course_code");
       classroom_id = intent.getIntExtra("classroom_id", 0);
       secure_mode = intent.getBooleanExtra("secure", false);
-      regular_mode = intent.getBooleanExtra("regular",true);
+      regular_mode = intent.getBooleanExtra("regular", true);
       expired = intent.getBooleanExtra("expired", false);
       if (secure_mode && !expired) {
         listView.setOnItemClickListener(

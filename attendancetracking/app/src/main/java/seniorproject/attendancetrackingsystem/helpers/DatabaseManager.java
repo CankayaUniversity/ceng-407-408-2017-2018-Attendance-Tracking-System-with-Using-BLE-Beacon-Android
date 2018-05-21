@@ -83,14 +83,14 @@ public class DatabaseManager {
                       JSONObject jsonObject = new JSONObject(response);
                       boolean result = jsonObject.getBoolean("success");
                       if (result) {
-                        try{
+                        try {
                           boolean update = jsonObject.getBoolean("update_android_id");
-                          if(update){
-                            new SessionManager(context.getApplicationContext()).setAndroidId
-                                    (params.get("android_id"));
+                          if (update) {
+                            new SessionManager(context.getApplicationContext())
+                                .setAndroidId(params.get("android_id"));
                           }
-                        }catch (JSONException e){
-                          //do nothing
+                        } catch (JSONException e) {
+                          // do nothing
                         }
                         Actor actor = jsonHelper.parseUser(response);
                         ((Globals) context.getApplicationContext()).setLoggedUser(actor);
@@ -100,7 +100,8 @@ public class DatabaseManager {
                             actor.getName(),
                             actor.getSurname(),
                             actor.getMail(),
-                            actor.getId());
+                            actor.getId(),
+                            actor.getImage());
                         Intent intent;
                         if (jsonObject.getString("user_type").equals("student"))
                           intent = new Intent(context, StudentActivity.class);
@@ -151,8 +152,8 @@ public class DatabaseManager {
                                 "Registration is " + "successful",
                                 Toast.LENGTH_LONG)
                             .show();
-                        new SessionManager(context.getApplicationContext()).setAndroidId(params
-                                .get("android_id"));
+                        new SessionManager(context.getApplicationContext())
+                            .setAndroidId(params.get("android_id"));
                         Intent intent = new Intent(context, MainActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

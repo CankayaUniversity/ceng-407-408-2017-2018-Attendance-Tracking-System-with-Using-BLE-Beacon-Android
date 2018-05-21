@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -25,6 +26,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -50,6 +52,7 @@ import seniorproject.attendancetrackingsystem.utils.Schedule;
 /* A simple {@link Fragment} subclass. */
 public class WelcomeFragmentLecturer extends Fragment {
 
+  private static String IMG_PREF = "http://attendancesystem.xyz/attendancetracking/";
   private String token = "not_initialized";
   private Handler handler;
   private boolean updated = false;
@@ -83,6 +86,18 @@ public class WelcomeFragmentLecturer extends Fragment {
 
     session = new SessionManager(getActivity().getApplicationContext());
     HashMap<String, String> userInfo = session.getUserDetails();
+    ImageView avatar = getActivity().findViewById(R.id.avatar);
+
+    if (userInfo.get(SessionManager.KEY_USER_IMG).isEmpty()
+        || userInfo.get(SessionManager.KEY_USER_IMG) == null) {
+      avatar.setImageResource(R.drawable.unknown_trainer);
+    } else {
+      Picasso.with(getActivity())
+          .load(IMG_PREF + userInfo.get(SessionManager.KEY_USER_IMG))
+          .fit()
+          .centerCrop()
+          .into(avatar);
+    }
     TextView nameSurnameField = getActivity().findViewById(R.id.w_user_name);
     TextView description = getActivity().findViewById(R.id.w_user_mail);
     secureSwitch = getActivity().findViewById(R.id.secure_switch);

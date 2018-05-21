@@ -52,7 +52,7 @@
         android:layout_width="268dp"
         android:layout_height="65dp"
 
-        android:layout_below="@+id/imageView"
+        android:layout_below="@+id/avatar"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="47dp"
         android:fontFamily="sans-serif"
@@ -64,7 +64,7 @@
         tools:layout_editor_absoluteY="187dp" />
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/avatar"
         android:layout_width="144dp"
         android:layout_height="150dp"
         android:layout_alignParentTop="true"

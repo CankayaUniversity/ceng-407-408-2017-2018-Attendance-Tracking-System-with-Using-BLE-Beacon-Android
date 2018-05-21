@@ -16,6 +16,7 @@ public class SessionManager {
   public static final String KEY_USER_SURNAME = "surname";
   public static final String KEY_USER_MAIL = "mail";
   public static final String KEY_USER_ID = "user_id";
+  public static final String KEY_USER_IMG = "img";
   private static final String IS_LOGIN = "IsLoggedIn";
   private static final String KEY_NOTIFICATION = "AllowNotification";
   private static final String KEY_ANDROID_ID = "AndroidId";
@@ -30,8 +31,8 @@ public class SessionManager {
     this.context = context;
   }
 
-  public void createLoginSession(String userType, String name, String surname, String mail, int
-          id) {
+  public void createLoginSession(
+      String userType, String name, String surname, String mail, int id, String img) {
     pref = context.getSharedPreferences("user-info", PRIVATE_MODE);
     editor = pref.edit();
     editor.putBoolean(IS_LOGIN, true);
@@ -40,7 +41,8 @@ public class SessionManager {
     editor.putString(KEY_USER_MAIL, mail);
     editor.putInt(KEY_USER_ID, id);
     editor.putString(KEY_USER_TYPE, userType);
-    editor.putBoolean(KEY_NOTIFICATION,true);
+    editor.putString(KEY_USER_IMG, img);
+    editor.putBoolean(KEY_NOTIFICATION, true);
 
     editor.apply();
   }
@@ -61,6 +63,7 @@ public class SessionManager {
     user.put(KEY_USER_NAME, pref.getString(KEY_USER_NAME, null));
     user.put(KEY_USER_SURNAME, pref.getString(KEY_USER_SURNAME, null));
     user.put(KEY_USER_MAIL, pref.getString(KEY_USER_MAIL, null));
+    user.put(KEY_USER_IMG, pref.getString(KEY_USER_IMG, null));
     user.put(KEY_USER_ID, String.valueOf(pref.getInt(KEY_USER_ID, 0)));
     return user;
   }
@@ -82,56 +85,58 @@ public class SessionManager {
     pref = context.getSharedPreferences("user-info", PRIVATE_MODE);
     return pref.getBoolean(IS_LOGIN, false);
   }
-public boolean dailyNotificationState(){
+
+  public boolean dailyNotificationState() {
     pref = context.getSharedPreferences("user-info", PRIVATE_MODE);
     return pref.getBoolean(KEY_NOTIFICATION, true);
-}
-public void changeDailyNotificatonState(boolean state){
+  }
+
+  public void changeDailyNotificatonState(boolean state) {
     pref = context.getSharedPreferences("user-info", PRIVATE_MODE);
     editor = pref.edit();
     editor.putBoolean(KEY_NOTIFICATION, state);
     editor.apply();
-}
+  }
 
   public boolean isEmptyAndroidId() {
     pref = context.getSharedPreferences("device-info", PRIVATE_MODE);
     return pref.getString(KEY_ANDROID_ID, null) == null;
-}
+  }
 
-public void setAndroidId(String android_id){
+  public String getAndroidId() {
+    pref = context.getSharedPreferences("device-info", PRIVATE_MODE);
+    return pref.getString(KEY_ANDROID_ID, null);
+  }
+
+  public void setAndroidId(String android_id) {
     pref = context.getSharedPreferences("device-info", PRIVATE_MODE);
     editor = pref.edit();
     editor.putString(KEY_ANDROID_ID, android_id);
     editor.apply();
-}
+  }
 
-public String getAndroidId(){
-    pref = context.getSharedPreferences("device-info", PRIVATE_MODE);
-    return pref.getString(KEY_ANDROID_ID, null);
-}
-
-public void turnOnSecure(String token){
+  public void turnOnSecure(String token) {
     pref = context.getSharedPreferences("secure-info", PRIVATE_MODE);
     editor = pref.edit();
     editor.putBoolean(KEY_SECURE_MODE, true);
     editor.putString(KEY_SECURE_TOKEN, token);
     editor.apply();
-}
+  }
 
-public void turnOffSecure(){
+  public void turnOffSecure() {
     pref = context.getSharedPreferences("secure-info", PRIVATE_MODE);
     editor = pref.edit();
     editor.clear();
     editor.apply();
-}
+  }
 
-public String getToken(){
+  public String getToken() {
     pref = context.getSharedPreferences("secure-info", PRIVATE_MODE);
     return pref.getString(KEY_SECURE_TOKEN, null);
-}
+  }
 
-public boolean isSecureMode(){
+  public boolean isSecureMode() {
     pref = context.getSharedPreferences("secure-info", PRIVATE_MODE);
     return pref.getBoolean(KEY_SECURE_MODE, false);
-}
+  }
 }

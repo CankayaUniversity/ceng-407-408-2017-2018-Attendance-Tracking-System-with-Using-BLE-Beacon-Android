@@ -6,9 +6,9 @@ public class Actor {
   private String surname;
   private String password;
   private String mail;
+  private String image;
 
-  Actor() {
-  }
+  Actor() {}
 
   public String getPassword() {
     return this.password;
@@ -40,6 +40,14 @@ public class Actor {
 
   public void setMail(String mail) {
     this.mail = mail;
+  }
+
+  public String getImage() {
+    return this.image;
+  }
+
+  public void setImage(String img) {
+    this.image = img;
   }
 
   public int getId() {

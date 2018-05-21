@@ -85,7 +85,8 @@ public class JsonHelper {
                 jsonObject.getInt("student_number"),
                 jsonObject.getString("name"),
                 jsonObject.getString("surname"),
-                jsonObject.getString("mail_address"));
+                jsonObject.getString("mail_address"),
+                jsonObject.getString("img"));
       } else if (jsonObject.getString("user_type").equals("lecturer")) {
         actor =
             new Lecturer(
@@ -93,7 +94,8 @@ public class JsonHelper {
                 jsonObject.getString("name"),
                 jsonObject.getString("surname"),
                 jsonObject.getString("mail_address"),
-                jsonObject.getInt("department_id"));
+                jsonObject.getInt("department_id"),
+                jsonObject.getString("img"));
       }
     } catch (JSONException e) {
       e.printStackTrace();
@@ -118,30 +120,35 @@ public class JsonHelper {
     return arrayList;
   }
 
-public ArrayList<GivenCourses> parseGivenCourses(String jsonString){
+  public ArrayList<GivenCourses> parseGivenCourses(String jsonString) {
     ArrayList<GivenCourses> arrayList = new ArrayList<>();
-    try{
+    try {
       JSONArray jsonArray = new JSONArray(jsonString);
-      for(int i = 0; i < jsonArray.length(); i++){
+      for (int i = 0; i < jsonArray.length(); i++) {
         JSONObject jsonObject = jsonArray.getJSONObject(i);
         GivenCourses tempGivenCourse = new GivenCourses(jsonObject.getInt("course_id"));
         arrayList.add(tempGivenCourse);
       }
-    }catch (JSONException e){
+    } catch (JSONException e) {
       e.printStackTrace();
     }
     return arrayList;
-}
+  }
+
   public Schedule parseSchedule(String jsonString) {
     Schedule schedule = new Schedule();
     try {
       JSONArray jsonArray = new JSONArray(jsonString);
       for (int i = 0; i < jsonArray.length(); i++) {
         JSONObject jsonObject = jsonArray.getJSONObject(i);
-        schedule.add(jsonObject.getInt("course_id"),jsonObject.getInt("section"),
-                jsonObject.getString("week_day"), jsonObject.getString("hour"),
-                jsonObject.getString("beacon_mac"),jsonObject.getString("course_code"),
-                jsonObject.getInt("classroom_id"));
+        schedule.add(
+            jsonObject.getInt("course_id"),
+            jsonObject.getInt("section"),
+            jsonObject.getString("week_day"),
+            jsonObject.getString("hour"),
+            jsonObject.getString("beacon_mac"),
+            jsonObject.getString("course_code"),
+            jsonObject.getInt("classroom_id"));
       }
     } catch (JSONException e) {
       e.printStackTrace();

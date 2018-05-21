@@ -27,7 +27,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/MyTheme"
-        android:fullBackupContent="@xml/my_backup_rules">
+        android:fullBackupContent="@xml/my_backup_rules"
+        android:largeHeap="true">
         <activity
             android:name=".activities.MainActivity"
             android:screenOrientation="portrait">

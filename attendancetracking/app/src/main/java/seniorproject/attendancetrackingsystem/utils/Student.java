@@ -9,15 +9,15 @@ public class Student extends Actor {
   public Student() {}
 
   public Student(
-      int id, int studentNumber, String name, String surname, String mail) {
+      int id, int studentNumber, String name, String surname, String mail, String imageURI) {
     this.studentNumber = studentNumber;
     setId(id);
     setMail(mail);
     setName(name);
     setSurname(surname);
     takenCourses = null;
+    setImage(imageURI);
   }
-
 
   public int getStudentNumber() {
     return this.studentNumber;

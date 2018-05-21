@@ -1,6 +1,5 @@
 package seniorproject.attendancetrackingsystem.activities;
 
-import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -13,7 +12,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -34,7 +32,7 @@ public class UploadImage extends AppCompatActivity {
         setContentView(R.layout.activity_upload_image);
 
         saveButton = (Button) findViewById(R.id.save);
-        imgTakenPic = (ImageView)findViewById(R.id.imageView);
+        imgTakenPic = (ImageView)findViewById(R.id.avatar);
 
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(intent,CAM_REQUEST);
