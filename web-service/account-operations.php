@@ -34,6 +34,10 @@ switch($_POST["operation"]){
 		$type = $_POST["type"];
 		$username = $_POST["username"];
 		$password = md5($_POST["password"]);
+		if($type == "studentLogin"){
+			$android_id = $_POST["android_id"];
+			if(empty($android_id)) empty_field_error();
+		}
 		$query = "";
 		if($type == "studentLogin") 
 			$query = "SELECT * FROM Student WHERE student_number = '$username' AND password = '$password'";
@@ -43,12 +47,38 @@ switch($_POST["operation"]){
 		if(mysqli_num_rows($result) > 0){
 			$row = mysqli_fetch_assoc($result);
 			if($row["active"] == 0){
-				send_error("Account is not active");
+				send_error("Account is not active. Please activate your account to use the system.");
+			}else if($type == "studentLogin"){
+				if($row["android_id"] == $android_id){
+					$json = $row;
+					$json["success"] = true;
+					$json["user_type"] = "student";
+					$json["update_android_id"] = false;
+				}else
+				{
+					$query = "SELECT android_id FROM Student WHERE android_id = '$android_id'";
+					$result = mysqli_query($con, $query);
+					if(mysqli_num_rows($result) > 0){
+						send_error("This device is associated with another account.");
+					}else
+					{
+						$query = "UPDATE Student SET android_id='$android_id' WHERE student_number='$username' AND password='$password'";
+						$result = mysqli_query($con, $query);
+						if($result){
+							$json = $row;
+							$json["success"] = true;
+							$json["user_type"] = "student";
+							$json["update_android_id"] = true;
+						}else
+						{
+							send_error("An error has been occurred. Please try again.");
+						}
+					}
+				}
 			}else{
 			$json = $row;
 			$json ["success"] = true;
-			if($type == "studentLogin") $json ["user_type"] = "student";
-			else if($type == "lecturerLogin") $json ["user_type"] = "lecturer";
+			$json ["user_type"] = "lecturer";
 			}
 		}
 		else{
@@ -70,7 +100,7 @@ switch($_POST["operation"]){
 			$token = md5($random);			
 		
 		if($_POST["type"] == "studentRegister"){
-			if(empty($_POST["schoolID"]) || empty($_POST["password"]) || empty($_POST["mail"]) || empty($_POST["name"]) || empty($_POST["surname"]) || empty($_POST["image"])) {
+			if(empty($_POST["schoolID"]) || empty($_POST["password"]) || empty($_POST["mail"]) || empty($_POST["name"]) || empty($_POST["surname"]) || empty($_POST["image"]) || empty($_POST["android_id"])) {
 				empty_field_error();
 			}
 			$studentNumber = $_POST["schoolID"];
@@ -78,7 +108,7 @@ switch($_POST["operation"]){
 			$email = $_POST["mail"];
 			$name = $_POST["name"];
 			$surname = $_POST["surname"];
-			$bluetoothMAC = $_POST["BluetoothMAC"];
+			$android_id = $_POST["android_id"];
 			$image = $_POST["image"];
 			$query = "SELECT * FROM Student WHERE student_number = '$studentNumber'";
 			$result = mysqli_query($con, $query);
@@ -100,10 +130,18 @@ switch($_POST["operation"]){
 				}
 			}
 			
+			if(!$exists){
+				$query = "SELECT * FROM Student WHERE android_id = '$android_id'";
+				$result = mysqli_query($con, $query);
+				if(mysqli_num_rows($result) > 0){
+					send_error("There is already an account that is used on this device");
+				}
+			}
+			
 			if($exists){
 				$path = "student_images/$student_id.jpg";
 					file_put_contents($path, base64_decode($image));
-				$query = "UPDATE Student SET student_number='$studentNumber', name='$name', surname='$surname', bluetooth_mac, '$bluetoothMAC', mail_address='$email', password='$password' img = '$path' WHERE student_id='$student_id'";
+				$query = "UPDATE Student SET student_number='$studentNumber', name='$name', surname='$surname', android_id = '$android_id', mail_address='$email', password='$password' img = '$path' WHERE student_id='$student_id'";
 				$result = mysqli_query($con, $query);
 				if($result) {
 					include 'mail.php';
@@ -122,7 +160,7 @@ switch($_POST["operation"]){
 				}
 			}
 			
-			$query = "INSERT INTO Student(student_number, name, surname, bluetooth_mac, mail_address, password) VALUES('$studentNumber', '$name', '$surname', '$bluetoothMAC', '$email', '$password')";
+			$query = "INSERT INTO Student(student_number, name, surname, android_id, mail_address, password) VALUES('$studentNumber', '$name', '$surname', '$android_id', '$email', '$password')";
 			$result = mysqli_query($con, $query);
 			if($result) {
 				$last = mysqli_insert_id($con);
@@ -256,6 +294,21 @@ switch($_POST["operation"]){
 		}else{
 			send_error("There is not any user that has e-mail address you entered");
 		}
+	break;
+	case "check-android-id":
+	if(empty($_POST["android_id"])){
+	empty_field_error();
+	}
+	
+	$android_id = $_POST["android_id"];
+	$query = "SELECT * FROM Student WHERE android_id = '$android_id'";
+	$result = mysqli_query($con, $query);
+	if(mysqli_num_rows($result)>0){
+		send_error("Already exists");
+	}
+	else{
+		send_success();
+	}
 	break;
 }
 mysqli_close($con);

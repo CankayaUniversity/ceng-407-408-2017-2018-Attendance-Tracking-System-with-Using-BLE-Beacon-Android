@@ -1,6 +1,8 @@
 package seniorproject.attendancetrackingsystem.fragments;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -17,6 +19,7 @@ import java.util.HashMap;
 
 import seniorproject.attendancetrackingsystem.R;
 import seniorproject.attendancetrackingsystem.helpers.DatabaseManager;
+import seniorproject.attendancetrackingsystem.helpers.SessionManager;
 
 public class StudentLogin extends Fragment implements View.OnClickListener {
   private EditText etStudentId;
@@ -50,6 +53,7 @@ public class StudentLogin extends Fragment implements View.OnClickListener {
     awesomeValidation = new AwesomeValidation(ValidationStyle.BASIC);
   }
 
+  @SuppressLint("HardwareIds")
   @Override
   public void onClick(View v) {
     if (v.getId() == R.id.login_button) {
@@ -59,12 +63,20 @@ public class StudentLogin extends Fragment implements View.OnClickListener {
         char first = studentID.charAt(0);
         if (first == 'c' || first == 'C') {
           String sub = studentID.substring(1);
-          String newStudentID = "20" + sub;
-          studentID = newStudentID;
+          studentID = "20" + sub;
         }
+        SessionManager sessionManager = new SessionManager(getActivity().getApplicationContext());
+        String android_id;
+        if(sessionManager.isEmptyAndroidId())
+          android_id = Settings.Secure.getString(getActivity().getContentResolver(), Settings
+                  .Secure.ANDROID_ID);
+        else
+        android_id = sessionManager.getAndroidId();
+
         HashMap<String, String> postParameters = new HashMap<>();
         postParameters.put("username", studentID);
         postParameters.put("password", password);
+        postParameters.put("android_id", android_id);
         postParameters.put("type", "studentLogin");
         DatabaseManager.getmInstance(getActivity()).execute("login", postParameters);
 

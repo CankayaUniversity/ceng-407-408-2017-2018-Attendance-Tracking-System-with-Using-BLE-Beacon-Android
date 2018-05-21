@@ -83,6 +83,15 @@ public class DatabaseManager {
                       JSONObject jsonObject = new JSONObject(response);
                       boolean result = jsonObject.getBoolean("success");
                       if (result) {
+                        try{
+                          boolean update = jsonObject.getBoolean("update_android_id");
+                          if(update){
+                            new SessionManager(context.getApplicationContext()).setAndroidId
+                                    (params.get("android_id"));
+                          }
+                        }catch (JSONException e){
+                          //do nothing
+                        }
                         Actor actor = jsonHelper.parseUser(response);
                         ((Globals) context.getApplicationContext()).setLoggedUser(actor);
                         SessionManager sessionManager = new SessionManager(context);
@@ -142,6 +151,8 @@ public class DatabaseManager {
                                 "Registration is " + "successful",
                                 Toast.LENGTH_LONG)
                             .show();
+                        new SessionManager(context.getApplicationContext()).setAndroidId(params
+                                .get("android_id"));
                         Intent intent = new Intent(context, MainActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

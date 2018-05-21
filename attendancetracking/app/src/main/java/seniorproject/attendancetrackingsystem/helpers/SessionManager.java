@@ -18,6 +18,7 @@ public class SessionManager {
   public static final String KEY_USER_ID = "user_id";
   private static final String IS_LOGIN = "IsLoggedIn";
   private static final String KEY_NOTIFICATION = "AllowNotification";
+  private static final String KEY_ANDROID_ID = "AndroidId";
   private static final int PRIVATE_MODE = 0;
   private final Context context;
   private SharedPreferences pref;
@@ -88,5 +89,22 @@ public void changeDailyNotificatonState(boolean state){
     editor = pref.edit();
     editor.putBoolean(KEY_NOTIFICATION, state);
     editor.apply();
+}
+
+  public boolean isEmptyAndroidId() {
+    pref = context.getSharedPreferences("device-info", PRIVATE_MODE);
+    return pref.getString(KEY_ANDROID_ID, null) == null;
+}
+
+public void setAndroidId(String android_id){
+    pref = context.getSharedPreferences("device-info", PRIVATE_MODE);
+    editor = pref.edit();
+    editor.putString(KEY_ANDROID_ID, android_id);
+    editor.apply();
+}
+
+public String getAndroidId(){
+    pref = context.getSharedPreferences("device-info", PRIVATE_MODE);
+    return pref.getString(KEY_ANDROID_ID, null);
 }
 }

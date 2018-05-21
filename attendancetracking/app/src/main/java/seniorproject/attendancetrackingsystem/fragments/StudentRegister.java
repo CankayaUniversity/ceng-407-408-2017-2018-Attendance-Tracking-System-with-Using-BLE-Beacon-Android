@@ -16,6 +16,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
@@ -122,20 +123,18 @@ public class StudentRegister extends Fragment {
               Bitmap bitmap = rotateBitmapOrientation(mCurrentPhotoPath);
               bitmap = Bitmap.createScaledBitmap(bitmap, 400, 500, false);
 
-              String bluetoothMac = "NULL";
               name = toTitleCase(name);
               surname = surname.toUpperCase(new Locale("tr", "TR"));
-              BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-              if (bluetoothAdapter != null) {
-                bluetoothMac = bluetoothAdapter.getAddress();
-              }
+              String android_id =  Settings.Secure.getString(getActivity().getContentResolver(),
+                      Settings
+                      .Secure.ANDROID_ID);
               Map<String, String> postParameters = new HashMap<>();
               postParameters.put("schoolID", schoolId);
               postParameters.put("password", password);
               postParameters.put("mail", mail);
               postParameters.put("name", name);
               postParameters.put("surname", surname);
-              postParameters.put("BluetoothMAC", bluetoothMac);
+              postParameters.put("android_id", android_id);
               postParameters.put("type", "studentRegister");
               postParameters.put("image", getStringImage(bitmap));
 

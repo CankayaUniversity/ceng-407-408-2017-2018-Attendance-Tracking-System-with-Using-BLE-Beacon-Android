@@ -4,15 +4,13 @@ import java.util.ArrayList;
 
 public class Student extends Actor {
   private int studentNumber;
-  private String bluetoothMAC;
   private ArrayList<TakenCourses> takenCourses;
 
   public Student() {}
 
   public Student(
-      int id, int studentNumber, String name, String surname, String bluetoothMAC, String mail) {
+      int id, int studentNumber, String name, String surname, String mail) {
     this.studentNumber = studentNumber;
-    this.bluetoothMAC = bluetoothMAC;
     setId(id);
     setMail(mail);
     setName(name);
@@ -20,13 +18,6 @@ public class Student extends Actor {
     takenCourses = null;
   }
 
-  public String getBluetoothMAC() {
-    return this.bluetoothMAC;
-  }
-
-  public void setBluetoothMAC(String bluetoothMAC) {
-    this.bluetoothMAC = bluetoothMAC;
-  }
 
   public int getStudentNumber() {
     return this.studentNumber;

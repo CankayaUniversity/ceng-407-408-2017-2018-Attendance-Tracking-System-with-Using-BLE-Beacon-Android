@@ -85,7 +85,6 @@ public class JsonHelper {
                 jsonObject.getInt("student_number"),
                 jsonObject.getString("name"),
                 jsonObject.getString("surname"),
-                jsonObject.getString("bluetooth_mac"),
                 jsonObject.getString("mail_address"));
       } else if (jsonObject.getString("user_type").equals("lecturer")) {
         actor =
