@@ -344,22 +344,20 @@ WHERE Given_Lectures.lecturer_id = '$user_id'";
 			$section = $row["section"];
 			
 			$attendanceQuery = "SELECT Classroom.*, COALESCE(Attended_Students.status, 0) as status 
-FROM Classroom 
-LEFT JOIN Attended_Students ON Classroom.classroom_id = Attended_Students.classroom_id and Attended_Students.student_id = '$student_id'
-WHERE Classroom.course_id = '$course_id' AND Classroom.section = '$section' AND Classroom.active = '1'";
+			FROM Classroom 
+			LEFT JOIN Attended_Students ON Classroom.classroom_id = Attended_Students.classroom_id and Attended_Students.student_id = '$student_id'
+			WHERE Classroom.course_id = '$course_id' AND Classroom.section = '$section' AND Classroom.active = '1'";
 
 			$attendanceResult = mysqli_query($con, $attendanceQuery);
 			$attendedCount = 0;
 			$nearlyCount = 0;
 			$absentCount = 0;
 			while($aRow = mysqli_fetch_assoc($attendanceResult)){
-				$time = $aRow["hour"];
-				$time = substr($time,0,2);
-				$time = ($time + 1).":10";
-				$date = $aRow["date"];
-				$current = new DateTime();
-				$lookDate = new DateTime($date);
-				if($current >= $lookDate){
+				$date = $aRow["date"]." ".$aRow["hour"].":00";
+                $time 	=	strtotime($date);
+                $date 	=	date('Y-m-d H:i:s',$time);
+				$now	=	date("Y-m-d H:i:s");
+				if($now >= $date){
 					if($aRow["status"] == 2 || $aRow["status"] == 3) $attendedCount++;
 					else if($aRow["status"] == 1) $nearlyCount++;
 					else $absentCount++;
@@ -396,13 +394,11 @@ LIMIT 15";
 		if(mysqli_num_rows($result) > 0){
 			$json = array();
 			while($row = mysqli_fetch_assoc($result)){
-				$time = $row["hour"];
-				$time = substr($time,0,2);
-				$time = ($time+1).":10";
-				$date = $row["date"]." ".$time;
-				$current = new DateTime();
-				$lookDate = new Datetime($date);
-				if($current >= $lookDate)
+				$date = $row["date"]." ".$row["hour"].":00";
+                $time 	=	strtotime($date);
+                $date 	=	date('Y-m-d H:i:s',$time);
+				$now	=	date("Y-m-d H:i:s");
+				if($now >= $date)
 					$json[] = $row;
 			}
 		}else
@@ -450,10 +446,11 @@ ORDER BY Classroom.date DESC, Classroom.hour DESC";
 		$result = mysqli_query($con, $query);
 		$json = array();
 		while($row = mysqli_fetch_assoc($result)){
-			$date = $row["date"]." ".$row["hour"];
-			$current = new DateTime();
-			$lookDate = new DateTime($date);
-			if($current>=$lookDate)
+			$date = $row["date"]." ".$row["hour"].":00";
+                $time 	=	strtotime($date);
+                $date 	=	date('Y-m-d H:i:s',$time);
+				$now	=	date("Y-m-d H:i:s");
+				if($now >= $date)
 				$json[] = $row;
 		}
 		echo json_encode($json);
@@ -504,10 +501,11 @@ ORDER BY Classroom.hour DESC";
 		if(mysqli_num_rows($result)>0){
 			$json = array();
 			while($row = mysqli_fetch_assoc($result)){
-				$date = $row["date"]." ".$row["hour"];
-				$current = new DateTime();
-				$lookDate = new DateTime($date);
-				if($current >= $lookDate)
+				$date = $row["date"]." ".$row["hour"].":00";
+                $time 	=	strtotime($date);
+                $date 	=	date('Y-m-d H:i:s',$time);
+				$now	=	date("Y-m-d H:i:s");
+				if($now >= $date)
 					$json[] = $row;
 			}
 		}else
