@@ -111,11 +111,14 @@ public class ServiceManager extends Service {
                       // BREAK TIME RUNS ONCE
                       if (breakTime != null && currentDate.compareTo(breakTime) >= 0) {
                         BluetoothAdapter.getDefaultAdapter().disable();
-                        stopRegularMode();
+                        if(isServiceIsRunning(RegularMode.class)) stopRegularMode();
                         allowNotification = true;
                         secure = false;
+                        runCollector();
                       } else if (currentCourse != null && !secure) {
                         // REGULAR MODE LECTURE
+                        if (!BluetoothAdapter.getDefaultAdapter().isEnabled())
+                          bluetoothChecker.start();
                         broadcastCourseInfo(currentCourse);
                       } else if (currentCourse != null && secure) {
                         // SECURE MODE LECTURE
@@ -130,6 +133,7 @@ public class ServiceManager extends Service {
                 } else {
                   // IF THERE IS NOT ANY COURSE FOR TODAY
                   broadcastCourseInfo("no_course_for_today");
+                    runCollector();
                 }
               } else {
                 // Log.i("ACTION", "STOP REGULAR MODE");
@@ -141,12 +145,10 @@ public class ServiceManager extends Service {
                 secure = false;
                 if (!new SessionManager(getBaseContext()).dailyNotificationState())
                   new SessionManager(getBaseContext()).changeDailyNotificatonState(true);
+                runCollector();
               }
             } catch (ParseException e) {
               e.printStackTrace();
-            }
-            if (!isServiceIsRunning(RegularMode.class)) {
-              runCollector();
             }
           }
         },
