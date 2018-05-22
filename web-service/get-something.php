@@ -328,7 +328,7 @@ WHERE Given_Lectures.lecturer_id = '$user_id'";
 		}
 		$classroom_id = $_POST["classroom_id"];
 		
-			$query = "SELECT Student.name, Student.surname, Student.student_number, Taken_Lectures.student_id, COALESCE(Attended_Students.status,0) as status, COALESCE(Attended_Students.time, 0) as time, Classroom.course_id, Classroom.section 
+			$query = "SELECT Student.name, Student.surname, Student.student_number, Student.img, Taken_Lectures.student_id, COALESCE(Attended_Students.status,0) as status, COALESCE(Attended_Students.time, 0) as time, Classroom.course_id, Classroom.section 
 			FROM Taken_Lectures 
 			INNER JOIN Classroom ON Classroom.course_id = Taken_Lectures.course_id AND Classroom.section = Taken_Lectures.section 
 			LEFT JOIN Attended_Students ON Classroom.classroom_id = Attended_Students.classroom_id AND Taken_Lectures.student_id = Attended_Students.student_id 
