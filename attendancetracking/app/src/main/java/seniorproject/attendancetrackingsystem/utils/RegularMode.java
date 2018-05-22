@@ -40,6 +40,7 @@ public class RegularMode extends Service implements BeaconConsumer {
   public void onCreate() {
     super.onCreate();
     beaconManager = BeaconManager.getInstanceForApplication(this);
+    beaconManager.getBeaconParsers().clear();
     beaconManager
         .getBeaconParsers()
         .add(new BeaconParser().setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"));
@@ -54,18 +55,11 @@ public class RegularMode extends Service implements BeaconConsumer {
         .add(new BeaconParser().setBeaconLayout(BeaconParser.EDDYSTONE_TLM_LAYOUT));
     beaconManager
         .getBeaconParsers()
-        .add(new BeaconParser().setBeaconLayout(BeaconParser.URI_BEACON_LAYOUT));
-    beaconManager
-        .getBeaconParsers()
         .add(new BeaconParser().setBeaconLayout(BeaconParser.ALTBEACON_LAYOUT));
     beaconManager.setBackgroundMode(true);
-    beaconManager.setBackgroundScanPeriod(30000); // 30 seconds
-    beaconManager.setBackgroundBetweenScanPeriod(60 * 1000 + 30000); // 1 minutes and 30 seconds
-    try {
-      beaconManager.updateScanPeriods();
-    } catch (RemoteException e) {
-    }
-    // new BackgroundPowerSaver(this);
+    beaconManager.setBackgroundScanPeriod(10000); // 10 seconds scans
+    beaconManager.setBackgroundBetweenScanPeriod(90000); // 90 seconds waits
+    beaconManager.setAndroidLScanningDisabled(true);
     beaconManager.bind(this);
   }
 
@@ -92,22 +86,17 @@ public class RegularMode extends Service implements BeaconConsumer {
         new RangeNotifier() {
           @Override
           public void didRangeBeaconsInRegion(Collection<Beacon> collection, Region region) {
-            boolean flag = false;
             for (Beacon x : collection) {
 
               if (x.getBluetoothAddress().equals(search)) {
                 String value = dateFormatLog.format(new Date());
                 queue.enqueueDistinct(value);
-                if (queue.size() >= 5) writeLog();
-                flag = true;
+                if (queue.size() >= 3) writeLog();
               }
             }
-
           }
         });
   }
-
-
 
   private void writeLog() {
     try {
