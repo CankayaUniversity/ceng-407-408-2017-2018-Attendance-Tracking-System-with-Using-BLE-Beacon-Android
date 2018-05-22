@@ -23,6 +23,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ScrollView;
@@ -36,6 +37,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.roomorama.caldroid.CaldroidFragment;
 import com.roomorama.caldroid.CaldroidListener;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -158,6 +160,8 @@ public class ReportFragmentLecturer extends Fragment {
             TextView attended = popup.findViewById(R.id.attendedPercent);
             TextView nearly = popup.findViewById(R.id.nearlyPercent);
             TextView absent = popup.findViewById(R.id.absentPercent);
+            ImageView avatar = popup.findViewById(R.id.avatar);
+            String URL = "http://attendancesystem.xyz/attendancetracking/";
             Button mark = popup.findViewById(R.id.mark);
             // getting student info
             final StudentRow student = studentList.get(position);
@@ -196,6 +200,12 @@ public class ReportFragmentLecturer extends Fragment {
                     popup.dismiss();
                   }
                 });
+            if(student.img == null || student.img.isEmpty()){
+              avatar.setImageResource(R.drawable.unknown_trainer);
+            }else{
+              Picasso.with(popup.getContext()).load(URL + student.img).fit().centerCrop().into
+                      (avatar);
+            }
             student_number.setText(String.valueOf(student.number));
             student_name.setText(student.name);
             close.setOnClickListener(
@@ -603,7 +613,8 @@ public class ReportFragmentLecturer extends Fragment {
                             jsonObject.getInt("time"),
                             jsonObject.getInt("attended"),
                             jsonObject.getInt("nearly"),
-                            jsonObject.getInt("absent"));
+                            jsonObject.getInt("absent"),
+                            jsonObject.getString("img"));
                     studentList.add(studentRow);
                   }
 
@@ -752,6 +763,7 @@ public class ReportFragmentLecturer extends Fragment {
     int absent;
     int student_id;
     int classroom_id;
+    String img;
 
     StudentRow(
         int student_id,
@@ -762,7 +774,8 @@ public class ReportFragmentLecturer extends Fragment {
         int time,
         int attended,
         int nearly,
-        int absent) {
+        int absent,
+        String img) {
       this.name = name;
       this.number = number;
       this.state = state;
@@ -772,6 +785,7 @@ public class ReportFragmentLecturer extends Fragment {
       this.absent = absent;
       this.student_id = student_id;
       this.classroom_id = classroom_id;
+      this.img = img;
     }
 
     public StudentRow() {
@@ -805,6 +819,7 @@ public class ReportFragmentLecturer extends Fragment {
         holder.txtName = row.findViewById(R.id.studentName);
         holder.txtNumber = row.findViewById(R.id.studentNo);
         holder.txtLineNum = row.findViewById(R.id.lineNum);
+        holder.student_pic = row.findViewById(R.id.studentPic);
 
         row.setTag(holder);
       } else {
@@ -812,7 +827,16 @@ public class ReportFragmentLecturer extends Fragment {
       }
 
       StudentRow student = data.get(position);
-
+      String url = "http://attendancesystem.xyz/attendancetracking/";
+      if (student.img == null || student.img.isEmpty()) {
+        holder.student_pic.setImageResource(R.drawable.unknown_trainer);
+      } else {
+        Picasso.with(getActivity())
+            .load(url + student.img)
+            .fit()
+            .centerCrop()
+            .into(holder.student_pic);
+      }
       // String info = student.name + " [" + student.time / 60000 + " m]";
       holder.txtName.setText(student.name);
       holder.txtNumber.setText(String.valueOf(student.number));
@@ -830,6 +854,7 @@ public class ReportFragmentLecturer extends Fragment {
       TextView txtNumber;
       TextView txtName;
       TextView txtLineNum;
+      ImageView student_pic;
     }
   }
 }
