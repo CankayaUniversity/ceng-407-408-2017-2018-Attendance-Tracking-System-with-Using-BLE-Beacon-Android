@@ -25,9 +25,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
+
+import com.basgeekball.awesomevalidation.AwesomeValidation;
+import com.basgeekball.awesomevalidation.ValidationStyle;
 
 import java.text.DecimalFormat;
 import java.util.HashMap;
@@ -47,6 +52,7 @@ public class LecturerActivity extends AppCompatActivity {
   private Receiver mReceiver;
   private BeaconBuilder beaconBuilder;
   private boolean mServiceBound = false;
+  private AwesomeValidation awesomeValidation;
   private BottomNavigationView mainNav;
   private AlertDialog alertDialog;
   private ProgressDialog progressDialog;
@@ -165,7 +171,7 @@ public class LecturerActivity extends AppCompatActivity {
       bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
       // new BeaconBuilder();
     } else if (item.toString().equals("Change Password")) {
-      buildAlertDialog().show();
+      buildAlertDialog();
     } else if (item.toString().equals("Course Settings")) {
       CourseSettings f = new CourseSettings();
       Objects.requireNonNull(getSupportActionBar()).setLogo(R.drawable.kdefault);
@@ -183,9 +189,9 @@ public class LecturerActivity extends AppCompatActivity {
     return super.onOptionsItemSelected(item);
   }
 
-  private AlertDialog.Builder buildAlertDialog() {
-    final AlertDialog.Builder alert = new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_LIGHT);
+  private void buildAlertDialog() {
     final LinearLayout layout = new LinearLayout(this);
+    awesomeValidation = new AwesomeValidation(ValidationStyle.BASIC);
     layout.setOrientation(LinearLayout.VERTICAL);
 
     final EditText oldPassword = new EditText(this);
@@ -195,7 +201,6 @@ public class LecturerActivity extends AppCompatActivity {
     oldPassword.getBackground().setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_IN);
     oldPassword.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
     oldPassword.setId(R.id.old_password);
-
     layout.addView(oldPassword);
 
     final EditText newPassword = new EditText(this);
@@ -214,59 +219,87 @@ public class LecturerActivity extends AppCompatActivity {
     newPasswordRepeat.setHintTextColor(Color.BLACK);
     newPasswordRepeat.getBackground().setColorFilter(Color.BLACK, PorterDuff.Mode.SRC_IN);
     newPasswordRepeat.setInputType(
-        InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
     newPasswordRepeat.setId(R.id.new_password_repeat);
 
     layout.addView(newPasswordRepeat);
-    alert.setView(layout);
 
-    alert.setPositiveButton(
-        "Change",
-        new DialogInterface.OnClickListener() {
+    final AlertDialog change_dialog = new AlertDialog.Builder(this,AlertDialog.THEME_HOLO_LIGHT)
+            .setView(layout)
+            .setPositiveButton(
+                    "Change",
+                    null)
+            .setNegativeButton(
+                    "Cancel",
+                    new DialogInterface.OnClickListener() {
+                      @Override
+                      public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                      }
+                    })
+            .create();
+
+    change_dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+      @Override
+      public void onShow(DialogInterface dialog) {
+
+        Button pos_button = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+        pos_button.setOnClickListener(new View.OnClickListener() {
           @Override
-          public void onClick(DialogInterface dialog, int which) {
+          public void onClick(View v) {
+            awesomeValidation.addValidation(newPassword,
+                    "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!_*.-]).{6,}$",
+                    "Password should be at least 6 characters.\n" +
+                            "Password should contains at least 1 uppercase letter\n" +
+                            "1 digit and 1 special character (. - _ ! *)");
+            awesomeValidation.addValidation(newPasswordRepeat,
+                    "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!_*.-]).{6,}$",
+                    "Password should be at least 6 characters.\n" +
+                            "        Password should contains at least 1 uppercase letter\n" +
+                            "        1 digit and 1 special character (. - _ ! *)");
+
             String old_password = oldPassword.getText().toString();
             String new_password = newPassword.getText().toString();
             String new_password_repeat = newPasswordRepeat.getText().toString();
 
             if (old_password.isEmpty() || new_password.isEmpty() || new_password_repeat.isEmpty()) {
               Toast.makeText(getApplicationContext(), "Empty field error", Toast.LENGTH_SHORT)
-                  .show();
+                      .show();
               return;
             }
 
             if (!new_password.equals(new_password_repeat)) {
               Toast.makeText(
                       getApplicationContext(), "New passwords don't match", Toast.LENGTH_SHORT)
-                  .show();
+                      .show();
               return;
             }
-            Map<String, String> params = new HashMap<>();
-            SessionManager session = new SessionManager(getApplicationContext());
-            Map<String, String> userInfo = session.getUserDetails();
-            params.put("old_password", old_password);
-            params.put("new_password", new_password);
-            params.put("user_type", userInfo.get(SessionManager.KEY_USER_TYPE));
-            params.put("user_id", userInfo.get(SessionManager.KEY_USER_ID));
-            DatabaseManager.getmInstance(getApplicationContext())
-                .execute("change-password", params);
 
-            Log.d("old_password", old_password);
-            Log.d("new_password", new_password);
-            Log.d("user_type", userInfo.get(SessionManager.KEY_USER_TYPE));
-            Log.d("user_id", userInfo.get(SessionManager.KEY_USER_ID));
+            if (awesomeValidation.validate()) {
+              Map<String, String> params = new HashMap<>();
+              SessionManager session = new SessionManager(getApplicationContext());
+              Map<String, String> userInfo = session.getUserDetails();
+              params.put("old_password", old_password);
+              params.put("new_password", new_password);
+              params.put("user_type", userInfo.get(SessionManager.KEY_USER_TYPE));
+              params.put("user_id", userInfo.get(SessionManager.KEY_USER_ID));
+              DatabaseManager.getmInstance(getApplicationContext())
+                      .execute("change-password", params);
+              change_dialog.dismiss();
+            }
+            else
+            {
+              Toast.makeText(getApplicationContext(),"Password should be at least 6 characters.\n"+
+                      "Password should contains at least 1 uppercase letter\n" +
+                      "1 digit and 1 special character (. - _ ! *)",Toast.LENGTH_LONG).show();
+              return;
+            }
           }
         });
 
-    alert.setNegativeButton(
-        "Cancel",
-        new DialogInterface.OnClickListener() {
-          @Override
-          public void onClick(DialogInterface dialog, int which) {
-            dialog.cancel();
-          }
-        });
-    return alert;
+      }
+    });
+    change_dialog.show();
   }
 
   private void showProgressDialog() {
