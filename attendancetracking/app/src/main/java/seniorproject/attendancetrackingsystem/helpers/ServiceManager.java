@@ -24,6 +24,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -73,6 +74,14 @@ public class ServiceManager extends Service {
 
           @Override
           public void run() {
+
+            Calendar cal = Calendar.getInstance();
+            if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY
+                    || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY) {
+              broadcastCourseInfo("weekend");
+              return;
+            }
+
             try {
               currentDate = dateFormat.parse(dateFormat.format(new Date()));
               regularStart = dateFormat.parse(START_REGULAR);

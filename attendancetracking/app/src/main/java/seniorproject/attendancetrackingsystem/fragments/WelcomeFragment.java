@@ -161,6 +161,10 @@ public class WelcomeFragment extends Fragment {
       secure_mode = false;
       expired = false;
       messages.add("There is no course for today");
+    } else if(course_code.equals("weekend")) {
+        secure_mode = false;
+        expired= false;
+        messages.add("Weekend!");
     }
     addAllLatestCourses();
     Parcelable state = listView.onSaveInstanceState();

@@ -34,6 +34,7 @@ import org.json.JSONObject;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -132,6 +133,13 @@ public class WelcomeFragmentLecturer extends Fragment {
 
           @Override
           public void run() {
+              Calendar cal = Calendar.getInstance();
+              if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY
+                      || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY) {
+                  items.clear();
+                  items.add("Weekend");
+                  return;
+              }
             try {
               current = dateFormat.parse(dateFormat.format(new Date()));
               start = dateFormat.parse("09:20");
