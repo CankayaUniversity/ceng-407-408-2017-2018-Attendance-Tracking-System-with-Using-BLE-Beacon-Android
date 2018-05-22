@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_gravity="top"
-    android:layout_marginTop="56dp"
-    >
+    android:layout_marginTop="56dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -23,17 +22,18 @@
         android:layout_marginTop="34dp"
         android:textColor="@android:color/black"
         />
-    <com.github.siyamed.shapeimageview.CircularImageView
-        android:layout_marginTop="5dp"
-        android:id="@+id/studentPic"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_gravity="center"
-        android:layout_marginLeft="20dp"
-        android:contentDescription="avatar"
-        android:src="@drawable/unknown_trainer"
-        android:layout_marginBottom="5dp"
-        />
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/studentPic"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginBottom="5dp"
+            android:contentDescription="avatar"
+            android:src="@drawable/unknown_trainer"
+            app:civ_border_color="@android:color/white"
+            app:civ_border_width="2dp" />
 
     
     <TextView

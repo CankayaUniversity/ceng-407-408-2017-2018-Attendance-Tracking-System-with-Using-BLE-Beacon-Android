@@ -26,14 +26,16 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_marginTop="5dp">
-        <com.github.siyamed.shapeimageview.CircularImageView
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/avatar"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:src="@drawable/unknown_trainer"
-            app:siBorderColor="@android:color/black"
-            app:siBorderWidth="1dp"
             android:layout_gravity="center"
-            android:layout_marginTop="5dp"/>
+            android:layout_marginTop="5dp"
+            android:contentDescription="avatar"
+            android:src="@drawable/unknown_trainer"
+            app:civ_border_color="@android:color/white"
+            app:civ_border_width="2dp" />
 
         <TextView
             android:id="@+id/student_number"
