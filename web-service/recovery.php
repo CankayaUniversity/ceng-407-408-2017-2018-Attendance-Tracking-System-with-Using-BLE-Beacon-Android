@@ -142,6 +142,14 @@ else{
 		exit(0);
 	}
 	
+	$pattern = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!_*.-]).{6,}$";
+	if(!preg_match($pattern, $new_password)){
+		echo "<center><b>Your password should include at least:<br>1 Uppercase<br>1 Lowercase<br>1 Digit<br>1 Special character<br>And minimum 6 characters</b></center>";
+		$link = "recovery.php?mail=".str_replace("@","__at__",$mail)."&token=".$token;
+		header("refresh:2;url=".$link);
+		exit(0);
+	}
+	
 	if($new_password != $new_password_repeat){
 		echo "<center><b>Passwords do not match</b></center>";
 		$link="recovery.php?mail=".str_replace("@","__at__",$mail)."&token=".$token;
