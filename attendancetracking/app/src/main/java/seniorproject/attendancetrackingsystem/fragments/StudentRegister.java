@@ -45,7 +45,7 @@ import seniorproject.attendancetrackingsystem.helpers.DatabaseManager;
 
 public class StudentRegister extends Fragment {
   private static final int CAM_REQUEST = 1313;
-  String mCurrentPhotoPath;
+  private String mCurrentPhotoPath;
   private EditText studentId;
   private EditText studentPassword;
   private EditText studentMail;
@@ -255,10 +255,8 @@ public class StudentRegister extends Fragment {
       // Rotate Bitmap
       Matrix matrix = new Matrix();
       matrix.setRotate(rotationAngle, (float) bm.getWidth() / 2, (float) bm.getHeight() / 2);
-      Bitmap rotatedBitmap =
-          Bitmap.createBitmap(bm, 0, 0, bounds.outWidth, bounds.outHeight, matrix, true);
       // Return result
-      return rotatedBitmap;
+      return Bitmap.createBitmap(bm, 0, 0, bounds.outWidth, bounds.outHeight, matrix, true);
     } catch (IOException e) {
       // do nothing
     }

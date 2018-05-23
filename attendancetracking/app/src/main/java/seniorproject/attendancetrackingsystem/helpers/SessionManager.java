@@ -22,6 +22,7 @@ public class SessionManager {
   private static final String KEY_ANDROID_ID = "AndroidId";
   private static final String KEY_SECURE_MODE = "SecureMode";
   private static final String KEY_SECURE_TOKEN = "SecureToken";
+  private static final String KEY_ALLOW_SECURE = "AllowSecure";
   private static final int PRIVATE_MODE = 0;
   private final Context context;
   private SharedPreferences pref;
@@ -139,4 +140,25 @@ public class SessionManager {
     pref = context.getSharedPreferences("secure-info", PRIVATE_MODE);
     return pref.getBoolean(KEY_SECURE_MODE, false);
   }
+
+  public void allowSecure(){
+    pref = context.getSharedPreferences("secure", PRIVATE_MODE);
+    editor = pref.edit();
+    editor.putBoolean(KEY_ALLOW_SECURE, false);
+    editor.apply();
+  }
+
+  public void disallowSecure(){
+    pref = context.getSharedPreferences("secure", PRIVATE_MODE);
+    editor = pref.edit();
+    editor.putBoolean(KEY_ALLOW_SECURE, true);
+    editor.apply();
+  }
+
+  public Boolean secureStatus(){
+    pref = context.getSharedPreferences("secure", PRIVATE_MODE);
+    return pref.getBoolean(KEY_ALLOW_SECURE, false);
+  }
+
+
 }

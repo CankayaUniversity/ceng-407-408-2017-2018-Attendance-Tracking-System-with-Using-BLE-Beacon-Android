@@ -123,6 +123,7 @@ public class ServiceManager extends Service {
                         if(isServiceIsRunning(RegularMode.class)) stopRegularMode();
                         allowNotification = true;
                         secure = false;
+                        new SessionManager(getApplicationContext()).allowSecure();
                         runCollector();
                       } else if (currentCourse != null && !secure) {
                         // REGULAR MODE LECTURE

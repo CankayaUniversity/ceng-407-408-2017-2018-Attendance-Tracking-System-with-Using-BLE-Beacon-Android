@@ -387,19 +387,21 @@ INNER JOIN Classroom ON Taken_Lectures.course_id = Classroom.course_id
 LEFT JOIN Attended_Students ON Classroom.classroom_id = Attended_Students.classroom_id AND Taken_Lectures.student_id = Attended_Students.student_id 
 INNER JOIN Course ON Course.course_id = Taken_Lectures.course_id
 WHERE Taken_Lectures.student_id = '$user_id' AND Classroom.active = '1'
-ORDER BY Classroom.date DESC, Classroom.hour DESC
-LIMIT 15";
-		
+ORDER BY Classroom.date DESC, Classroom.hour DESC";
+		$count = 0;
 		$result =mysqli_query($con, $query);
 		if(mysqli_num_rows($result) > 0){
 			$json = array();
 			while($row = mysqli_fetch_assoc($result)){
 				$date = $row["date"]." ".$row["hour"].":00";
-                $time 	=	strtotime($date);
+                $time 	=	strtotime($date) + 60 * 50; // adds aditional 50 minutes to wait end of the course
                 $date 	=	date('Y-m-d H:i:s',$time);
 				$now	=	date("Y-m-d H:i:s");
-				if($now >= $date)
+				if($now >= $date){
 					$json[] = $row;
+					$count++;
+				}
+				if($count >=15) break;
 			}
 		}else
 		{

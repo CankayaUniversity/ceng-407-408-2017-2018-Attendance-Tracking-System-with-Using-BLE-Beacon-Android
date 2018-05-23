@@ -260,6 +260,33 @@ switch($_POST["operation"]){
 			}
 		}
 	break;
+	case 'secure-image':
+		if(empty($_POST["user_id"]) || empty($_POST["classroom_id"]) || empty($_POST["image"])){
+			empty_field_error();
+		}
+		$classroom_id = $_POST["classroom_id"];
+		$user_id = $_POST["user_id"];
+		$image = $_POST["image"];
+		$path = "secure_images/".$classroom_id."_".$user_id.".jpg";
+		
+		$query = "SELECT * FROM Attended_Students WHERE classroom_id = '$classroom_id' AND student_id='$user_id'";
+		$result = mysqli_query($con, $query);
+		if(mysqli_num_rows($result) > 0){
+			$query = "UPDATE Attended_Students SET status='0', secure_img = '$path' WHERE classroom_id='$classroom_id' AND student_id='$user_id'";
+		}else
+		{
+			$query = "INSERT INTO Attended_Students(classroom_id, student_id, status, secure_img) VALUES('$classroom_id', '$user_id', '0', '$path'";
+		}
+		
+		$result = mysqli_query($con, $query);
+		if($result){
+			file_put_contents($path, base64_decode($image));
+			send_success();
+		}else
+		{
+			send_error("Error while saving your photo. Please try again.");
+		}
+	break;
 }
 
 ?>
