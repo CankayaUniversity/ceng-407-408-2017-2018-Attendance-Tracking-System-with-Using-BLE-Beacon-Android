@@ -115,6 +115,7 @@ public class ServiceManager extends Service {
                       } else {
                         // IF THERE IS NOT ACTIVE COURSE
                         broadcastCourseInfo("null");
+                        runCollector();
                       }
                     } else {
                       // BREAK TIME RUNS ONCE

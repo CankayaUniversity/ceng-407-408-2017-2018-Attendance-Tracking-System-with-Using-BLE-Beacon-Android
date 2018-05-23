@@ -200,11 +200,14 @@ public class ReportFragmentLecturer extends Fragment {
                     popup.dismiss();
                   }
                 });
-            if(student.img == null || student.img.isEmpty()){
+            if (student.img == null || student.img.isEmpty()) {
               avatar.setImageResource(R.drawable.unknown_trainer);
-            }else{
-              Picasso.with(popup.getContext()).load(URL + student.img).fit().centerCrop().into
-                      (avatar);
+            } else {
+              Picasso.with(popup.getContext())
+                  .load(URL + student.img)
+                  .fit()
+                  .centerCrop()
+                  .into(avatar);
             }
             student_number.setText(String.valueOf(student.number));
             student_name.setText(student.name);
@@ -328,6 +331,25 @@ public class ReportFragmentLecturer extends Fragment {
         .commit();
   }
 
+  private void setInfo(final int done, final int taken, final double average) {
+    handler.post(
+        new Runnable() {
+          @Override
+          public void run() {
+            TextView tLecture = getActivity().findViewById(R.id.total_lecture);
+            TextView tStudent = getActivity().findViewById(R.id.total_student);
+            TextView averInfo = getActivity().findViewById(R.id.attendance_percentage);
+            String info = "Total Lecture: " + String.valueOf(done);
+            tLecture.setText(info);
+            info = "Registered Students: " + String.valueOf(taken);
+            tStudent.setText(info);
+            NumberFormat formatter = new DecimalFormat("#0.00");
+            info = "Participation: " + formatter.format(average)+"%";
+            averInfo.setText(info);
+          }
+        });
+  }
+
   private void fillCalendar(final Given_Lectures_Row lecture) {
     StringRequest request =
         new StringRequest(
@@ -347,7 +369,8 @@ public class ReportFragmentLecturer extends Fragment {
                   // do nothing
                 }
                 try {
-                  JSONArray jsonArray = new JSONArray(response);
+                  JSONObject json = new JSONObject(response);
+                  JSONArray jsonArray = json.getJSONArray("lectures");
                   calendarColumns.clear();
                   for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject jsonObject = jsonArray.getJSONObject(i);
@@ -360,6 +383,12 @@ public class ReportFragmentLecturer extends Fragment {
                     calendarColumns.add(column);
                   }
                   getCalendar();
+
+                  JSONObject jsonObject = json.getJSONObject("info");
+                  setInfo(
+                      jsonObject.getInt("done"),
+                      jsonObject.getInt("taken"),
+                      jsonObject.getDouble("average"));
 
                 } catch (JSONException e) {
                   e.printStackTrace();

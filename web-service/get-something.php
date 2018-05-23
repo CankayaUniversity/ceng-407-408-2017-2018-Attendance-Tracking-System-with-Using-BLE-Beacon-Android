@@ -493,7 +493,7 @@ ORDER BY Course.course_code ASC";
 		}
 		$course_id = $_POST["course_id"];
 		$section = $_POST["section"];
-		
+		$done  = 0;
 		$query = "SELECT Classroom.classroom_id, Classroom.date, Classroom.hour, Course.course_code FROM Classroom
 INNER JOIN Course ON Classroom.course_id = Course.course_id
 WHERE Classroom.course_id = '$course_id' AND Classroom.section = '$section' AND Classroom.active = '1'
@@ -502,14 +502,33 @@ ORDER BY Classroom.hour DESC";
 		$result = mysqli_query($con, $query);
 		if(mysqli_num_rows($result)>0){
 			$json = array();
+			$lectures = array();
 			while($row = mysqli_fetch_assoc($result)){
 				$date = $row["date"]." ".$row["hour"].":00";
                 $time 	=	strtotime($date);
                 $date 	=	date('Y-m-d H:i:s',$time);
 				$now	=	date("Y-m-d H:i:s");
-				if($now >= $date)
-					$json[] = $row;
+				if($now >= $date){
+					$lectures[] = $row;
+					$done++;
+				}
 			}
+			$query	= "SELECT * FROM Taken_Lectures WHERE course_id='$course_id' AND section='$section'";
+			$result = mysqli_query($con,$query);
+			$taken = mysqli_num_rows($result);
+			
+			$query	= "SELECT * FROM Attended_Students INNER JOIN Classroom ON Attended_Students.classroom_id = Classroom.classroom_id WHERE (Classroom.course_id='$course_id' AND Classroom.active = 1) AND (Attended_Students.status = 3 OR Attended_Students.status = 2)";
+			$result = mysqli_query($con, $query);
+			$numberofAttended = mysqli_num_rows($result);
+			
+			$average = $numberofAttended*100 / ($taken * $done);
+			$average = number_format($average,2);
+			$a["done"] = $done;
+			$a["taken"] = $taken;
+			$a["average"] = $average;
+			$json["info"] = $a;
+			$json["lectures"] = $lectures;
+			
 		}else
 		{
 			send_error("There is no classroom information");
