@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_gravity="center"
+    >
+<LinearLayout
     android:layout_width="300dp"
     android:layout_height="400dp"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/gradientback"
     android:orientation="vertical"
     android:padding="5dp"
     android:layout_gravity="center"
+ >
 
-    >
     <TextView
         android:id="@+id/txtclose"
         android:layout_width="30dp"
@@ -20,11 +25,7 @@
         android:gravity="center"
         android:background="@drawable/circleclose"/>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginTop="5dp">
+
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/avatar"
             android:layout_width="100dp"
@@ -54,20 +55,15 @@
             android:layout_marginTop="5dp"
             android:text="Berkan Gürel"
             android:textColor="@android:color/black" />
-    </LinearLayout>ü
-    <TextView
-        android:id="@+id/popuptime"
-        android:layout_marginTop="5dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Time Place"
+
+    <ImageView
+        android:layout_width="150dp"
+        android:layout_height="200dp"
+        android:layout_gravity="center"
         android:layout_marginLeft="1dp"
         android:layout_marginRight="1dp"
-        android:textColor="@android:color/black"
-        android:layout_gravity="center"
-        android:background="#ffc77d"
-        android:gravity="center"
-        android:textSize="15sp"/>
+        android:layout_marginTop="5dp"
+        android:gravity="center" />
     <LinearLayout
         android:layout_marginTop="5dp"
         android:orientation="horizontal"
@@ -157,3 +153,4 @@
         android:textColor="@android:color/black"/>
 
 </LinearLayout>
+</ScrollView>
