@@ -19,6 +19,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -72,9 +73,10 @@ public class ReportFragmentLecturer extends Fragment {
   private ArrayAdapter<String> course_adapter;
   private Spinner course_spinner;
   private ScrollView scroll_report;
-  private TextView courseTxt;
   private LinearLayout generalReport;
   private FrameLayout calendar_hoder;
+  private boolean secure_list = false;
+  private Dialog popup;
 
   private TextView totalstudent;
   private TextView attendedstudent;
@@ -108,7 +110,6 @@ public class ReportFragmentLecturer extends Fragment {
 
     listView = view.findViewById(R.id.studentlist);
     course_spinner = view.findViewById(R.id.lecturelist);
-    courseTxt = view.findViewById(R.id.course_select);
     calendar_hoder = view.findViewById(R.id.cal_container);
     generalReport = view.findViewById(R.id.general_report);
     scroll_report = view.findViewById(R.id.scroll_report);
@@ -147,12 +148,14 @@ public class ReportFragmentLecturer extends Fragment {
             changeVisibility(calendar_hoder, false);
           }
         });
-    final Dialog popup = new Dialog(getActivity());
     listView.setOnItemClickListener(
         new AdapterView.OnItemClickListener() {
           @Override
           public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            popup.setContentView(R.layout.popup);
+            popup = new Dialog(getActivity());
+            popup.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+            if (secure_list) popup.setContentView(R.layout.securepopup);
+            else popup.setContentView(R.layout.popup);
             // getting UI elements
             TextView student_number = popup.findViewById(R.id.student_number);
             TextView student_name = popup.findViewById(R.id.student_name);
@@ -162,7 +165,7 @@ public class ReportFragmentLecturer extends Fragment {
             TextView absent = popup.findViewById(R.id.absentPercent);
             ImageView avatar = popup.findViewById(R.id.avatar);
             String URL = "http://attendancesystem.xyz/attendancetracking/";
-            Button mark = popup.findViewById(R.id.mark);
+            final Button mark = popup.findViewById(R.id.mark);
             // getting student info
             final StudentRow student = studentList.get(position);
             // Calculating total lecture hour
@@ -214,6 +217,26 @@ public class ReportFragmentLecturer extends Fragment {
                   .placeholder(R.drawable.unknown_trainer)
                   .into(avatar);
             }
+            if (secure_list) {
+              ImageView secure_image = popup.findViewById(R.id.secure_image);
+              if (student.secure_img == null || student.secure_img.isEmpty()) {
+                Picasso.with(popup.getContext())
+                    .load(R.drawable.unknown_trainer)
+                    .fit()
+                    .into(secure_image);
+              } else {
+                Picasso.with(popup.getContext())
+                    .load(URL + student.secure_img)
+                    .fit()
+                    .placeholder(R.drawable.unknown_trainer)
+                    .into(secure_image);
+              }
+            } else {
+              TextView time = popup.findViewById(R.id.time);
+              String info =
+                  "This student attended approximately " + student.time / 60000 + " minute(s)";
+              time.setText(info);
+            }
             student_number.setText(String.valueOf(student.number));
             student_name.setText(student.name);
             close.setOnClickListener(
@@ -254,6 +277,7 @@ public class ReportFragmentLecturer extends Fragment {
                   boolean result = jsonObject.getBoolean("success");
                   if (result) {
                     toastWithHandler("Student has been marked as attended");
+                    studentList.clear();
                     getStudentList(classroom_id);
                   } else {
                     toastWithHandler(jsonObject.getString("message"));
@@ -590,6 +614,7 @@ public class ReportFragmentLecturer extends Fragment {
           @Override
           public void run() {
             for (int i = 0; i < classrooms.size(); i++) {
+              studentList.clear();
               getStudentList(classrooms.get(i));
             }
           }
@@ -633,14 +658,18 @@ public class ReportFragmentLecturer extends Fragment {
                   // do nothing
                 }
                 try {
-                  JSONArray jsonArray = new JSONArray(response);
-                  studentList.clear();
-                  for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                  JSONObject json = new JSONObject(response);
+                  JSONObject classroom_info = json.getJSONObject("classroom_info");
+                  secure_list = classroom_info.getString("type").equals("secure");
+
+                  JSONArray student_info = json.getJSONArray("student_info");
+                  // JSONObject course_info = json.getJSONObject("course_info");
+                  for (int i = 0; i < student_info.length(); i++) {
+                    JSONObject jsonObject = student_info.getJSONObject(i);
                     StudentRow studentRow =
                         new StudentRow(
                             jsonObject.getInt("student_id"),
-                            jsonObject.getInt("classroom_id"),
+                            classroom_info.getInt("classroom_id"),
                             jsonObject.getString("name") + " " + jsonObject.getString("surname"),
                             jsonObject.getInt("student_number"),
                             jsonObject.getInt("status"),
@@ -648,7 +677,8 @@ public class ReportFragmentLecturer extends Fragment {
                             jsonObject.getInt("attended"),
                             jsonObject.getInt("nearly"),
                             jsonObject.getInt("absent"),
-                            jsonObject.getString("img"));
+                            jsonObject.getString("img"),
+                            jsonObject.getString("secure_img"));
                     studentList.add(studentRow);
                   }
 
@@ -798,6 +828,7 @@ public class ReportFragmentLecturer extends Fragment {
     int student_id;
     int classroom_id;
     String img;
+    String secure_img;
 
     StudentRow(
         int student_id,
@@ -809,7 +840,8 @@ public class ReportFragmentLecturer extends Fragment {
         int attended,
         int nearly,
         int absent,
-        String img) {
+        String img,
+        String secure_img) {
       this.name = name;
       this.number = number;
       this.state = state;
@@ -820,6 +852,7 @@ public class ReportFragmentLecturer extends Fragment {
       this.student_id = student_id;
       this.classroom_id = classroom_id;
       this.img = img;
+      this.secure_img = secure_img;
     }
 
     public StudentRow() {
@@ -876,7 +909,6 @@ public class ReportFragmentLecturer extends Fragment {
             .placeholder(R.drawable.unknown_trainer)
             .into(holder.student_pic);
       }
-      // String info = student.name + " [" + student.time / 60000 + " m]";
       holder.txtName.setText(student.name);
       holder.txtNumber.setText(String.valueOf(student.number));
       holder.txtLineNum.setText(String.valueOf(position + 1));

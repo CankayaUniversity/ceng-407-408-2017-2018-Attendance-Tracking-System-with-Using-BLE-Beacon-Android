@@ -66,12 +66,14 @@
         <ListView
             android:id="@+id/studentlist"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:scrollbars="none"/>
 
         <ScrollView
             android:id="@+id/scroll_report"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:scrollbars="none">
 
             <LinearLayout
                 android:layout_width="match_parent"

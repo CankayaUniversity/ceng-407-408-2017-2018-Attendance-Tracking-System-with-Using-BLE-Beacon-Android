@@ -1,8 +1,8 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="seniorproject.attendancetrackingsystem.fragments.WelcomeFragment">
 
 
@@ -26,7 +26,6 @@
                 app:civ_border_color="@android:color/white"
                 app:civ_border_width="3dp" />
 
-            <!--android:id="@+id/_______"-->
             <TextView
                 android:id="@+id/w_user_name"
                 android:layout_width="wrap_content"
@@ -39,7 +38,6 @@
 
                 />
 
-            <!--android:id="@+id/_____________"-->
             <TextView
                 android:id="@+id/w_user_mail"
                 android:layout_width="wrap_content"
@@ -56,8 +54,8 @@
                 android:id="@+id/secure_switch"
                 android:layout_width="wrap_content"
                 android:layout_height="10dp"
-                android:text="Secure Mode"
                 android:layout_gravity="end"
+                android:text="Secure Mode"
                 android:textColor="@color/colorWhite" />
 
         </LinearLayout>
@@ -66,13 +64,14 @@
             android:layout_width="350dp"
             android:layout_height="match_parent"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="280dp"
-            android:layout_marginBottom="59dp">
+            android:layout_marginBottom="59dp"
+            android:layout_marginTop="280dp">
 
             <ListView
                 android:id="@+id/notification_list"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:scrollbars="none" />
 
         </android.support.v7.widget.CardView>
 

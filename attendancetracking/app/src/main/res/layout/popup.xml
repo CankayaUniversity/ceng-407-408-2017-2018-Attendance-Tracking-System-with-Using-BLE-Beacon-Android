@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="300dp"
-    android:layout_height="400dp"
+    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/gradientback"
     android:orientation="vertical"
@@ -54,9 +54,9 @@
             android:layout_marginTop="5dp"
             android:text="Berkan Gürel"
             android:textColor="@android:color/black" />
-    </LinearLayout>ü
+    </LinearLayout>
     <TextView
-        android:id="@+id/popuptime"
+        android:id="@+id/time"
         android:layout_marginTop="5dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -117,8 +117,8 @@ switch($_POST["operation"]){
 			empty_field_error();
 		}
 		$user_id = $_POST["user_id"];
-		$query = "SELECT Lecturer.beacon_mac FROM Lecturer 
-		INNER JOIN Given_Lectures ON Lecturer.lecturer_id = Given_Lectures.lecturer_id 
+		$query = "SELECT Lecturer.beacon_mac FROM Lecturer
+		INNER JOIN Given_Lectures ON Lecturer.lecturer_id = Given_Lectures.lecturer_id
 		INNER JOIN Taken_Lectures ON Given_Lectures.course_id = Taken_Lectures.course_id WHERE Taken_Lectures.student_id = '$user_id'";
 		$result = mysqli_query($con, $query);
 		if(mysqli_num_rows($result)>0){
@@ -140,13 +140,13 @@ switch($_POST["operation"]){
 		$week = array("sunday","monday","tuesday","wednesday","thursday","friday","saturday");
 		$week_day = $week[$day];
 		$user_id = $_POST["user_id"];
-		$query = "SELECT Schedule.*, Taken_Lectures.student_id, Lecturer.beacon_mac, Course.course_code FROM Schedule 
-		INNER JOIN Taken_Lectures ON Taken_Lectures.course_id = Schedule.course_id 
-		INNER JOIN Given_Lectures ON Taken_Lectures.course_id = Given_Lectures.course_id 
-		INNER JOIN Lecturer ON Given_Lectures.lecturer_id = Lecturer.lecturer_id 
+		$query = "SELECT Schedule.*, Taken_Lectures.student_id, Lecturer.beacon_mac, Course.course_code FROM Schedule
+		INNER JOIN Taken_Lectures ON Taken_Lectures.course_id = Schedule.course_id
+		INNER JOIN Given_Lectures ON Taken_Lectures.course_id = Given_Lectures.course_id
+		INNER JOIN Lecturer ON Given_Lectures.lecturer_id = Lecturer.lecturer_id
 		INNER JOIN Course ON Taken_Lectures.course_id = Course.course_id
 		WHERE Taken_Lectures.student_id = '$user_id' AND Taken_Lectures.section = Schedule.section AND Schedule.week_day = '$week_day'";
-		
+
 		$result = mysqli_query($con, $query);
 		if(mysqli_num_rows($result)>0){
 			$json = array();
@@ -173,14 +173,14 @@ switch($_POST["operation"]){
 			$json ["success"] = false;
 		}
 		echo json_encode($json);
-		
+
 	break;
 	case 'precondition';
 	if(empty($_POST["course_id"])){
 			empty_field_error();
 		}
 	$course_id = $_POST["course_id"];
-	
+
 	$query = "SELECT * FROM Preconditions WHERE course_id = '$course_id'";
 	$result = mysqli_query($con, $query);
 	if(mysqli_num_rows($result) > 0){
@@ -197,7 +197,7 @@ switch($_POST["operation"]){
 		empty_field_error();
 	}
 	$classroom_id = $_POST["classroom_id"];
-	
+
 	$query = "SELECT hour FROM Classroom WHERE classroom_id = '$classroom_id'";
 	$result = mysqli_query($con, $query);
 	if(mysqli_num_rows($result) > 0){
@@ -214,12 +214,12 @@ switch($_POST["operation"]){
 	if(empty($_POST["user_id"])){
 			empty_field_error();
 		}
-		
+
 		$day = date("w");
 		$week = array("sunday","monday","tuesday","wednesday","thursday","friday","saturday");
 		$week_day = $week[$day];
 		$user_id = $_POST["user_id"];
-	
+
 	$query = "SELECT Schedule.*, Course.course_code, Lecturer.beacon_mac FROM Schedule
 INNER JOIN Given_Lectures ON Given_Lectures.course_id = Schedule.course_id
 INNER JOIN Course ON Course.course_id = Given_Lectures.course_id
@@ -246,7 +246,7 @@ WHERE Schedule.week_day = '$week_day' AND Given_Lectures.lecturer_id = '$user_id
 					if($result2) $row["classroom_id"] = mysqli_insert_id($con);
 				}
 				$json [] = $row;
-			}	
+			}
 		}else{
 			$json ["success"] = false;
 		}
@@ -256,16 +256,16 @@ WHERE Schedule.week_day = '$week_day' AND Given_Lectures.lecturer_id = '$user_id
 		if(empty($_POST["classroom_id"])){
 			empty_field_error();
 		}
-		
+
 		$classroom_id = $_POST["classroom_id"];
-		
+
 		$query = "SELECT * FROM Token WHERE classroom_id = '$classroom_id'";
 		$result = mysqli_query($con, $query);
 		if(mysqli_num_rows($result) > 0){
 			$row = mysqli_fetch_assoc($result);
 			$time = $row["time"];
 			$current_time = round(microtime(true) * 1000);
-			
+
 			if($current_time > $time){
 				$json["experied"]  = true;
 			}
@@ -306,20 +306,20 @@ WHERE Given_Lectures.lecturer_id = '$user_id'";
 		$course_id = $_POST["course_id"];
 		$middle = 0;
 		$attended = 70;
-		
+
 		$query = "SELECT * FROM Preconditions WHERE course_id = '$course_id'";
-		
+
 		$result = mysqli_query($con, $query);
 		if(mysqli_num_rows($result)){
 			$row = mysqli_fetch_assoc($result);
 			$middle = $row["middle_condition"];
 			$attended = $row["attended_condition"];
 		}
-		
+
 		$json ["middle"] = $middle;
 		$json["attended"] = $attended;
 		$json["success"] = true;
-		
+
 		echo json_encode($json);
 	break;
 	case "attendance-list":
@@ -327,24 +327,30 @@ WHERE Given_Lectures.lecturer_id = '$user_id'";
 			empty_field_error();
 		}
 		$classroom_id = $_POST["classroom_id"];
-		
-			$query = "SELECT Student.name, Student.surname, Student.student_number, Student.img, Taken_Lectures.student_id, COALESCE(Attended_Students.status,0) as status, COALESCE(Attended_Students.time, 0) as time, Classroom.course_id, Classroom.section 
-			FROM Taken_Lectures 
-			INNER JOIN Classroom ON Classroom.course_id = Taken_Lectures.course_id AND Classroom.section = Taken_Lectures.section 
-			LEFT JOIN Attended_Students ON Classroom.classroom_id = Attended_Students.classroom_id AND Taken_Lectures.student_id = Attended_Students.student_id 
+		$query = "SELECT * FROM Token WHERE classroom_id='$classroom_id'";
+		$result = mysqli_query($con, $query);
+		if(mysqli_num_rows($result) > 0) $type = "secure";
+		else $type = "regular";
+
+		$query = "SELECT Student.name, Student.surname, Student.student_number, Student.img, Taken_Lectures.student_id, COALESCE(Attended_Students.status,0) as status, COALESCE(Attended_Students.time, 0) as time, COALESCE(Attended_Students.secure_img, '') as secure_img, Classroom.course_id, Classroom.section
+			FROM Taken_Lectures
+			INNER JOIN Classroom ON Classroom.course_id = Taken_Lectures.course_id AND Classroom.section = Taken_Lectures.section
+			LEFT JOIN Attended_Students ON Classroom.classroom_id = Attended_Students.classroom_id AND Taken_Lectures.student_id = Attended_Students.student_id
 			INNER JOIN Student ON Taken_Lectures.student_id = Student.student_id WHERE Classroom.classroom_id = ".$classroom_id."
 			ORDER BY status DESC, Student.student_number ASC";
-	$result = mysqli_query($con, $query);
+		$result = mysqli_query($con, $query);
 
 	if(mysqli_num_rows($result)>0){
-			$json = array();
+			$json["classroom_info"]["classroom_id"] = $classroom_id;
+			$json["classroom_info"]["type"] = $type;
+			$json["student_info"] = array();
 		while($row = mysqli_fetch_assoc($result)){
 			$student_id = $row["student_id"];
 			$course_id = $row["course_id"];
 			$section = $row["section"];
-			
-			$attendanceQuery = "SELECT Classroom.*, COALESCE(Attended_Students.status, 0) as status 
-			FROM Classroom 
+
+			$attendanceQuery = "SELECT Classroom.*, COALESCE(Attended_Students.status, 0) as status
+			FROM Classroom
 			LEFT JOIN Attended_Students ON Classroom.classroom_id = Attended_Students.classroom_id and Attended_Students.student_id = '$student_id'
 			WHERE Classroom.course_id = '$course_id' AND Classroom.section = '$section' AND Classroom.active = '1'";
 
@@ -354,8 +360,8 @@ WHERE Given_Lectures.lecturer_id = '$user_id'";
 			$absentCount = 0;
 			while($aRow = mysqli_fetch_assoc($attendanceResult)){
 				$date = $aRow["date"]." ".$aRow["hour"].":00";
-                $time 	=	strtotime($date);
-                $date 	=	date('Y-m-d H:i:s',$time);
+				$time 	=	strtotime($date);
+				$date 	=	date('Y-m-d H:i:s',$time);
 				$now	=	date("Y-m-d H:i:s");
 				if($now >= $date){
 					if($aRow["status"] == 2 || $aRow["status"] == 3) $attendedCount++;
@@ -363,14 +369,24 @@ WHERE Given_Lectures.lecturer_id = '$user_id'";
 					else $absentCount++;
 				}
 			}
-			$row["attended"] = $attendedCount;
-			$row["nearly"] = $nearlyCount;
-			$row["absent"] = $absentCount;
-			if($row["status"]==3) $row["status"] = 2;
-			
-			$row["classroom_id"] =$classroom_id;
-			$json[]= $row;
+		  if($row["status"]==3) $row["status"] = 2;
+			$student_info["student_id"] = $student_id;
+			$student_info["student_number"] = $row["student_number"];
+			$student_info["name"] = $row["name"];
+			$student_info["surname"] = $row["surname"];
+			$student_info["img"] = $row["img"];
+			$student_info["attended"] = $attendedCount;
+			$student_info["nearly"] = $nearlyCount;
+			$student_info["absent"] = $absentCount;
+			$student_info["status"] = $row["status"];
+			$student_info["time"] = $row["time"];
+			$student_info["secure_img"] = $row["secure_img"];
+
+
+			$json["student_info"][] = $student_info;
 		}
+		$json["course_info"]["course_id"] = $course_id;
+		$json["course_info"]["section"] = $section;
 	}else{
 		send_error("There is not any classroom information on the database");
 	}
@@ -380,11 +396,11 @@ WHERE Given_Lectures.lecturer_id = '$user_id'";
 		if(empty($_POST["user_id"])){
 			empty_field_error();
 		}
-		
+
 		$user_id = $_POST["user_id"];
-		$query = "SELECT Classroom.date, Classroom.hour, Course.course_code, COALESCE(Attended_Students.status, 0) as status FROM Taken_Lectures 
-INNER JOIN Classroom ON Taken_Lectures.course_id = Classroom.course_id 
-LEFT JOIN Attended_Students ON Classroom.classroom_id = Attended_Students.classroom_id AND Taken_Lectures.student_id = Attended_Students.student_id 
+		$query = "SELECT Classroom.date, Classroom.hour, Course.course_code, COALESCE(Attended_Students.status, 0) as status FROM Taken_Lectures
+INNER JOIN Classroom ON Taken_Lectures.course_id = Classroom.course_id
+LEFT JOIN Attended_Students ON Classroom.classroom_id = Attended_Students.classroom_id AND Taken_Lectures.student_id = Attended_Students.student_id
 INNER JOIN Course ON Course.course_id = Taken_Lectures.course_id
 WHERE Taken_Lectures.student_id = '$user_id' AND Classroom.active = '1'
 ORDER BY Classroom.date DESC, Classroom.hour DESC";
@@ -413,13 +429,13 @@ ORDER BY Classroom.date DESC, Classroom.hour DESC";
 		if(empty($_POST["user_id"])){
 			empty_field_error();
 		}
-		
+
 		$user_id = $_POST["user_id"];
-		
+
 		$query = "SELECT Taken_Lectures.course_id, Course.course_code, Taken_Lectures.section FROM Taken_Lectures
 INNER JOIN Course ON Taken_Lectures.course_id = Course.course_id
 WHERE Taken_Lectures.student_id = '$user_id'";
-		
+
 		$result = mysqli_query($con, $query);
 		if(mysqli_num_rows($result)>0){
 			$json = array();
@@ -439,9 +455,9 @@ WHERE Taken_Lectures.student_id = '$user_id'";
 		$user_id = $_POST["user_id"];
 		$course_id = $_POST["course_id"];
 		$section = $_POST["section"];
-		$query = "SELECT Classroom.date, Classroom.hour, Course.course_code, COALESCE(Attended_Students.status, 0) as status FROM Taken_Lectures 
-INNER JOIN Classroom ON Taken_Lectures.course_id = Classroom.course_id 
-LEFT JOIN Attended_Students ON Classroom.classroom_id = Attended_Students.classroom_id AND Taken_Lectures.student_id = Attended_Students.student_id 
+		$query = "SELECT Classroom.date, Classroom.hour, Course.course_code, COALESCE(Attended_Students.status, 0) as status FROM Taken_Lectures
+INNER JOIN Classroom ON Taken_Lectures.course_id = Classroom.course_id
+LEFT JOIN Attended_Students ON Classroom.classroom_id = Attended_Students.classroom_id AND Taken_Lectures.student_id = Attended_Students.student_id
 INNER JOIN Course ON Course.course_id = Taken_Lectures.course_id
 WHERE Taken_Lectures.student_id = '$user_id' AND Classroom.course_id = '$course_id' AND Classroom.section='$section' AND Classroom.active = '1'
 ORDER BY Classroom.date DESC, Classroom.hour DESC";
@@ -479,7 +495,7 @@ ORDER BY Course.course_code ASC";
 					$arr["section"] = $i;
 					$json [] = $arr;
 				}
-				
+
 			}
 		}else
 		{
@@ -516,11 +532,11 @@ ORDER BY Classroom.hour DESC";
 			$query	= "SELECT * FROM Taken_Lectures WHERE course_id='$course_id' AND section='$section'";
 			$result = mysqli_query($con,$query);
 			$taken = mysqli_num_rows($result);
-			
+
 			$query	= "SELECT * FROM Attended_Students INNER JOIN Classroom ON Attended_Students.classroom_id = Classroom.classroom_id WHERE (Classroom.course_id='$course_id' AND Classroom.active = 1) AND (Attended_Students.status = 3 OR Attended_Students.status = 2)";
 			$result = mysqli_query($con, $query);
 			$numberofAttended = mysqli_num_rows($result);
-			
+
 			$average = $numberofAttended*100 / ($taken * $done);
 			$average = number_format($average,2);
 			$a["done"] = $done;
@@ -528,7 +544,7 @@ ORDER BY Classroom.hour DESC";
 			$a["average"] = $average;
 			$json["info"] = $a;
 			$json["lectures"] = $lectures;
-			
+
 		}else
 		{
 			send_error("There is no classroom information");
