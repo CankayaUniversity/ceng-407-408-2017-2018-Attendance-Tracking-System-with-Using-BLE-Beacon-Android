@@ -91,12 +91,13 @@ public class WelcomeFragmentLecturer extends Fragment {
 
     if (userInfo.get(SessionManager.KEY_USER_IMG).isEmpty()
         || userInfo.get(SessionManager.KEY_USER_IMG) == null) {
-      avatar.setImageResource(R.drawable.unknown_trainer);
+      Picasso.with(getActivity()).load(R.drawable.unknown_trainer).fit().centerCrop().into(avatar);
     } else {
       Picasso.with(getActivity())
           .load(IMG_PREF + userInfo.get(SessionManager.KEY_USER_IMG))
           .fit()
           .centerCrop()
+          .placeholder(R.drawable.unknown_trainer)
           .into(avatar);
     }
     TextView nameSurnameField = getActivity().findViewById(R.id.w_user_name);
@@ -133,13 +134,13 @@ public class WelcomeFragmentLecturer extends Fragment {
 
           @Override
           public void run() {
-              Calendar cal = Calendar.getInstance();
-              if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY
-                      || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY) {
-                  items.clear();
-                  items.add("Weekend");
-                  return;
-              }
+            Calendar cal = Calendar.getInstance();
+            if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY
+                || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY) {
+              items.clear();
+              items.add("Weekend");
+              return;
+            }
             try {
               current = dateFormat.parse(dateFormat.format(new Date()));
               start = dateFormat.parse("09:20");

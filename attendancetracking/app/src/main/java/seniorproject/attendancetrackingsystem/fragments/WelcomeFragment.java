@@ -41,7 +41,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -70,8 +69,8 @@ import seniorproject.attendancetrackingsystem.utils.RegularMode;
 
 /* A simple {@link Fragment} subclass. */
 public class WelcomeFragment extends Fragment {
-  private static String IMG_PREF = "http://attendancesystem.xyz/attendancetracking/";
   private static final int CAM_REQUEST = 1313;
+  private static String IMG_PREF = "http://attendancesystem.xyz/attendancetracking/";
   ArrayAdapter<String> adapter;
   private Receiver mReceiver;
   private ArrayList<String> messages;
@@ -87,6 +86,7 @@ public class WelcomeFragment extends Fragment {
   private Uri photoURI;
   private String mCurrentPhotoPath;
   private Bitmap bitmap;
+
   public WelcomeFragment() {
     // Required empty public constructor
   }
@@ -108,12 +108,13 @@ public class WelcomeFragment extends Fragment {
     ImageView avatar = getActivity().findViewById(R.id.avatar);
     if (userInfo.get(SessionManager.KEY_USER_IMG).isEmpty()
         || userInfo.get(SessionManager.KEY_USER_IMG) == null) {
-      avatar.setImageResource(R.drawable.unknown_trainer);
+      Picasso.with(getActivity()).load(R.drawable.unknown_trainer).fit().centerCrop().into(avatar);
     } else {
       Picasso.with(getActivity())
           .load(IMG_PREF + userInfo.get(SessionManager.KEY_USER_IMG))
           .fit()
           .centerCrop()
+          .placeholder(R.drawable.unknown_trainer)
           .into(avatar);
     }
     TextView nameSurnameField = getActivity().findViewById(R.id.w_user_name);
@@ -181,10 +182,10 @@ public class WelcomeFragment extends Fragment {
       secure_mode = false;
       expired = false;
       messages.add("There is no course for today");
-    } else if(course_code.equals("weekend")) {
-        secure_mode = false;
-        expired= false;
-        messages.add("Weekend!");
+    } else if (course_code.equals("weekend")) {
+      secure_mode = false;
+      expired = false;
+      messages.add("Weekend!");
     }
     addAllLatestCourses();
     Parcelable state = listView.onSaveInstanceState();
@@ -505,6 +506,139 @@ public class WelcomeFragment extends Fragment {
         });
   }
 
+  private void openCamera() {
+
+    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+    File photoFile = null;
+    try {
+      photoFile = createImageFile();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    if (photoFile != null) {
+      if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT)
+        photoURI =
+            FileProvider.getUriForFile(
+                getActivity(), "com.example.android.fileprovider", photoFile);
+      else photoURI = Uri.fromFile(photoFile);
+      intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+      startActivityForResult(intent, CAM_REQUEST);
+    }
+  }
+
+  private File createImageFile() throws IOException {
+    // Create an image file name
+    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+    String imageFileName = "JPEG_" + timeStamp + "_";
+    File storageDir = null;
+    if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT)
+      storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+    else storageDir = getActivity().getExternalFilesDir("Pictures");
+    File image =
+        File.createTempFile(
+            imageFileName, /* prefix */ ".jpg", /* suffix */ storageDir /* directory */);
+
+    // Save a file: path for use with ACTION_VIEW intents
+    mCurrentPhotoPath = image.getAbsolutePath();
+    return image;
+  }
+
+  private Bitmap rotateBitmapOrientation(String photoFilePath) {
+
+    // Create and configure BitmapFactory
+    BitmapFactory.Options bounds = new BitmapFactory.Options();
+    bounds.inJustDecodeBounds = true;
+    BitmapFactory.decodeFile(photoFilePath, bounds);
+    BitmapFactory.Options opts = new BitmapFactory.Options();
+    Bitmap bm = BitmapFactory.decodeFile(photoFilePath, opts);
+    // Read EXIF Data
+    try {
+      ExifInterface exif = new ExifInterface(photoFilePath);
+
+      String orientString = exif.getAttribute(ExifInterface.TAG_ORIENTATION);
+      int orientation =
+          orientString != null ? Integer.parseInt(orientString) : ExifInterface.ORIENTATION_NORMAL;
+      int rotationAngle = 0;
+      if (orientation == ExifInterface.ORIENTATION_ROTATE_90) rotationAngle = 90;
+      if (orientation == ExifInterface.ORIENTATION_ROTATE_180) rotationAngle = 180;
+      if (orientation == ExifInterface.ORIENTATION_ROTATE_270) rotationAngle = 270;
+      // Rotate Bitmap
+      Matrix matrix = new Matrix();
+      matrix.setRotate(rotationAngle, (float) bm.getWidth() / 2, (float) bm.getHeight() / 2);
+      // Return result
+      return Bitmap.createBitmap(bm, 0, 0, bounds.outWidth, bounds.outHeight, matrix, true);
+    } catch (IOException e) {
+      // do nothing
+    }
+    return bm;
+  }
+
+  private String getStringImage(Bitmap img) {
+    ByteArrayOutputStream bm = new ByteArrayOutputStream();
+    img.compress(Bitmap.CompressFormat.JPEG, 100, bm);
+    byte[] imageByte = bm.toByteArray();
+    return Base64.encodeToString(imageByte, Base64.DEFAULT);
+  }
+
+  @Override
+  public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+    if (resultCode == Activity.RESULT_OK) {
+      if (requestCode == CAM_REQUEST) {
+        bitmap = rotateBitmapOrientation(mCurrentPhotoPath);
+        if (bitmap == null) {
+          toastMessageWithHandle("Please re-take photo.");
+          return;
+        }
+        bitmap = Bitmap.createScaledBitmap(bitmap, 400, 500, false);
+        StringRequest request =
+            new StringRequest(
+                Request.Method.POST,
+                DatabaseManager.SetOperations,
+                new Response.Listener<String>() {
+                  @Override
+                  public void onResponse(String response) {
+                    try {
+                      JSONObject jsonObject = new JSONObject(response);
+                      boolean result = jsonObject.getBoolean("success");
+                      if (result) {
+                        new SessionManager(getActivity()).disallowSecure();
+                        toastMessageWithHandle("Your photograph is successfully saved.");
+                      } else {
+                        toastMessageWithHandle(jsonObject.getString("message"));
+                      }
+                    } catch (JSONException e) {
+                      e.printStackTrace();
+                    }
+                  }
+                },
+                new Response.ErrorListener() {
+                  @Override
+                  public void onErrorResponse(VolleyError error) {}
+                }) {
+              @Override
+              protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("operation", "secure-image");
+                params.put(
+                    "user_id",
+                    new SessionManager(getActivity())
+                        .getUserDetails()
+                        .get(SessionManager.KEY_USER_ID));
+                params.put("image", getStringImage(bitmap));
+                params.put("classroom_id", String.valueOf(classroom_id));
+                return params;
+              }
+            };
+        try {
+          DatabaseManager.getmInstance(getActivity()).execute(request);
+        } catch (NullPointerException e) {
+          // do nothing
+        }
+      }
+    }
+  }
+
   private class Receiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -513,7 +647,7 @@ public class WelcomeFragment extends Fragment {
       secure_mode = intent.getBooleanExtra("secure", false);
       regular_mode = intent.getBooleanExtra("regular", true);
       expired = intent.getBooleanExtra("expired", false);
-      if (secure_mode && !expired && ! new SessionManager(getActivity()).secureStatus()) {
+      if (secure_mode && !expired && !new SessionManager(getActivity()).secureStatus()) {
         listView.setOnItemClickListener(
             new AdapterView.OnItemClickListener() {
               @Override
@@ -541,131 +675,7 @@ public class WelcomeFragment extends Fragment {
       showMessages();
     }
   }
-  private void openCamera() {
 
-    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-    File photoFile = null;
-    try {
-      photoFile = createImageFile();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    if (photoFile != null) {
-      if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT)
-        photoURI =
-                FileProvider.getUriForFile(
-                        getActivity(), "com.example.android.fileprovider", photoFile);
-      else photoURI = Uri.fromFile(photoFile);
-      intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-      startActivityForResult(intent, CAM_REQUEST);
-    }
-  }
-
-  private File createImageFile() throws IOException {
-    // Create an image file name
-    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-    String imageFileName = "JPEG_" + timeStamp + "_";
-    File storageDir = null;
-    if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT)
-      storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-    else storageDir = getActivity().getExternalFilesDir("Pictures");
-    File image =
-            File.createTempFile(
-                    imageFileName, /* prefix */ ".jpg", /* suffix */ storageDir /* directory */);
-
-    // Save a file: path for use with ACTION_VIEW intents
-    mCurrentPhotoPath = image.getAbsolutePath();
-    return image;
-  }
-  private Bitmap rotateBitmapOrientation(String photoFilePath) {
-
-    // Create and configure BitmapFactory
-    BitmapFactory.Options bounds = new BitmapFactory.Options();
-    bounds.inJustDecodeBounds = true;
-    BitmapFactory.decodeFile(photoFilePath, bounds);
-    BitmapFactory.Options opts = new BitmapFactory.Options();
-    Bitmap bm = BitmapFactory.decodeFile(photoFilePath, opts);
-    // Read EXIF Data
-    try {
-      ExifInterface exif = new ExifInterface(photoFilePath);
-
-      String orientString = exif.getAttribute(ExifInterface.TAG_ORIENTATION);
-      int orientation =
-              orientString != null ? Integer.parseInt(orientString) : ExifInterface.ORIENTATION_NORMAL;
-      int rotationAngle = 0;
-      if (orientation == ExifInterface.ORIENTATION_ROTATE_90) rotationAngle = 90;
-      if (orientation == ExifInterface.ORIENTATION_ROTATE_180) rotationAngle = 180;
-      if (orientation == ExifInterface.ORIENTATION_ROTATE_270) rotationAngle = 270;
-      // Rotate Bitmap
-      Matrix matrix = new Matrix();
-      matrix.setRotate(rotationAngle, (float) bm.getWidth() / 2, (float) bm.getHeight() / 2);
-      // Return result
-      return Bitmap.createBitmap(bm, 0, 0, bounds.outWidth, bounds.outHeight, matrix, true);
-    } catch (IOException e) {
-      // do nothing
-    }
-    return bm;
-  }
-  private String getStringImage(Bitmap img) {
-    ByteArrayOutputStream bm = new ByteArrayOutputStream();
-    img.compress(Bitmap.CompressFormat.JPEG, 100, bm);
-    byte[] imageByte = bm.toByteArray();
-    return Base64.encodeToString(imageByte, Base64.DEFAULT);
-  }
-  @Override
-  public void onActivityResult(int requestCode, int resultCode, Intent data) {
-    super.onActivityResult(requestCode, resultCode, data);
-    if (resultCode == Activity.RESULT_OK) {
-      if (requestCode == CAM_REQUEST) {
-        bitmap = rotateBitmapOrientation(mCurrentPhotoPath);
-        if(bitmap == null){
-          toastMessageWithHandle("Please re-take photo.");
-          return;
-        }
-        bitmap = Bitmap.createScaledBitmap(bitmap, 400, 500, false);
-        StringRequest request = new StringRequest(Request.Method.POST, DatabaseManager
-                .SetOperations, new Response.Listener<String>() {
-          @Override
-          public void onResponse(String response) {
-            try{
-            JSONObject jsonObject = new JSONObject(response);
-            boolean result = jsonObject.getBoolean("success");
-            if(result){
-              new SessionManager(getActivity()).disallowSecure();
-              toastMessageWithHandle("Your photograph is successfully saved.");
-            }else
-            {
-              toastMessageWithHandle(jsonObject.getString("message"));
-            }
-            }catch (JSONException e){
-              e.printStackTrace();
-            }
-          }
-        }, new Response.ErrorListener() {
-          @Override
-          public void onErrorResponse(VolleyError error) {
-
-          }
-        }){
-          @Override
-          protected Map<String, String> getParams() {
-            Map<String, String> params = new HashMap<>();
-            params.put("operation", "secure-image");
-            params.put("user_id", new SessionManager(getActivity()).getUserDetails().get
-                    (SessionManager.KEY_USER_ID));
-            params.put("image", getStringImage(bitmap));
-            params.put("classroom_id", String.valueOf(classroom_id));
-            return params;
-          }
-        };
-        try{
-        DatabaseManager.getmInstance(getActivity()).execute(request);
-        }catch (NullPointerException e){
-          //do nothing
-        }
-      }
-    }
-  }
   class LatestCourses {
     String date;
     String hour;

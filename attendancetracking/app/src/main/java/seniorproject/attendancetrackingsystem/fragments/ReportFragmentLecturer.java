@@ -201,12 +201,17 @@ public class ReportFragmentLecturer extends Fragment {
                   }
                 });
             if (student.img == null || student.img.isEmpty()) {
-              avatar.setImageResource(R.drawable.unknown_trainer);
+              Picasso.with(popup.getContext())
+                  .load(R.drawable.unknown_trainer)
+                  .fit()
+                  .centerCrop()
+                  .into(avatar);
             } else {
               Picasso.with(popup.getContext())
                   .load(URL + student.img)
                   .fit()
                   .centerCrop()
+                  .placeholder(R.drawable.unknown_trainer)
                   .into(avatar);
             }
             student_number.setText(String.valueOf(student.number));
@@ -344,7 +349,7 @@ public class ReportFragmentLecturer extends Fragment {
             info = "Registered Students: " + String.valueOf(taken);
             tStudent.setText(info);
             NumberFormat formatter = new DecimalFormat("#0.00");
-            info = "Participation: " + formatter.format(average)+"%";
+            info = "Participation: " + formatter.format(average) + "%";
             averInfo.setText(info);
           }
         });
@@ -858,12 +863,17 @@ public class ReportFragmentLecturer extends Fragment {
       StudentRow student = data.get(position);
       String url = "http://attendancesystem.xyz/attendancetracking/";
       if (student.img == null || student.img.isEmpty()) {
-        holder.student_pic.setImageResource(R.drawable.unknown_trainer);
+        Picasso.with(getActivity())
+            .load(R.drawable.unknown_trainer)
+            .fit()
+            .centerCrop()
+            .into(holder.student_pic);
       } else {
         Picasso.with(getActivity())
             .load(url + student.img)
             .fit()
             .centerCrop()
+            .placeholder(R.drawable.unknown_trainer)
             .into(holder.student_pic);
       }
       // String info = student.name + " [" + student.time / 60000 + " m]";
