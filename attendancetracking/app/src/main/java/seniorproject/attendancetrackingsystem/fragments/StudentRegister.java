@@ -2,7 +2,6 @@ package seniorproject.attendancetrackingsystem.fragments;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -10,7 +9,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.media.ExifInterface;
+import android.support.annotation.NonNull;
+import android.support.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -39,6 +39,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 import seniorproject.attendancetrackingsystem.R;
 import seniorproject.attendancetrackingsystem.helpers.DatabaseManager;
@@ -71,30 +72,30 @@ public class StudentRegister extends Fragment {
   @Nullable
   @Override
   public View onCreateView(
-      LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+          @NonNull LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
     return inflater.inflate(R.layout.student_register, container, false);
   }
 
   @Override
-  public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+  public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     initElements(view);
     awesomeValidation.addValidation(
-        getActivity(), R.id.student_schoolID, "^20[0-9]{7}$", R.string.studentIDerror);
+        getActivity(), R.id.student_schoolID, "^20[0-9]{7}$", R.string.student_ID_error);
     awesomeValidation.addValidation(
         getActivity(),
         R.id.student_e_mail,
         "^([c]|(20))[0-9]{7}@student.cankaya.edu.tr$",
-        R.string.emailerror);
+        R.string.email_error);
     awesomeValidation.addValidation(
-        getActivity(), R.id.student_name, "^[a-zA-ZğüşöçİĞÜŞÖÇ]+$", R.string.nameerror);
+        getActivity(), R.id.student_name, "^[a-zA-ZğüşöçİĞÜŞÖÇ]+$", R.string.name_error);
     awesomeValidation.addValidation(
-        getActivity(), R.id.student_surname, "^[a-zA-ZğüşöçİĞÜŞÖÇ]+$", R.string.surnameerror);
+        getActivity(), R.id.student_surname, "^[a-zA-ZğüşöçİĞÜŞÖÇ]+$", R.string.surname_error);
     awesomeValidation.addValidation(
         getActivity(),
         R.id.student_password,
         "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!_*.-]).{6,}$",
-        R.string.passworderror);
+        R.string.password_error);
   }
 
   private void initElements(View view) {
@@ -125,7 +126,7 @@ public class StudentRegister extends Fragment {
 
               name = toTitleCase(name);
               surname = surname.toUpperCase(new Locale("tr", "TR"));
-              String android_id =  Settings.Secure.getString(getActivity().getContentResolver(),
+              String android_id =  Settings.Secure.getString(Objects.requireNonNull(getActivity()).getContentResolver(),
                       Settings
                       .Secure.ANDROID_ID);
               Map<String, String> postParameters = new HashMap<>();
@@ -138,7 +139,7 @@ public class StudentRegister extends Fragment {
               postParameters.put("type", "studentRegister");
               postParameters.put("image", getStringImage(bitmap));
 
-              DatabaseManager.getmInstance(getActivity()).execute("register", postParameters);
+              DatabaseManager.getInstance(getActivity()).execute("register", postParameters);
             }
           }
         });
@@ -161,12 +162,12 @@ public class StudentRegister extends Fragment {
 
   private File createImageFile() throws IOException {
     // Create an image file name
-    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ENGLISH).format(new Date());
     String imageFileName = "JPEG_" + timeStamp + "_";
-    File storageDir = null;
+    File storageDir;
     if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT)
-      storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-    else storageDir = getActivity().getExternalFilesDir("Pictures");
+      storageDir = Objects.requireNonNull(getActivity()).getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+    else storageDir = Objects.requireNonNull(getActivity()).getExternalFilesDir("Pictures");
     File image =
         File.createTempFile(
             imageFileName, /* prefix */ ".jpg", /* suffix */ storageDir /* directory */);
@@ -189,7 +190,7 @@ public class StudentRegister extends Fragment {
       if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT)
         photoURI =
             FileProvider.getUriForFile(
-                getActivity(), "com.example.android.fileprovider", photoFile);
+                    Objects.requireNonNull(getActivity()), "com.example.android.fileprovider", photoFile);
       else photoURI = Uri.fromFile(photoFile);
       intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
       startActivityForResult(intent, CAM_REQUEST);
@@ -207,7 +208,7 @@ public class StudentRegister extends Fragment {
     return hasImage;
   }
 
-  public int getCameraPhotoOrientation(Context context, Uri imageUri, String imagePath) {
+  private int getCameraPhotoOrientation(Context context, Uri imageUri, String imagePath) {
     int rotate = 0;
     try {
       context.getContentResolver().notifyChange(imageUri, null);
@@ -233,7 +234,7 @@ public class StudentRegister extends Fragment {
     return rotate;
   }
 
-  public Bitmap rotateBitmapOrientation(String photoFilePath) {
+  private Bitmap rotateBitmapOrientation(String photoFilePath) {
 
     // Create and configure BitmapFactory
     BitmapFactory.Options bounds = new BitmapFactory.Options();

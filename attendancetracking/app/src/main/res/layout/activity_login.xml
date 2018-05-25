@@ -4,7 +4,7 @@
     android:id="@+id/login_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/gradientback"
+    android:background="@drawable/gradient_back"
     android:gravity="top|center"
     android:orientation="vertical"
     android:paddingLeft="10dp"
@@ -16,7 +16,7 @@
         android:layout_width="144dp"
         android:layout_height="150dp"
         android:layout_marginTop="16dp"
-        android:contentDescription="logo"
+        android:contentDescription="@string/logo"
         app:srcCompat="@drawable/logo" />
 
     <Switch

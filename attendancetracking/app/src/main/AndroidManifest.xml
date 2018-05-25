@@ -54,8 +54,6 @@
         <service android:name=".helpers.ServiceManager"/>
         <service android:name=".helpers.Logger"/>
         <service android:name=".helpers.Pusher"/>
-        <activity android:name=".securemode.FaceTrackerActivity"></activity>
-        <activity android:name=".activities.UploadImage"></activity>
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.example.android.fileprovider"
@@ -63,7 +61,7 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths"></meta-data>
+                android:resource="@xml/provider_paths"/>
         </provider>
     </application>
 

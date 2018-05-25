@@ -10,19 +10,11 @@ public class Actor {
 
   Actor() {}
 
-  public String getPassword() {
-    return this.password;
-  }
-
-  public void setPassword(String password) {
-    this.password = password;
-  }
-
   public String getName() {
     return this.name;
   }
 
-  public void setName(String name) {
+  void setName(String name) {
     this.name = name;
   }
 
@@ -30,7 +22,7 @@ public class Actor {
     return this.surname;
   }
 
-  public void setSurname(String surname) {
+  void setSurname(String surname) {
     this.surname = surname;
   }
 
@@ -38,7 +30,7 @@ public class Actor {
     return this.mail;
   }
 
-  public void setMail(String mail) {
+  void setMail(String mail) {
     this.mail = mail;
   }
 
@@ -46,7 +38,7 @@ public class Actor {
     return this.image;
   }
 
-  public void setImage(String img) {
+  void setImage(String img) {
     this.image = img;
   }
 
@@ -54,7 +46,7 @@ public class Actor {
     return id;
   }
 
-  public void setId(int id) {
+  void setId(int id) {
     this.id = id;
   }
 }

@@ -1,6 +1,7 @@
 package seniorproject.attendancetrackingsystem.fragments;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -14,6 +15,7 @@ import com.basgeekball.awesomevalidation.AwesomeValidation;
 import com.basgeekball.awesomevalidation.ValidationStyle;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 import seniorproject.attendancetrackingsystem.R;
 import seniorproject.attendancetrackingsystem.helpers.DatabaseManager;
@@ -26,23 +28,23 @@ public class LecturerLogin extends Fragment implements View.OnClickListener {
   @Nullable
   @Override
   public View onCreateView(
-      LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+          @NonNull LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
     return inflater.inflate(R.layout.lecturer_login, container, false);
   }
 
   @Override
-  public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+  public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     initElements(view);
     awesomeValidation.addValidation(
         getActivity(),
         R.id.input_email,
         "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@cankaya.edu.tr$",
-        R.string.emailerror);
+        R.string.email_error);
   }
 
   private void initElements(View view) {
-    Switch roleSwitch = getActivity().findViewById(R.id.role_switch);
+    Switch roleSwitch = Objects.requireNonNull(getActivity()).findViewById(R.id.role_switch);
     roleSwitch.setVisibility(View.VISIBLE);
     Button loginButton = view.findViewById(R.id.login_button);
     loginButton.setOnClickListener(this);
@@ -63,7 +65,7 @@ public class LecturerLogin extends Fragment implements View.OnClickListener {
         postParameters.put("username", mail);
         postParameters.put("password", password);
         postParameters.put("type", "lecturerLogin");
-        DatabaseManager.getmInstance(getActivity()).execute("login", postParameters);
+        DatabaseManager.getInstance(getActivity()).execute("login", postParameters);
 
       } else if (etPassword.getText().toString().isEmpty()) {
         etPassword.setError("Enter your password");
@@ -73,7 +75,7 @@ public class LecturerLogin extends Fragment implements View.OnClickListener {
       Bundle bundle = new Bundle();
       bundle.putString("user_type", "lecturer");
       f.setArguments(bundle);
-      getActivity()
+      Objects.requireNonNull(getActivity())
           .getSupportFragmentManager()
           .beginTransaction()
           .replace(R.id.login_layout, f)

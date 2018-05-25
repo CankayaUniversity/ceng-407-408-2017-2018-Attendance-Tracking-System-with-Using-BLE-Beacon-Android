@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/gradientback"
+    android:background="@drawable/gradient_back"
 
 
     tools:context=".activities.StudentActivity">
@@ -24,7 +24,8 @@
             android:layout_height="2sp"
             android:layout_gravity="bottom"
             android:layout_marginBottom="57dp"
-            android:background="@drawable/delimeter" />
+            android:background="@drawable/delimiter"
+            tools:ignore="SmallSp" />
 
         <android.support.design.widget.BottomNavigationView
             android:id="@+id/main_nav"

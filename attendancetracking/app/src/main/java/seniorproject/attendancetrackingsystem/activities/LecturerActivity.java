@@ -21,7 +21,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -58,7 +57,7 @@ public class LecturerActivity extends AppCompatActivity {
   private ProgressDialog progressDialog;
   private WelcomeFragmentLecturer welcomeFragmentLecturer;
   private ReportFragmentLecturer reportFragmentLecturer;
-  private ServiceConnection serviceConnection =
+  private final ServiceConnection serviceConnection =
       new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -164,27 +163,34 @@ public class LecturerActivity extends AppCompatActivity {
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
     setFinishOnTouchOutside(false);
-    if (item.toString().equals("Beacon Configuration")) {
-      showProgressDialog();
-      Intent intent = new Intent(this, BeaconBuilder.class);
-      // startService(intent);
-      bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
-      // new BeaconBuilder();
-    } else if (item.toString().equals("Change Password")) {
-      buildAlertDialog();
-    } else if (item.toString().equals("Course Settings")) {
-      CourseSettings f = new CourseSettings();
-      Objects.requireNonNull(getSupportActionBar()).setLogo(R.drawable.kdefault);
-      getSupportActionBar().setTitle("Ç.Ü. Attendance Tracking System");
-      getSupportActionBar().setSubtitle("/Course Settings");
-      getSupportFragmentManager().beginTransaction().replace(R.id.main_frame, f).commit();
-    } else if (item.toString().equals("Report Problem")) {
-      mainNav.getMenu().findItem(R.id.nav_report).setChecked(true);
-      ReportProblem f = new ReportProblem();
-      Objects.requireNonNull(getSupportActionBar()).setLogo(R.drawable.kdefault);
-      getSupportActionBar().setTitle("Ç.Ü. Attendance Tracking System");
-      getSupportActionBar().setSubtitle("/Report Problem");
-      getSupportFragmentManager().beginTransaction().replace(R.id.main_frame, f).commit();
+    switch (item.toString()) {
+      case "Beacon Configuration":
+        showProgressDialog();
+        Intent intent = new Intent(this, BeaconBuilder.class);
+        // startService(intent);
+        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+        // new BeaconBuilder();
+        break;
+      case "Change Password":
+        buildAlertDialog();
+        break;
+      case "Course Settings": {
+        CourseSettings f = new CourseSettings();
+        Objects.requireNonNull(getSupportActionBar()).setLogo(R.drawable.kdefault);
+        getSupportActionBar().setTitle("Ç.Ü. Attendance Tracking System");
+        getSupportActionBar().setSubtitle("/Course Settings");
+        getSupportFragmentManager().beginTransaction().replace(R.id.main_frame, f).commit();
+        break;
+      }
+      case "Report Problem": {
+        mainNav.getMenu().findItem(R.id.nav_report).setChecked(true);
+        ReportProblem f = new ReportProblem();
+        Objects.requireNonNull(getSupportActionBar()).setLogo(R.drawable.kdefault);
+        getSupportActionBar().setTitle("Ç.Ü. Attendance Tracking System");
+        getSupportActionBar().setSubtitle("/Report Problem");
+        getSupportFragmentManager().beginTransaction().replace(R.id.main_frame, f).commit();
+        break;
+      }
     }
     return super.onOptionsItemSelected(item);
   }
@@ -283,7 +289,7 @@ public class LecturerActivity extends AppCompatActivity {
               params.put("new_password", new_password);
               params.put("user_type", userInfo.get(SessionManager.KEY_USER_TYPE));
               params.put("user_id", userInfo.get(SessionManager.KEY_USER_ID));
-              DatabaseManager.getmInstance(getApplicationContext())
+              DatabaseManager.getInstance(getApplicationContext())
                       .execute("change-password", params);
               change_dialog.dismiss();
             }
@@ -292,7 +298,6 @@ public class LecturerActivity extends AppCompatActivity {
               Toast.makeText(getApplicationContext(),"Password should be at least 6 characters.\n"+
                       "Password should contains at least 1 uppercase letter\n" +
                       "1 digit and 1 special character (. - _ ! *)",Toast.LENGTH_LONG).show();
-              return;
             }
           }
         });
@@ -303,8 +308,8 @@ public class LecturerActivity extends AppCompatActivity {
   }
 
   private void showProgressDialog() {
-    progressDialog.setTitle("Beacon syncronizer");
-    progressDialog.setMessage("Searching nearyby beacons");
+    progressDialog.setTitle("Beacon synchronizer");
+    progressDialog.setMessage("Searching nearby beacons");
     progressDialog.setButton(
         DialogInterface.BUTTON_NEGATIVE,
         "Cancel",
@@ -337,7 +342,6 @@ public class LecturerActivity extends AppCompatActivity {
     if (mac == null || mac.isEmpty() || mac.equals("null")) return;
     progressDialog.hide();
     alertDialog.setTitle("Found Beacon");
-    DecimalFormat formatter = new DecimalFormat("#0.00");
     String info = "Name: " + name + "\n\nMAC Address: " + mac;
     alertDialog.setMessage(info);
     alertDialog.setButton(
@@ -364,7 +368,7 @@ public class LecturerActivity extends AppCompatActivity {
                 new SessionManager(getApplicationContext())
                     .getUserDetails()
                     .get(SessionManager.KEY_USER_ID));
-            DatabaseManager.getmInstance(getApplicationContext())
+            DatabaseManager.getInstance(getApplicationContext())
                 .execute("set-beacon", postParameters);
             BluetoothAdapter.getDefaultAdapter().disable();
             if (mServiceBound) {

@@ -2,19 +2,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/beacon_configuration"
         android:title="@string/beacon_conf"
         app:showAsAction="never" />
     <item
-        android:id="@+id/course_settings"
         android:title="@string/course_settings"
         app:showAsAction="never" />
     <item
-        android:id="@+id/change_password"
         android:title="@string/change_password"
         app:showAsAction="never" />
     <item
-        android:id="@+id/report_problem"
         android:title="@string/reportProblem"
         app:showAsAction="never" />
 </menu>

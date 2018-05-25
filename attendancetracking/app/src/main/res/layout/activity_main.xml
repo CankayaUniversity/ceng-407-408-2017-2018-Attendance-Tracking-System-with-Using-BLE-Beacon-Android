@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/gradientback"
+    android:background="@drawable/gradient_back"
     tools:context="seniorproject.attendancetrackingsystem.activities.MainActivity">
 
 
@@ -70,7 +70,7 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
-        android:contentDescription="logo"
+        android:contentDescription="@string/logo"
         app:srcCompat="@drawable/logo" />
 
 </RelativeLayout>

@@ -3,6 +3,7 @@ package seniorproject.attendancetrackingsystem.fragments;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -16,6 +17,7 @@ import com.basgeekball.awesomevalidation.AwesomeValidation;
 import com.basgeekball.awesomevalidation.ValidationStyle;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 import seniorproject.attendancetrackingsystem.R;
 import seniorproject.attendancetrackingsystem.helpers.DatabaseManager;
@@ -29,20 +31,20 @@ public class StudentLogin extends Fragment implements View.OnClickListener {
   @Nullable
   @Override
   public View onCreateView(
-      LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+          @NonNull LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
     return inflater.inflate(R.layout.student_login, container, false);
   }
 
   @Override
-  public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+  public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     initElements(view);
     awesomeValidation.addValidation(
-        getActivity(), R.id.input_school_id, "^([cC]|(20))[0-9]{7}$", R.string.studentIDerror);
+        getActivity(), R.id.input_school_id, "^([cC]|(20))[0-9]{7}$", R.string.student_ID_error);
   }
 
   private void initElements(View view) {
-    Switch roleSwitch = getActivity().findViewById(R.id.role_switch);
+    Switch roleSwitch = Objects.requireNonNull(getActivity()).findViewById(R.id.role_switch);
     roleSwitch.setVisibility(View.VISIBLE);
     Button loginButton = view.findViewById(R.id.login_button);
     Button forgotPassword = view.findViewById(R.id.missing_password);
@@ -65,7 +67,7 @@ public class StudentLogin extends Fragment implements View.OnClickListener {
           String sub = studentID.substring(1);
           studentID = "20" + sub;
         }
-        SessionManager sessionManager = new SessionManager(getActivity().getApplicationContext());
+        SessionManager sessionManager = new SessionManager(Objects.requireNonNull(getActivity()).getApplicationContext());
         String android_id;
         if(sessionManager.isEmptyAndroidId())
           android_id = Settings.Secure.getString(getActivity().getContentResolver(), Settings
@@ -78,7 +80,7 @@ public class StudentLogin extends Fragment implements View.OnClickListener {
         postParameters.put("password", password);
         postParameters.put("android_id", android_id);
         postParameters.put("type", "studentLogin");
-        DatabaseManager.getmInstance(getActivity()).execute("login", postParameters);
+        DatabaseManager.getInstance(getActivity()).execute("login", postParameters);
 
       } else if (etPassword.getText().toString().isEmpty())
         etPassword.setError("Enter your password");
@@ -87,7 +89,7 @@ public class StudentLogin extends Fragment implements View.OnClickListener {
       Bundle bundle = new Bundle();
       bundle.putString("user_type", "student");
       f.setArguments(bundle);
-      getActivity()
+      Objects.requireNonNull(getActivity())
           .getSupportFragmentManager()
           .beginTransaction()
           .replace(R.id.login_layout, f)

@@ -1,6 +1,7 @@
 package seniorproject.attendancetrackingsystem.fragments;
 
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.os.Handler;
@@ -30,6 +31,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import seniorproject.attendancetrackingsystem.R;
 import seniorproject.attendancetrackingsystem.helpers.DatabaseManager;
@@ -42,7 +44,7 @@ public class CourseSettings extends Fragment {
   private Spinner course_spinner;
   private ArrayList<String> courses;
   private ArrayAdapter<String> adapter;
-  private ArrayList<Given_Lecture_Row> given_lectures = new ArrayList<>();
+  private final ArrayList<Given_Lecture_Row> given_lectures = new ArrayList<>();
   private Handler handler;
   private LinearLayout seek_layout;
   private double nearly = 0;
@@ -59,12 +61,12 @@ public class CourseSettings extends Fragment {
 
   @Override
   public View onCreateView(
-      LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+          @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     return inflater.inflate(R.layout.course_settings, container, false);
   }
 
   @Override
-  public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+  public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     handler = new Handler(Looper.getMainLooper());
     near_text = view.findViewById(R.id.near_text);
@@ -75,7 +77,7 @@ public class CourseSettings extends Fragment {
     middle_seek.setMax(100);
     attended_seek = view.findViewById(R.id.attended);
     attended_seek.setMax(100);
-    course_spinner = view.findViewById(R.id.lecturelist);
+    course_spinner = view.findViewById(R.id.lecture_list);
     Button save_button = view.findViewById(R.id.save_btn);
     save_button.setOnClickListener(
         new View.OnClickListener() {
@@ -86,7 +88,7 @@ public class CourseSettings extends Fragment {
         });
     courses = new ArrayList<>();
     adapter =
-        new ArrayAdapter<>(getActivity().getApplicationContext(), R.layout.spinner_item2, courses);
+        new ArrayAdapter<>(Objects.requireNonNull(getActivity()).getApplicationContext(), R.layout.spinner_item2, courses);
     adapter.setDropDownViewResource(R.layout.spinner_item2);
     get_course_list();
 
@@ -154,7 +156,7 @@ public class CourseSettings extends Fragment {
         new Runnable() {
           @Override
           public void run() {
-            Toast.makeText(getActivity().getApplicationContext(), text, Toast.LENGTH_SHORT).show();
+            Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), text, Toast.LENGTH_SHORT).show();
           }
         });
   }
@@ -199,7 +201,7 @@ public class CourseSettings extends Fragment {
           }
         };
 
-    DatabaseManager.getmInstance(getActivity().getApplicationContext()).execute(request);
+    DatabaseManager.getInstance(Objects.requireNonNull(getActivity()).getApplicationContext()).execute(request);
   }
 
   private void set_preconditions(double near, double full) {
@@ -255,7 +257,7 @@ public class CourseSettings extends Fragment {
           }
         };
 
-    DatabaseManager.getmInstance(getActivity().getApplicationContext()).execute(request);
+    DatabaseManager.getInstance(Objects.requireNonNull(getActivity()).getApplicationContext()).execute(request);
   }
 
   private void get_course_list() {
@@ -309,19 +311,19 @@ public class CourseSettings extends Fragment {
             Map<String, String> params = new HashMap<>();
             params.put(
                 "user_id",
-                new SessionManager(getActivity().getApplicationContext())
+                new SessionManager(Objects.requireNonNull(getActivity()).getApplicationContext())
                     .getUserDetails()
                     .get(SessionManager.KEY_USER_ID));
             params.put("operation", "given-lectures");
             return params;
           }
         };
-    DatabaseManager.getmInstance(getActivity().getApplicationContext()).execute(request);
+    DatabaseManager.getInstance(Objects.requireNonNull(getActivity()).getApplicationContext()).execute(request);
   }
 
   class Given_Lecture_Row {
-    int course_id;
-    String course_code;
+    final int course_id;
+    final String course_code;
 
     Given_Lecture_Row(int course_id, String course_code) {
       this.course_code = course_code;

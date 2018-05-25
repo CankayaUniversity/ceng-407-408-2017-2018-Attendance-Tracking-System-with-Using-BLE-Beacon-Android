@@ -1,36 +1,20 @@
 <resources>
     <string name="app_name">Çankaya ATS</string>
-    <string name="login_lecturer">Lecturer Login</string>
-    <string name="register_lecturer">Lecturer Register</string>
-    <string name="emailerror">Enter a valid e-mail address</string>
-    <string name="studentIDerror">Enter a valid student ID number</string>
-    <string name="nameerror">Enter a valid name</string>
-    <string name="surnameerror">Enter a valid surname</string>
-    <string name="passworderror">Password should be at least 6 characters. \n
+    <string name="email_error">Enter a valid e-mail address</string>
+    <string name="student_ID_error">Enter a valid student ID number</string>
+    <string name="name_error">Enter a valid name</string>
+    <string name="surname_error">Enter a valid surname</string>
+    <string name="password_error">Password should be at least 6 characters. \n
         Password should contains at least 1 uppercase letter \n
         1 digit and 1 special character (. - _ ! *)</string>
     <string name="nav_home">Home</string>
-    <string name="nav_services">Services</string>
     <string name="nav_report">Reports</string>
     <string name="nav_logout">Logout</string>
-    <string name="nav_settings">Settings</string>
-    <string name="bluetooth_switch">Bluetooth</string>
     <string name="lecturer_login_string">Lecturer Login</string>
-    <string name="text_no">No</string>
-    <string name="text_yes">Yes</string>
     <string name="login_text_activity">Login</string>
     <string name="registration_text_activity">Registration</string>
     <string name="welcome_text_main">Welcome to Attendance Tracking System</string>
     <string name="lecturer_register_activity">Lecturer Register</string>
-    <string name="select_course_register">Select Course :</string>
-    <string name="select_section_register">Select Section :</string>
-    <string name="save_register">Save</string>
-    <string name="report_line_1_report">ReportLine 1</string>
-    <string name="services_fragment_text">Services</string>
-    <string name="settings_welcome_page">Settings</string>
-    <string name="initial_services_welcome">Initial Services</string>
-    <string name="show_report_welcome">Show Report</string>
-    <string name="course_assignment_welcome">Course Assignment</string>
     <string name="e_mail_login">E-mail</string>
     <string name="password_login">Password</string>
     <string name="login_button_lecturer">Logın</string>
@@ -52,18 +36,33 @@
     <string name="reportProblem">Report Problem</string>
     <string name="beacon_conf">Beacon Configuration</string>
     <string name="course_settings">Course Settings</string>
-    <string name="status_warning">Status</string>
     <string-array name="settings_items">
         <item>Withdraw from a course</item>
         <item>Change password</item>
         <item>Report a problem</item>
         <item>Logout</item>
     </string-array>
-    <string name="ok">OK</string>
-    <string name="permission_camera_rationale">Access to the camera is needed for detection</string>
-    <string name="no_camera_permission">This application cannot run because it does not have the camera permission.  The application will now exit.</string>
-    <string name="low_storage_error">Face detector dependencies cannot be downloaded due to low device storage</string>
     <string name="forgot_password">Forgot Password</string>
     <string name="enter_your_e_mail_address">Enter your e-mail address</string>
     <string name="send_e_mail">SEND E-MAIL</string>
+    <string name="taken_image">Taken Image</string>
+    <string name="logo">logo</string>
+    <string name="choose_course_code">Choose Course Code</string>
+    <string name="avatar_text">avatar</string>
+    <string name="take_picture">Take Pıcture</string>
+    <string name="x">X</string>
+    <string name="mark_as_attended">Mark as Attended</string>
+    <string name="secure_mode">Secure Mode</string>
+    <string name="course_code">Course Code</string>
+    <string name="nearly_attended">Nearly attended</string>
+    <string name="fully_attended">Fully attended</string>
+    <string name="save">Save</string>
+    <string name="issue">Issue :</string>
+    <string name="enter_a_subject">Enter a subject</string>
+    <string name="message">Message :</string>
+    <string name="enter_detailed_information_about_your_problem">Enter detailed information about your problem</string>
+    <string name="send">Send</string>
+    <string name="enter_token">Enter Token:</string>
+    <string name="show">Show</string>
+    <string name="cancel">Cancel</string>
 </resources>

@@ -1,105 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:layout_gravity="bottom"
     android:layout_marginBottom="60dp"
     android:layout_marginTop="56dp"
-    android:background="@color/colorWhite">
-<ScrollView
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:background="@color/colorWhite"
+    android:orientation="vertical">
+
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-    <TextView
-        android:id="@+id/course_select"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="10dp"
-        android:text="Course Code"
-        android:textColor="@android:color/black"
-        android:textSize="16sp" />
-
-    <Spinner
-        android:id="@+id/lecturelist"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="20dp"
-        android:textAlignment="center"
-        android:background="@color/fewWhite"
-        android:backgroundTint="@color/fewWhite"
-        android:popupBackground="@color/fewWhite"/>
-
-    <LinearLayout
-        android:id="@+id/setting_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="30dp"
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/near_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginTop="20dp"
-            android:text="Nearly attended"
-            android:textColor="@android:color/black" />
-
-        <SeekBar
-            android:id="@+id/nearly"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            android:layout_marginTop="20dp"
-            android:progressDrawable="@drawable/progress"
-            android:thumb="@drawable/thumb"
-            />
-
-
-        <TextView
-            android:id="@+id/full_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginTop="20dp"
-            android:text="Fully attended"
-            android:textColor="@android:color/black" />
-
-        <SeekBar
-            android:id="@+id/attended"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            android:layout_marginTop="20dp"
-            android:progressDrawable="@drawable/progress"
-            android:thumb="@drawable/thumb"/>
-
-        <Button
-            android:id="@+id/save_btn"
-            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="10dp"
+            android:text="@string/course_code"
             android:textColor="@android:color/black"
-            android:layout_width="170dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center|center_horizontal"
+            android:textSize="16sp" />
+
+        <Spinner
+            android:id="@+id/lecture_list"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
             android:layout_marginTop="20dp"
-            android:background="@drawable/button_border2"
-            android:text="Save"
-            android:textSize="16sp"/>
+            android:background="@color/fewWhite"
+            android:backgroundTint="@color/fewWhite"
+            android:popupBackground="@color/fewWhite"
+            android:textAlignment="center" />
 
+        <LinearLayout
+            android:id="@+id/setting_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="30dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/near_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="20dp"
+                android:text="@string/nearly_attended"
+                android:textColor="@android:color/black" />
+
+            <SeekBar
+                android:id="@+id/nearly"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginTop="20dp"
+                android:progressDrawable="@drawable/progress"
+                android:thumb="@drawable/thumb" />
+
+
+            <TextView
+                android:id="@+id/full_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="20dp"
+                android:text="@string/fully_attended"
+                android:textColor="@android:color/black" />
+
+            <SeekBar
+                android:id="@+id/attended"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginTop="20dp"
+                android:progressDrawable="@drawable/progress"
+                android:thumb="@drawable/thumb" />
+
+            <Button
+                android:id="@+id/save_btn"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="170dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|center_horizontal"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/button_border2"
+                android:text="@string/save"
+                android:textColor="@android:color/black"
+                android:textSize="16sp" />
+
+        </LinearLayout>
     </LinearLayout>
-    </LinearLayout>
+
+
 </ScrollView>
-
-
-</LinearLayout>

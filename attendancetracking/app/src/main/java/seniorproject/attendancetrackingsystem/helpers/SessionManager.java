@@ -92,7 +92,7 @@ public class SessionManager {
     return pref.getBoolean(KEY_NOTIFICATION, true);
   }
 
-  public void changeDailyNotificatonState(boolean state) {
+  public void changeDailyNotificationState(boolean state) {
     pref = context.getSharedPreferences("user-info", PRIVATE_MODE);
     editor = pref.edit();
     editor.putBoolean(KEY_NOTIFICATION, state);

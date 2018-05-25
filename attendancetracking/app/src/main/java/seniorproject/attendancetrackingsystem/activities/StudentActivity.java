@@ -251,7 +251,7 @@ public class StudentActivity extends AppCompatActivity {
                   params.put("new_password", new_password);
                   params.put("user_type", userInfo.get(SessionManager.KEY_USER_TYPE));
                   params.put("user_id", userInfo.get(SessionManager.KEY_USER_ID));
-                  DatabaseManager.getmInstance(getApplicationContext())
+                  DatabaseManager.getInstance(getApplicationContext())
                           .execute("change-password", params);
                   change_dialog.dismiss();
                 }
@@ -260,7 +260,6 @@ public class StudentActivity extends AppCompatActivity {
                   Toast.makeText(getApplicationContext(),"Password should be at least 6 characters.\n"+
                           "Password should contains at least 1 uppercase letter\n" +
                           "1 digit and 1 special character (. - _ ! *)",Toast.LENGTH_LONG).show();
-                  return;
                 }
           }
         });

@@ -19,14 +19,13 @@ import seniorproject.attendancetrackingsystem.utils.TakenCourses;
 
 public class JsonHelper {
   private static JsonHelper mInstance;
-  private static Context context;
 
   private JsonHelper(Context context) {
-    JsonHelper.context = context;
+
   }
 
   /** Synchronize the JsonHelper object to make it common for whole activity. */
-  public static synchronized JsonHelper getmInstance(Context context) {
+  public static synchronized JsonHelper getInstance(Context context) {
     if (mInstance == null) {
       mInstance = new JsonHelper(context);
     }

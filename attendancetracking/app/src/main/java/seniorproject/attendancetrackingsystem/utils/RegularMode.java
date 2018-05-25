@@ -25,6 +25,7 @@ import java.util.Locale;
 import seniorproject.attendancetrackingsystem.helpers.Logger;
 import seniorproject.attendancetrackingsystem.helpers.SessionManager;
 
+@SuppressWarnings("ResultOfMethodCallIgnored")
 public class RegularMode extends Service implements BeaconConsumer {
   public static final String ACTION = "REGULAR_MODE";
   private static final Region ALL_BEACONS = new Region("ALL_BEACONS", null, null, null);
@@ -34,7 +35,7 @@ public class RegularMode extends Service implements BeaconConsumer {
   private BeaconManager beaconManager;
   private String search;
   private String filename;
-  private Queue<String> queue = new Queue<>();
+  private final Queue<String> queue = new Queue<>();
 
   @Override
   public void onCreate() {
@@ -59,7 +60,7 @@ public class RegularMode extends Service implements BeaconConsumer {
     beaconManager.setBackgroundMode(true);
     beaconManager.setBackgroundScanPeriod(10000); // 10 seconds scans
     beaconManager.setBackgroundBetweenScanPeriod(90000); // 90 seconds waits
-    beaconManager.setAndroidLScanningDisabled(true);
+    BeaconManager.setAndroidLScanningDisabled(true);
     beaconManager.bind(this);
   }
 
@@ -139,8 +140,7 @@ public class RegularMode extends Service implements BeaconConsumer {
     search = intent.getStringExtra("search");
     currentCourse = (Schedule.CourseInfo) intent.getSerializableExtra("course-info");
     if (search.isEmpty() || currentCourse == null) stopSelf();
-    int user_id =
-        Integer.parseInt(new SessionManager(getBaseContext()).getUserDetails().get("user_id"));
+
     filename =
         currentCourse.getCourse_code()
             + "_"

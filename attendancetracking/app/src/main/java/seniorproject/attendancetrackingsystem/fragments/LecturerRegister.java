@@ -2,6 +2,7 @@ package seniorproject.attendancetrackingsystem.fragments;
 
 import android.app.AlertDialog;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -37,28 +38,28 @@ public class LecturerRegister extends Fragment {
   @Nullable
   @Override
   public View onCreateView(
-      LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+          @NonNull LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
     return inflater.inflate(R.layout.lecturer_register, container, false);
   }
 
   @Override
-  public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+  public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     initElements(view);
     awesomeValidation.addValidation(
         getActivity(),
         R.id.lecturer_e_mail,
         "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@cankaya.edu.tr$",
-        R.string.emailerror);
+        R.string.email_error);
     awesomeValidation.addValidation(
-        getActivity(), R.id.lecturer_name, "^[a-zA-ZğüşöçİĞÜŞÖÇ]+$", R.string.nameerror);
+        getActivity(), R.id.lecturer_name, "^[a-zA-ZğüşöçİĞÜŞÖÇ]+$", R.string.name_error);
     awesomeValidation.addValidation(
-        getActivity(), R.id.lecturer_surname, "^[a-zA-ZğüşöçİĞÜŞÖÇ]+$", R.string.surnameerror);
+        getActivity(), R.id.lecturer_surname, "^[a-zA-ZğüşöçİĞÜŞÖÇ]+$", R.string.surname_error);
     awesomeValidation.addValidation(
         getActivity(),
         R.id.lecturer_password,
         "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!_*.-]).{6,}$",
-        R.string.passworderror);
+        R.string.password_error);
   }
   private static String toTitleCase(String givenString) {
 
@@ -84,8 +85,8 @@ public class LecturerRegister extends Fragment {
 
     departments.add(0, "Choose your department");
 
-    if (((Globals) getActivity().getApplication()).getDepartments() == null) {
-      DatabaseManager.getmInstance(getActivity()).execute("get", "department-list", departments);
+    if (((Globals) Objects.requireNonNull(getActivity()).getApplication()).getDepartments() == null) {
+      DatabaseManager.getInstance(getActivity()).execute("get", "department-list", departments);
     } else {
       for (Department department : ((Globals) getActivity().getApplication()).getDepartments()) {
         departments.add(department.getDepartmentName());
@@ -134,7 +135,7 @@ public class LecturerRegister extends Fragment {
               postParameters.put("departmentID", String.valueOf(departmentId));
               postParameters.put("type", "lecturerRegister");
 
-              DatabaseManager.getmInstance(getActivity()).execute("register", postParameters);
+              DatabaseManager.getInstance(getActivity()).execute("register", postParameters);
             }
           }
         });

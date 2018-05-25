@@ -11,7 +11,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Matrix;
-import android.media.ExifInterface;
+import android.support.annotation.NonNull;
+import android.support.media.ExifInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -58,7 +59,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -70,8 +73,7 @@ import seniorproject.attendancetrackingsystem.utils.RegularMode;
 /* A simple {@link Fragment} subclass. */
 public class WelcomeFragment extends Fragment {
   private static final int CAM_REQUEST = 1313;
-  private static String IMG_PREF = "http://attendancesystem.xyz/attendancetracking/";
-  ArrayAdapter<String> adapter;
+  private ArrayAdapter<String> adapter;
   private Receiver mReceiver;
   private ArrayList<String> messages;
   private ListView listView;
@@ -80,10 +82,8 @@ public class WelcomeFragment extends Fragment {
   private String course_code = "";
   private boolean secure_mode = false;
   private boolean expired = false;
-  private boolean regular_mode = false;
   private Timer timer;
-  private ArrayList<LatestCourses> latestCourses = new ArrayList<>();
-  private Uri photoURI;
+  private final ArrayList<LatestCourses> latestCourses = new ArrayList<>();
   private String mCurrentPhotoPath;
   private Bitmap bitmap;
 
@@ -93,23 +93,24 @@ public class WelcomeFragment extends Fragment {
 
   @Override
   public View onCreateView(
-      LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+          @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     // Inflate the layout for this fragment
     return inflater.inflate(R.layout.fragment_welcome, container, false);
   }
 
   @Override
-  public void onViewCreated(View view, Bundle savedInstanceState) {
+  public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     handler = new Handler();
     timer = new Timer();
-    SessionManager session = new SessionManager(getActivity().getApplicationContext());
+    SessionManager session = new SessionManager(Objects.requireNonNull(getActivity()).getApplicationContext());
     HashMap<String, String> userInfo = session.getUserDetails();
     ImageView avatar = getActivity().findViewById(R.id.avatar);
     if (userInfo.get(SessionManager.KEY_USER_IMG).isEmpty()
         || userInfo.get(SessionManager.KEY_USER_IMG) == null) {
       Picasso.with(getActivity()).load(R.drawable.unknown_trainer).fit().centerCrop().into(avatar);
     } else {
+      String IMG_PREF = "http://attendancesystem.xyz/attendancetracking/";
       Picasso.with(getActivity())
           .load(IMG_PREF + userInfo.get(SessionManager.KEY_USER_IMG))
           .fit()
@@ -153,13 +154,13 @@ public class WelcomeFragment extends Fragment {
     IntentFilter filter = new IntentFilter();
     filter.addAction(RegularMode.ACTION);
     filter.addAction("RegularModeStatus");
-    getActivity().registerReceiver(mReceiver, filter);
+    Objects.requireNonNull(getActivity()).registerReceiver(mReceiver, filter);
   }
 
   @Override
   public void onPause() {
     super.onPause();
-    getActivity().unregisterReceiver(mReceiver);
+    Objects.requireNonNull(getActivity()).unregisterReceiver(mReceiver);
   }
 
   private void showMessages() {
@@ -196,7 +197,7 @@ public class WelcomeFragment extends Fragment {
   private void buildAlertDialog() {
     final AlertDialog.Builder alert =
         new AlertDialog.Builder(getActivity(), AlertDialog.THEME_HOLO_LIGHT);
-    final LinearLayout layout = new LinearLayout(getActivity().getApplicationContext());
+    final LinearLayout layout = new LinearLayout(Objects.requireNonNull(getActivity()).getApplicationContext());
     layout.setOrientation(LinearLayout.HORIZONTAL);
 
     final EditText digit1 = new EditText(getActivity().getApplicationContext());
@@ -205,7 +206,7 @@ public class WelcomeFragment extends Fragment {
     final EditText digit4 = new EditText(getActivity().getApplicationContext());
     final EditText digit5 = new EditText(getActivity().getApplicationContext());
     final TextView info = new TextView(getActivity().getApplicationContext());
-    info.setText("Enter Token:");
+    info.setText(R.string.enter_token);
     info.setTextColor(Color.BLACK);
     info.setWidth(300);
     info.setInputType(InputType.TYPE_TEXT_VARIATION_PASSWORD);
@@ -225,7 +226,7 @@ public class WelcomeFragment extends Fragment {
             final InputMethodManager imm =
                 (InputMethodManager)
                     digit1.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.showSoftInput(digit1, InputMethodManager.SHOW_IMPLICIT);
+            Objects.requireNonNull(imm).showSoftInput(digit1, InputMethodManager.SHOW_IMPLICIT);
             digit1.requestFocus(); // needed if you have more then one input
           }
         });
@@ -364,7 +365,7 @@ public class WelcomeFragment extends Fragment {
 
   private boolean isConnected() {
     ConnectivityManager connectivityManager =
-        (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        (ConnectivityManager) Objects.requireNonNull(getActivity()).getSystemService(Context.CONNECTIVITY_SERVICE);
     assert connectivityManager != null;
     // we are connected to a network
     return connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE).getState()
@@ -415,7 +416,7 @@ public class WelcomeFragment extends Fragment {
             }
           };
 
-      DatabaseManager.getmInstance(getActivity().getApplicationContext()).execute(request);
+      DatabaseManager.getInstance(Objects.requireNonNull(getActivity()).getApplicationContext()).execute(request);
     } else {
       toastMessageWithHandle("This action requires a network connection");
     }
@@ -482,7 +483,7 @@ public class WelcomeFragment extends Fragment {
             Map<String, String> params = new HashMap<>();
             params.put(
                 "user_id",
-                new SessionManager(getActivity().getApplicationContext())
+                new SessionManager(Objects.requireNonNull(getActivity()).getApplicationContext())
                     .getUserDetails()
                     .get(SessionManager.KEY_USER_ID));
             params.put("operation", "last-15-lectures");
@@ -490,7 +491,7 @@ public class WelcomeFragment extends Fragment {
           }
         };
     try {
-      DatabaseManager.getmInstance(getActivity().getApplicationContext()).execute(request);
+      DatabaseManager.getInstance(Objects.requireNonNull(getActivity()).getApplicationContext()).execute(request);
     } catch (NullPointerException e) {
       // do nothing
     }
@@ -501,7 +502,7 @@ public class WelcomeFragment extends Fragment {
         new Runnable() {
           @Override
           public void run() {
-            Toast.makeText(getActivity().getApplicationContext(), text, Toast.LENGTH_SHORT).show();
+            Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), text, Toast.LENGTH_SHORT).show();
           }
         });
   }
@@ -516,10 +517,11 @@ public class WelcomeFragment extends Fragment {
       e.printStackTrace();
     }
     if (photoFile != null) {
+      Uri photoURI;
       if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT)
         photoURI =
             FileProvider.getUriForFile(
-                getActivity(), "com.example.android.fileprovider", photoFile);
+                    Objects.requireNonNull(getActivity()), "com.example.android.fileprovider", photoFile);
       else photoURI = Uri.fromFile(photoFile);
       intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
       startActivityForResult(intent, CAM_REQUEST);
@@ -528,12 +530,12 @@ public class WelcomeFragment extends Fragment {
 
   private File createImageFile() throws IOException {
     // Create an image file name
-    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.ENGLISH).format(new Date());
     String imageFileName = "JPEG_" + timeStamp + "_";
     File storageDir = null;
     if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT)
-      storageDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-    else storageDir = getActivity().getExternalFilesDir("Pictures");
+      storageDir = Objects.requireNonNull(getActivity()).getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+    else storageDir = Objects.requireNonNull(getActivity()).getExternalFilesDir("Pictures");
     File image =
         File.createTempFile(
             imageFileName, /* prefix */ ".jpg", /* suffix */ storageDir /* directory */);
@@ -631,7 +633,7 @@ public class WelcomeFragment extends Fragment {
               }
             };
         try {
-          DatabaseManager.getmInstance(getActivity()).execute(request);
+          DatabaseManager.getInstance(getActivity()).execute(request);
         } catch (NullPointerException e) {
           // do nothing
         }
@@ -645,7 +647,6 @@ public class WelcomeFragment extends Fragment {
       course_code = intent.getStringExtra("course_code");
       classroom_id = intent.getIntExtra("classroom_id", 0);
       secure_mode = intent.getBooleanExtra("secure", false);
-      regular_mode = intent.getBooleanExtra("regular", true);
       expired = intent.getBooleanExtra("expired", false);
       if (secure_mode && !expired && !new SessionManager(getActivity()).secureStatus()) {
         listView.setOnItemClickListener(
@@ -677,10 +678,10 @@ public class WelcomeFragment extends Fragment {
   }
 
   class LatestCourses {
-    String date;
-    String hour;
-    String course_code;
-    int status;
+    final String date;
+    final String hour;
+    final String course_code;
+    final int status;
 
     LatestCourses(String course_code, String date, String hour, int status) {
       this.date = date;
@@ -692,12 +693,17 @@ public class WelcomeFragment extends Fragment {
     @Override
     public String toString() {
       String output = date + " " + hour + " - " + course_code;
-      if (status == 0) {
-        output = output + " [Absent]";
-      } else if (status == 1) {
-        output = output + " [Nearly]";
-      } else if (status == 2 || status == 3) {
-        output = output + " [Attended]";
+      switch (status) {
+        case 0:
+          output = output + " [Absent]";
+          break;
+        case 1:
+          output = output + " [Nearly]";
+          break;
+        case 2:
+        case 3:
+          output = output + " [Attended]";
+          break;
       }
       return output;
     }

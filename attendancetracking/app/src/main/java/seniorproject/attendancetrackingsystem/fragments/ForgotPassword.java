@@ -53,7 +53,7 @@ public class ForgotPassword extends Fragment {
     super.onViewCreated(view, savedInstanceState);
 
     args = getArguments();
-    if (args == null || args.getString("user_type").isEmpty()) getActivity().onBackPressed();
+    if (args == null || Objects.requireNonNull(args.getString("user_type")).isEmpty()) Objects.requireNonNull(getActivity()).onBackPressed();
     else {
       initElements(view);
       addValidation(Objects.requireNonNull(args.getString("user_type")));
@@ -64,7 +64,7 @@ public class ForgotPassword extends Fragment {
     handler = new Handler(Looper.getMainLooper());
     awesomeValidation = new AwesomeValidation(ValidationStyle.BASIC);
 
-    Switch loginSwitch = getActivity().findViewById(R.id.role_switch);
+    Switch loginSwitch = Objects.requireNonNull(getActivity()).findViewById(R.id.role_switch);
     if (loginSwitch != null) loginSwitch.setVisibility(View.INVISIBLE);
 
     mail = view.findViewById(R.id.forgot_mail);
@@ -86,7 +86,7 @@ public class ForgotPassword extends Fragment {
         new Runnable() {
           @Override
           public void run() {
-            Toast.makeText(getActivity().getApplicationContext(), text, Toast.LENGTH_LONG).show();
+            Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), text, Toast.LENGTH_LONG).show();
           }
         });
   }
@@ -98,13 +98,13 @@ public class ForgotPassword extends Fragment {
           getActivity(),
           R.id.forgot_mail,
           "^([c]|(20))[0-9]{7}@student.cankaya.edu.tr$",
-          R.string.emailerror);
+          R.string.email_error);
     else
       awesomeValidation.addValidation(
           getActivity(),
           R.id.forgot_mail,
           "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@cankaya.edu.tr$",
-          R.string.emailerror);
+          R.string.email_error);
   }
 
   private void checkAndSendMail(final String mail) {
@@ -120,7 +120,7 @@ public class ForgotPassword extends Fragment {
                   boolean result = jsonObject.getBoolean("success");
                   if (result) {
                     toastMessage("A recovery mail has been sent to your mail address");
-                    getActivity().onBackPressed();
+                    Objects.requireNonNull(getActivity()).onBackPressed();
                   } else {
                     toastMessage(jsonObject.getString("message"));
                   }
@@ -143,7 +143,7 @@ public class ForgotPassword extends Fragment {
           }
         };
     try {
-      DatabaseManager.getmInstance(getActivity().getApplicationContext()).execute(request);
+      DatabaseManager.getInstance(Objects.requireNonNull(getActivity()).getApplicationContext()).execute(request);
     } catch (NullPointerException e) {
       // do nothing
     }

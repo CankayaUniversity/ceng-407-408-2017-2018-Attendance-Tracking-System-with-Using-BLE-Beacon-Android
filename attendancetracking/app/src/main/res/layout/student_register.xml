@@ -89,7 +89,7 @@
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/button_border"
-                android:text="Take Pıcture" />
+                android:text="@string/take_picture" />
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/upload_image_view"
@@ -97,7 +97,7 @@
                 android:layout_height="133dp"
                 android:layout_marginStart="55dp"
                 android:layout_marginTop="20dp"
-                android:contentDescription="avatar"
+                android:contentDescription="@string/avatar_text"
                 app:civ_border_color="@android:color/white"
                 app:civ_border_width="3dp" />
         </LinearLayout>

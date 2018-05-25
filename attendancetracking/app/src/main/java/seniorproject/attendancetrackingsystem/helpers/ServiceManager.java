@@ -47,9 +47,8 @@ public class ServiceManager extends Service {
   private boolean updatedForToday = false;
   private boolean noCourseForToday = false;
   private Schedule schedule = null;
-  private Timer timer;
   private Handler handler;
-  private SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
+  private final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
   private boolean connected = false;
   private Schedule.CourseInfo currentCourse = null;
   private boolean allowNotification = true;
@@ -68,7 +67,7 @@ public class ServiceManager extends Service {
 
     final BluetoothChecker bluetoothChecker = new BluetoothChecker();
     handler = new Handler(getMainLooper());
-    timer = new Timer();
+    Timer timer = new Timer();
     timer.scheduleAtFixedRate(
         new TimerTask() {
 
@@ -131,9 +130,9 @@ public class ServiceManager extends Service {
                         if (!BluetoothAdapter.getDefaultAdapter().isEnabled())
                           bluetoothChecker.start();
                         broadcastCourseInfo(currentCourse);
-                      } else if (currentCourse != null && secure) {
+                      } else if (currentCourse != null) {
                         // SECURE MODE LECTURE
-                        broacastCourseInfo(currentCourse, secure, expired);
+                        broadcastCourseInfo(currentCourse, expired);
                       }
                     }
 
@@ -155,7 +154,7 @@ public class ServiceManager extends Service {
                 noCourseForToday = false;
                 secure = false;
                 if (!new SessionManager(getBaseContext()).dailyNotificationState())
-                  new SessionManager(getBaseContext()).changeDailyNotificatonState(true);
+                  new SessionManager(getBaseContext()).changeDailyNotificationState(true);
                 runCollector();
               }
             } catch (ParseException e) {
@@ -210,7 +209,7 @@ public class ServiceManager extends Service {
                   if (result) {
                     expired = jsonObject.getBoolean("experied");
                     secure = true;
-                    broacastCourseInfo(currentCourse, secure, expired);
+                    broadcastCourseInfo(currentCourse, expired);
                     if (allowNotification) {
                       simpleNotification(
                           "Secure Mode",
@@ -236,7 +235,7 @@ public class ServiceManager extends Service {
             return params;
           }
         };
-    DatabaseManager.getmInstance(getBaseContext()).execute(request);
+    DatabaseManager.getInstance(getBaseContext()).execute(request);
   }
 
   private void stopRegularMode() {
@@ -247,11 +246,6 @@ public class ServiceManager extends Service {
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
-  }
-
-  @Override
-  public void onDestroy() {
-    super.onDestroy();
   }
 
   @Nullable
@@ -305,14 +299,14 @@ public class ServiceManager extends Service {
                         }
                         if (!noCourseForToday) {
                           schedule =
-                              JsonHelper.getmInstance(getBaseContext()).parseSchedule(response);
+                              JsonHelper.getInstance(getBaseContext()).parseSchedule(response);
                           if (schedule.getCourses().size() > 0) {
                             updatedForToday = true;
                             if (new SessionManager(getBaseContext()).dailyNotificationState()) {
                               simpleNotification(
                                   "Update", "Your daily schedule is updated", MainActivity.class);
                               new SessionManager(getBaseContext())
-                                  .changeDailyNotificatonState(false);
+                                  .changeDailyNotificationState(false);
                             }
                           }
                         }
@@ -334,7 +328,7 @@ public class ServiceManager extends Service {
                     return params;
                   }
                 };
-            DatabaseManager.getmInstance(getApplicationContext()).execute(request);
+            DatabaseManager.getInstance(getApplicationContext()).execute(request);
           }
         });
   }
@@ -347,12 +341,12 @@ public class ServiceManager extends Service {
     sendBroadcast(intent);
   }
 
-  private void broacastCourseInfo(Schedule.CourseInfo courseInfo, boolean secure, boolean expired) {
+  private void broadcastCourseInfo(Schedule.CourseInfo courseInfo, boolean expired) {
     Intent intent = new Intent();
     intent.setAction(RegularMode.ACTION);
     intent.putExtra("course_code", courseInfo.getCourse_code());
     intent.putExtra("classroom_id", courseInfo.getClassroom_id());
-    intent.putExtra("secure", secure);
+    intent.putExtra("secure", true);
     intent.putExtra("expired", expired);
     sendBroadcast(intent);
   }
@@ -368,15 +362,14 @@ public class ServiceManager extends Service {
     File root = new File(Environment.getExternalStorageDirectory(), LOG_FOLDER);
     if (!root.exists()) return false;
     File[] list = root.listFiles();
-    if (list == null) return false;
-    return list.length != 0;
+    return list != null && list.length != 0;
   }
   private void runCollector() {
     File root = new File(Environment.getExternalStorageDirectory(), LOG_FOLDER);
     if (!root.exists()) return; // no need to push something to database
     File[] list = root.listFiles();
     if (list == null) return;
-    if (list.length == 0) return; // no nedd to push something to database
+    if (list.length == 0) return; // no need to push something to database
     connectionChecker();
     if (connected) {
       Intent intent = new Intent(this, Logger.class);
@@ -419,7 +412,7 @@ public class ServiceManager extends Service {
     return START_STICKY;
   }
 
-  public class BluetoothChecker extends Thread {
+  class BluetoothChecker extends Thread {
     @Override
     public void run() {
       while (!BluetoothAdapter.getDefaultAdapter().isEnabled()) {

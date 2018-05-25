@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
@@ -40,6 +41,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -53,7 +55,6 @@ import seniorproject.attendancetrackingsystem.utils.Schedule;
 /* A simple {@link Fragment} subclass. */
 public class WelcomeFragmentLecturer extends Fragment {
 
-  private static String IMG_PREF = "http://attendancesystem.xyz/attendancetracking/";
   private String token = "not_initialized";
   private Handler handler;
   private boolean updated = false;
@@ -63,8 +64,8 @@ public class WelcomeFragmentLecturer extends Fragment {
   private ArrayList<String> items;
   private ArrayAdapter<String> adapter;
   private Timer timer;
-  private ArrayList<Schedule.CourseInfo> currentCourses = new ArrayList<>();
-  private SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
+  private final ArrayList<Schedule.CourseInfo> currentCourses = new ArrayList<>();
+  private final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
   private Switch secureSwitch;
   private SessionManager session;
 
@@ -74,18 +75,18 @@ public class WelcomeFragmentLecturer extends Fragment {
 
   @Override
   public View onCreateView(
-      LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+          @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     // Inflate the layout for this fragment
     return inflater.inflate(R.layout.fragment_welcome_lecturer, container, false);
   }
 
   @Override
-  public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+  public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     handler = new Handler(Looper.getMainLooper());
     timer = new Timer();
 
-    session = new SessionManager(getActivity().getApplicationContext());
+    session = new SessionManager(Objects.requireNonNull(getActivity()).getApplicationContext());
     HashMap<String, String> userInfo = session.getUserDetails();
     ImageView avatar = getActivity().findViewById(R.id.avatar);
 
@@ -93,6 +94,7 @@ public class WelcomeFragmentLecturer extends Fragment {
         || userInfo.get(SessionManager.KEY_USER_IMG) == null) {
       Picasso.with(getActivity()).load(R.drawable.unknown_trainer).fit().centerCrop().into(avatar);
     } else {
+      String IMG_PREF = "http://attendancesystem.xyz/attendancetracking/";
       Picasso.with(getActivity())
           .load(IMG_PREF + userInfo.get(SessionManager.KEY_USER_IMG))
           .fit()
@@ -211,7 +213,7 @@ public class WelcomeFragmentLecturer extends Fragment {
                     if (!result) {
                       Toast.makeText(
                               getActivity().getApplicationContext(),
-                              "An error has been occured",
+                              "An error has been occurred",
                               Toast.LENGTH_LONG)
                           .show();
                     }
@@ -224,8 +226,8 @@ public class WelcomeFragmentLecturer extends Fragment {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                   Toast.makeText(
-                          getActivity().getApplicationContext(),
-                          "An error has been occured",
+                          Objects.requireNonNull(getActivity()).getApplicationContext(),
+                          "An error has been occurred",
                           Toast.LENGTH_LONG)
                       .show();
                 }
@@ -241,7 +243,7 @@ public class WelcomeFragmentLecturer extends Fragment {
             }
           };
 
-      DatabaseManager.getmInstance(getActivity().getApplicationContext()).execute(request);
+      DatabaseManager.getInstance(Objects.requireNonNull(getActivity()).getApplicationContext()).execute(request);
     }
   }
 
@@ -251,7 +253,7 @@ public class WelcomeFragmentLecturer extends Fragment {
 
   private void generateToken() {
     Toast.makeText(
-            getActivity().getApplicationContext(), "Secure mode is activated", Toast.LENGTH_SHORT)
+            Objects.requireNonNull(getActivity()).getApplicationContext(), "Secure mode is activated", Toast.LENGTH_SHORT)
         .show();
 
     Random r = new Random(System.currentTimeMillis());
@@ -376,7 +378,7 @@ public class WelcomeFragmentLecturer extends Fragment {
                         }
                         if (!noCourseForToday) {
                           schedule =
-                              JsonHelper.getmInstance(getActivity().getApplicationContext())
+                              JsonHelper.getInstance(Objects.requireNonNull(getActivity()).getApplicationContext())
                                   .parseSchedule(response);
                           if (schedule.getCourses().size() > 0) updated = true;
                         }
@@ -395,7 +397,7 @@ public class WelcomeFragmentLecturer extends Fragment {
                   }
                 };
             try {
-              DatabaseManager.getmInstance(getActivity().getApplicationContext()).execute(request);
+              DatabaseManager.getInstance(Objects.requireNonNull(getActivity()).getApplicationContext()).execute(request);
             } catch (NullPointerException e) {
               // do nothing
             }
@@ -417,10 +419,10 @@ public class WelcomeFragmentLecturer extends Fragment {
                 }
                 args.putIntegerArrayList("classrooms", courses);
                 ReportFragmentLecturer f = new ReportFragmentLecturer();
-                BottomNavigationView mainNav = getActivity().findViewById(R.id.main_nav);
+                BottomNavigationView mainNav = Objects.requireNonNull(getActivity()).findViewById(R.id.main_nav);
                 mainNav.setSelectedItemId(R.id.nav_report);
                 f.setArguments(args);
-                getFragmentManager().beginTransaction().replace(R.id.main_frame, f).commit();
+                Objects.requireNonNull(getFragmentManager()).beginTransaction().replace(R.id.main_frame, f).commit();
               } else if (position == 1) {
                 if (session.isSecureMode()) showAlertDialog(session.getToken());
               }
@@ -505,7 +507,7 @@ public class WelcomeFragmentLecturer extends Fragment {
               @Override
               public void run() {
                 Toast.makeText(
-                        getActivity().getApplicationContext(),
+                        Objects.requireNonNull(getActivity()).getApplicationContext(),
                         "Secure is " + "deactivated.",
                         Toast.LENGTH_SHORT)
                     .show();

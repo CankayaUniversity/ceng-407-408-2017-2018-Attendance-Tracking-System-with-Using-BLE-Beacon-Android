@@ -21,7 +21,7 @@
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_marginTop="70dp"
-            android:text="Issue : "
+            android:text="@string/issue"
             android:textColor="@color/colorWhite"
             android:textSize="16sp" />
 
@@ -32,7 +32,7 @@
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:ems="10"
-            android:hint="Enter a subject"
+            android:hint="@string/enter_a_subject"
             android:inputType="text" />
 
         <TextView
@@ -41,7 +41,7 @@
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_marginTop="20dp"
-            android:text="Message : "
+            android:text="@string/message"
             android:textColor="@color/colorWhite"
             android:textSize="16sp" />
 
@@ -55,7 +55,7 @@
             android:background="@drawable/message"
             android:ems="10"
             android:gravity="top|start"
-            android:hint="Enter detailed information about your problem"
+            android:hint="@string/enter_detailed_information_about_your_problem"
             android:inputType="textMultiLine"
             android:paddingEnd="20dp"
             android:paddingStart="20dp"
@@ -70,7 +70,7 @@
             android:layout_marginBottom="30dp"
             android:layout_marginTop="20dp"
             android:background="@drawable/button_border"
-            android:text="Send" />
+            android:text="@string/send" />
 
 
     </LinearLayout>

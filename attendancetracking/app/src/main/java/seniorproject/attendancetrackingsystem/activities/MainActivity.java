@@ -28,6 +28,7 @@ import seniorproject.attendancetrackingsystem.R;
 import seniorproject.attendancetrackingsystem.helpers.DatabaseManager;
 import seniorproject.attendancetrackingsystem.helpers.SessionManager;
 
+@SuppressWarnings("ALL")
 public class MainActivity extends AppCompatActivity {
   private Button login;
   private Button register;
@@ -148,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
             return params;
           }
         };
-    DatabaseManager.getmInstance(getApplicationContext()).execute(request);
+    DatabaseManager.getInstance(getApplicationContext()).execute(request);
     return true;
   }
 

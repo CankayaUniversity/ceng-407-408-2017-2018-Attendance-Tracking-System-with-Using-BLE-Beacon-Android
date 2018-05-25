@@ -6,8 +6,8 @@
         android:icon="@drawable/ic_home_black_24dp"
         android:title="@string/nav_home"
         android:visible="true"
-        app:showAsAction="always|withText" />
-    />
+        app:showAsAction="ifRoom|withText" />
+
     <item
         android:id="@+id/nav_report"
         android:icon="@drawable/ic_import_contacts_black_24dp"

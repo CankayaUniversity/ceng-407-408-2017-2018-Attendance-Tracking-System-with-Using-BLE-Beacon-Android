@@ -55,6 +55,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -67,26 +68,25 @@ public class ReportFragmentLecturer extends Fragment {
   private ListView listView;
   private ArrayList<Integer> classrooms = new ArrayList<>();
   private Handler handler;
-  private ArrayList<StudentRow> studentList = new ArrayList<>();
+  private final ArrayList<StudentRow> studentList = new ArrayList<>();
   private StudentAdapter adapter;
   private Timer timer;
-  private ArrayList<Given_Lectures_Row> givenLectures = new ArrayList<>();
-  private ArrayList<String> courses = new ArrayList<>();
+  private final ArrayList<Given_Lectures_Row> givenLectures = new ArrayList<>();
+  private final ArrayList<String> courses = new ArrayList<>();
   private ArrayAdapter<String> course_adapter;
   private Spinner course_spinner;
-  private ScrollView scroll_report;
   private LinearLayout generalReport;
-  private FrameLayout calendar_hoder;
+  private FrameLayout calendar_holder;
   private boolean secure_list = false;
   private Dialog popup;
 
-  private TextView totalstudent;
-  private TextView attendedstudent;
-  private TextView nearlystudent;
-  private TextView absentstudent;
+  private TextView totalStudent;
+  private TextView attendedStudent;
+  private TextView nearlyStudent;
+  private TextView absentStudent;
 
-  private ArrayList<CalendarColumn> calendarColumns = new ArrayList<>();
-  private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.ENGLISH);
+  private final ArrayList<CalendarColumn> calendarColumns = new ArrayList<>();
+  private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.ENGLISH);
   private int lastSelectedSection;
 
   public ReportFragmentLecturer() {
@@ -95,28 +95,28 @@ public class ReportFragmentLecturer extends Fragment {
 
   @Override
   public View onCreateView(
-      LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+          @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
     // Inflate the layout for this fragment
     return inflater.inflate(R.layout.fragment_report_lecturer, container, false);
   }
 
   @Override
-  public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+  public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
 
-    totalstudent = view.findViewById(R.id.totalstudent);
-    absentstudent = view.findViewById(R.id.absentstudent);
-    attendedstudent = view.findViewById(R.id.attendedstudent);
-    nearlystudent = view.findViewById(R.id.nearlystudent);
+    totalStudent = view.findViewById(R.id.total_student);
+    absentStudent = view.findViewById(R.id.absent_student);
+    attendedStudent = view.findViewById(R.id.attended_student);
+    nearlyStudent = view.findViewById(R.id.nearly_student);
 
-    listView = view.findViewById(R.id.studentlist);
-    course_spinner = view.findViewById(R.id.lecturelist);
-    calendar_hoder = view.findViewById(R.id.cal_container);
+    listView = view.findViewById(R.id.student_list);
+    course_spinner = view.findViewById(R.id.lecture_list);
+    calendar_holder = view.findViewById(R.id.cal_container);
     generalReport = view.findViewById(R.id.general_report);
-    scroll_report = view.findViewById(R.id.scroll_report);
+    ScrollView scroll_report = view.findViewById(R.id.scroll_report);
     course_adapter =
-        new ArrayAdapter<>(getActivity().getApplicationContext(), R.layout.spinner_item2, courses);
+        new ArrayAdapter<>(Objects.requireNonNull(getActivity()).getApplicationContext(), R.layout.spinner_item2, courses);
     course_adapter.setDropDownViewResource(R.layout.spinner_item2);
     handler = new Handler(Looper.getMainLooper());
     timer = new Timer();
@@ -147,7 +147,7 @@ public class ReportFragmentLecturer extends Fragment {
 
           @Override
           public void onNothingSelected(AdapterView<?> parent) {
-            changeVisibility(calendar_hoder, false);
+            changeVisibility(calendar_holder, false);
           }
         });
     listView.setOnItemClickListener(
@@ -155,13 +155,13 @@ public class ReportFragmentLecturer extends Fragment {
           @Override
           public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             popup = new Dialog(getActivity());
-            popup.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+            Objects.requireNonNull(popup.getWindow()).requestFeature(Window.FEATURE_NO_TITLE);
             if (secure_list) popup.setContentView(R.layout.securepopup);
             else popup.setContentView(R.layout.popup);
             // getting UI elements
             TextView student_number = popup.findViewById(R.id.student_number);
             TextView student_name = popup.findViewById(R.id.student_name);
-            TextView close = popup.findViewById(R.id.txtclose);
+            TextView close = popup.findViewById(R.id.txt_close);
             TextView attended = popup.findViewById(R.id.attendedPercent);
             TextView nearly = popup.findViewById(R.id.nearlyPercent);
             TextView absent = popup.findViewById(R.id.absentPercent);
@@ -302,7 +302,7 @@ public class ReportFragmentLecturer extends Fragment {
           }
         };
     try {
-      DatabaseManager.getmInstance(getActivity().getApplicationContext()).execute(request);
+      DatabaseManager.getInstance(Objects.requireNonNull(getActivity()).getApplicationContext()).execute(request);
     } catch (NullPointerException e) {
       // do nothing
     }
@@ -354,7 +354,7 @@ public class ReportFragmentLecturer extends Fragment {
         };
     caldroidFragment.setCaldroidListener(listener);
     caldroidFragment.setArguments(args);
-    getActivity()
+    Objects.requireNonNull(getActivity())
         .getSupportFragmentManager()
         .beginTransaction()
         .replace(R.id.cal_container, caldroidFragment)
@@ -366,8 +366,8 @@ public class ReportFragmentLecturer extends Fragment {
         new Runnable() {
           @Override
           public void run() {
-            TextView tLecture = getActivity().findViewById(R.id.total_lecture);
-            TextView tStudent = getActivity().findViewById(R.id.total_student);
+            TextView tLecture = Objects.requireNonNull(getActivity()).findViewById(R.id.total_lecture);
+            TextView tStudent = getActivity().findViewById(R.id.total_student_text);
             TextView averInfo = getActivity().findViewById(R.id.attendance_percentage);
             String info = "Total Lecture: " + String.valueOf(done);
             tLecture.setText(info);
@@ -440,7 +440,7 @@ public class ReportFragmentLecturer extends Fragment {
           }
         };
     try {
-      DatabaseManager.getmInstance(getActivity().getApplicationContext()).execute(request);
+      DatabaseManager.getInstance(Objects.requireNonNull(getActivity()).getApplicationContext()).execute(request);
     } catch (NullPointerException e) {
       // do nothing
     }
@@ -452,10 +452,10 @@ public class ReportFragmentLecturer extends Fragment {
     classes.add(classroom_id);
     args.putIntegerArrayList("classrooms", classes);
     ReportFragmentLecturer f = new ReportFragmentLecturer();
-    BottomNavigationView mainNav = getActivity().findViewById(R.id.main_nav);
+    BottomNavigationView mainNav = Objects.requireNonNull(getActivity()).findViewById(R.id.main_nav);
     mainNav.setSelectedItemId(R.id.nav_report);
     f.setArguments(args);
-    getFragmentManager().beginTransaction().replace(R.id.main_frame, f).commit();
+    Objects.requireNonNull(getFragmentManager()).beginTransaction().replace(R.id.main_frame, f).commit();
   }
 
   private void cancelClassroom(final int classroom_id) {
@@ -493,7 +493,7 @@ public class ReportFragmentLecturer extends Fragment {
           }
         };
     try {
-      DatabaseManager.getmInstance(getActivity().getApplicationContext()).execute(request);
+      DatabaseManager.getInstance(Objects.requireNonNull(getActivity()).getApplicationContext()).execute(request);
     } catch (NullPointerException e) {
       // do nothing
     }
@@ -547,10 +547,10 @@ public class ReportFragmentLecturer extends Fragment {
                 Date d = simpleDateFormat.parse(x.date);
                 if (d.compareTo(date) == 0) {
                   alertDialog.setTitle(x.course_code + " " + simpleDateFormat.format(date));
-                  LinearLayout horizan = new LinearLayout(getActivity());
-                  horizan.setPadding(0, 5, 0, 5);
-                  horizan.setGravity(Gravity.CENTER);
-                  horizan.setOrientation(LinearLayout.HORIZONTAL);
+                  LinearLayout horizontalLayout = new LinearLayout(getActivity());
+                  horizontalLayout.setPadding(0, 5, 0, 5);
+                  horizontalLayout.setGravity(Gravity.CENTER);
+                  horizontalLayout.setOrientation(LinearLayout.HORIZONTAL);
 
                   TextView text = new TextView(getActivity());
                   text.setTextColor(Color.BLACK);
@@ -558,10 +558,10 @@ public class ReportFragmentLecturer extends Fragment {
                   text.setTextSize(16);
                   text.setPadding(0, 0, 40, 0);
                   text.setTextColor(getResources().getColor(R.color.caldroid_holo_blue_dark));
-                  horizan.addView(text);
+                  horizontalLayout.addView(text);
 
                   Button btn = new Button(getActivity());
-                  btn.setText("Show");
+                  btn.setText(R.string.show);
                   btn.setBackgroundColor(getResources().getColor(R.color.caldroid_holo_blue_dark));
                   btn.setOnClickListener(
                       new View.OnClickListener() {
@@ -571,10 +571,10 @@ public class ReportFragmentLecturer extends Fragment {
                           alertDialog.dismiss();
                         }
                       });
-                  horizan.addView(btn);
+                  horizontalLayout.addView(btn);
 
                   btn = new Button(getActivity());
-                  btn.setText("Cancel");
+                  btn.setText(R.string.cancel);
                   btn.setBackgroundColor(getResources().getColor(R.color.caldroid_light_red));
                   btn.setOnClickListener(
                       new View.OnClickListener() {
@@ -585,9 +585,9 @@ public class ReportFragmentLecturer extends Fragment {
                           alertDialog.dismiss();
                         }
                       });
-                  horizan.addView(btn);
+                  horizontalLayout.addView(btn);
 
-                  linearLayout.addView(horizan);
+                  linearLayout.addView(horizontalLayout);
                 }
               }
             } catch (ParseException e) {
@@ -627,7 +627,7 @@ public class ReportFragmentLecturer extends Fragment {
         new Runnable() {
           @Override
           public void run() {
-            Toast.makeText(getActivity().getApplicationContext(), text, Toast.LENGTH_SHORT).show();
+            Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), text, Toast.LENGTH_SHORT).show();
           }
         });
   }
@@ -701,18 +701,26 @@ public class ReportFragmentLecturer extends Fragment {
                   int absent = 0;
                   int nearly = 0;
                   for (StudentRow x : studentList) {
-                    if (x.state == 0) {
-                      absent++;
-                    } else if (x.state == 1) {
-                      nearly++;
-                    } else {
-                      attended++;
+                    switch (x.state) {
+                      case 0:
+                        absent++;
+                        break;
+                      case 1:
+                        nearly++;
+                        break;
+                      default:
+                        attended++;
+                        break;
                     }
                   }
-                  totalstudent.setText(" Total Student: " + studentList.size());
-                  attendedstudent.setText(" Attended: " + attended);
-                  absentstudent.setText(" Absent: " + absent);
-                  nearlystudent.setText(" Nearly: " + nearly);
+                  String info = "Total Student: " + studentList.size();
+                  totalStudent.setText(info);
+                  info = "Attended: " + attended;
+                  attendedStudent.setText(info);
+                  info = "Absent: " + absent;
+                  absentStudent.setText(info);
+                  info = "Nearly: " + nearly;
+                  nearlyStudent.setText(info);
 
                   Parcelable state = listView.onSaveInstanceState();
                   listView.setAdapter(adapter);
@@ -737,7 +745,7 @@ public class ReportFragmentLecturer extends Fragment {
           }
         };
     try {
-      DatabaseManager.getmInstance(getActivity().getApplicationContext()).execute(request);
+      DatabaseManager.getInstance(Objects.requireNonNull(getActivity()).getApplicationContext()).execute(request);
     } catch (NullPointerException e) {
       // Do nothing
     }
@@ -794,7 +802,7 @@ public class ReportFragmentLecturer extends Fragment {
             Map<String, String> params = new HashMap<>();
             params.put(
                 "user_id",
-                new SessionManager(getActivity().getApplicationContext())
+                new SessionManager(Objects.requireNonNull(getActivity()).getApplicationContext())
                     .getUserDetails()
                     .get(SessionManager.KEY_USER_ID));
             params.put("operation", "given-lectures-seperate-sections");
@@ -802,18 +810,18 @@ public class ReportFragmentLecturer extends Fragment {
           }
         };
     try {
-      DatabaseManager.getmInstance(getActivity().getApplicationContext()).execute(request);
+      DatabaseManager.getInstance(Objects.requireNonNull(getActivity()).getApplicationContext()).execute(request);
     } catch (NullPointerException e) {
       // do nothing
     }
   }
 
   class Given_Lectures_Row {
-    int course_id;
-    String course_code;
-    int section;
+    final int course_id;
+    final String course_code;
+    final int section;
 
-    public Given_Lectures_Row(int course_id, String course_code, int section) {
+    Given_Lectures_Row(int course_id, String course_code, int section) {
       this.course_code = course_code;
       this.course_id = course_id;
       this.section = section;
@@ -821,10 +829,10 @@ public class ReportFragmentLecturer extends Fragment {
   }
 
   class CalendarColumn {
-    String date;
-    String hour;
-    int classroom_id;
-    String course_code;
+    final String date;
+    final String hour;
+    final int classroom_id;
+    final String course_code;
 
     CalendarColumn(int classroom_id, String course_code, String date, String hour) {
       this.classroom_id = classroom_id;
@@ -834,18 +842,18 @@ public class ReportFragmentLecturer extends Fragment {
     }
   }
 
-  public class StudentRow {
-    String name;
-    int number;
-    int state;
-    int time;
-    int attended;
-    int nearly;
-    int absent;
-    int student_id;
-    int classroom_id;
-    String img;
-    String secure_img;
+  class StudentRow {
+    final String name;
+    final int number;
+    final int state;
+    final int time;
+    final int attended;
+    final int nearly;
+    final int absent;
+    final int student_id;
+    final int classroom_id;
+    final String img;
+    final String secure_img;
 
     StudentRow(
         int student_id,
@@ -872,19 +880,17 @@ public class ReportFragmentLecturer extends Fragment {
       this.secure_img = secure_img;
     }
 
-    public StudentRow() {
-      super();
-    }
+
   }
 
-  public class StudentAdapter extends ArrayAdapter<StudentRow> {
-    Context context;
-    int layoutResourseId;
-    ArrayList<StudentRow> data;
+  class StudentAdapter extends ArrayAdapter<StudentRow> {
+    final Context context;
+    final int layoutResourceId;
+    final ArrayList<StudentRow> data;
 
-    private StudentAdapter(Context context, int layoutResourseId, ArrayList<StudentRow> data) {
-      super(context, layoutResourseId, data);
-      this.layoutResourseId = layoutResourseId;
+    private StudentAdapter(Context context, int layoutResourceId, ArrayList<StudentRow> data) {
+      super(context, layoutResourceId, data);
+      this.layoutResourceId = layoutResourceId;
       this.context = context;
       this.data = data;
     }
@@ -893,11 +899,11 @@ public class ReportFragmentLecturer extends Fragment {
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
       View row = convertView;
-      StudentHolder holder = null;
+      StudentHolder holder;
 
       if (row == null) {
         LayoutInflater inflater = ((Activity) context).getLayoutInflater();
-        row = inflater.inflate(layoutResourseId, parent, false);
+        row = inflater.inflate(layoutResourceId, parent, false);
 
         holder = new StudentHolder();
         holder.txtName = row.findViewById(R.id.studentName);
@@ -929,11 +935,18 @@ public class ReportFragmentLecturer extends Fragment {
       holder.txtName.setText(student.name);
       holder.txtNumber.setText(String.valueOf(student.number));
       holder.txtLineNum.setText(String.valueOf(position + 1));
-      if (student.state == 0) row.setBackgroundColor(getResources().getColor(R.color.stateRed));
-      else if (student.state == 1)
-        row.setBackgroundColor(getResources().getColor(R.color.stateYellow));
-      else if (student.state == 2 || student.state == 3)
-        row.setBackgroundColor(getResources().getColor(R.color.stateGreen));
+      switch (student.state) {
+        case 0:
+          row.setBackgroundColor(getResources().getColor(R.color.stateRed));
+          break;
+        case 1:
+          row.setBackgroundColor(getResources().getColor(R.color.stateYellow));
+          break;
+        case 2:
+        case 3:
+          row.setBackgroundColor(getResources().getColor(R.color.stateGreen));
+          break;
+      }
 
       return row;
     }
