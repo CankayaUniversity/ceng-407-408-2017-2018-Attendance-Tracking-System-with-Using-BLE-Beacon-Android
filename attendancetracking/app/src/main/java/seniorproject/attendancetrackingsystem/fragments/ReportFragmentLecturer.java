@@ -49,6 +49,8 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -115,7 +117,7 @@ public class ReportFragmentLecturer extends Fragment {
     scroll_report = view.findViewById(R.id.scroll_report);
     course_adapter =
         new ArrayAdapter<>(getActivity().getApplicationContext(), R.layout.spinner_item2, courses);
-    course_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+    course_adapter.setDropDownViewResource(R.layout.spinner_item2);
     handler = new Handler(Looper.getMainLooper());
     timer = new Timer();
     Bundle args = getArguments();
@@ -277,8 +279,7 @@ public class ReportFragmentLecturer extends Fragment {
                   boolean result = jsonObject.getBoolean("success");
                   if (result) {
                     toastWithHandler("Student has been marked as attended");
-                    studentList.clear();
-                    getStudentList(classroom_id);
+                    getStudentList();
                   } else {
                     toastWithHandler(jsonObject.getString("message"));
                   }
@@ -392,6 +393,7 @@ public class ReportFragmentLecturer extends Fragment {
                   boolean result = jsonObject.getBoolean("success");
                   if (!result) {
                     toastWithHandler(jsonObject.getString("message"));
+                    getCalendar();
                     return;
                   }
                 } catch (JSONException e) {
@@ -613,10 +615,7 @@ public class ReportFragmentLecturer extends Fragment {
         new TimerTask() {
           @Override
           public void run() {
-            for (int i = 0; i < classrooms.size(); i++) {
-              studentList.clear();
-              getStudentList(classrooms.get(i));
-            }
+            getStudentList();
           }
         },
         0,
@@ -639,7 +638,7 @@ public class ReportFragmentLecturer extends Fragment {
     timer.cancel();
   }
 
-  private void getStudentList(final int classroom_id) {
+  private void getStudentList() {
     StringRequest request =
         new StringRequest(
             Request.Method.POST,
@@ -658,30 +657,46 @@ public class ReportFragmentLecturer extends Fragment {
                   // do nothing
                 }
                 try {
-                  JSONObject json = new JSONObject(response);
-                  JSONObject classroom_info = json.getJSONObject("classroom_info");
-                  secure_list = classroom_info.getString("type").equals("secure");
-
-                  JSONArray student_info = json.getJSONArray("student_info");
-                  // JSONObject course_info = json.getJSONObject("course_info");
-                  for (int i = 0; i < student_info.length(); i++) {
-                    JSONObject jsonObject = student_info.getJSONObject(i);
-                    StudentRow studentRow =
-                        new StudentRow(
-                            jsonObject.getInt("student_id"),
-                            classroom_info.getInt("classroom_id"),
-                            jsonObject.getString("name") + " " + jsonObject.getString("surname"),
-                            jsonObject.getInt("student_number"),
-                            jsonObject.getInt("status"),
-                            jsonObject.getInt("time"),
-                            jsonObject.getInt("attended"),
-                            jsonObject.getInt("nearly"),
-                            jsonObject.getInt("absent"),
-                            jsonObject.getString("img"),
-                            jsonObject.getString("secure_img"));
-                    studentList.add(studentRow);
+                  JSONArray json = new JSONArray(response);
+                  studentList.clear();
+                  for(int j = 0; j < json.length(); j++){
+                    JSONObject mainJson = json.getJSONObject(j);
+                    JSONObject classroom_info = mainJson.getJSONObject("classroom_info");
+                    secure_list = classroom_info.getString("type").equals("secure");
+                    JSONArray student_info = mainJson.getJSONArray("student_info");
+                    // JSONObject course_info = mainJson.getJSONObject("course_info");
+                    for (int i = 0; i < student_info.length(); i++) {
+                      JSONObject jsonObject = student_info.getJSONObject(i);
+                      StudentRow studentRow =
+                              new StudentRow(
+                                      jsonObject.getInt("student_id"),
+                                      classroom_info.getInt("classroom_id"),
+                                      jsonObject.getString("name") + " " + jsonObject.getString("surname"),
+                                      jsonObject.getInt("student_number"),
+                                      jsonObject.getInt("status"),
+                                      jsonObject.getInt("time"),
+                                      jsonObject.getInt("attended"),
+                                      jsonObject.getInt("nearly"),
+                                      jsonObject.getInt("absent"),
+                                      jsonObject.getString("img"),
+                                      jsonObject.getString("secure_img"));
+                      studentList.add(studentRow);
+                    }
                   }
 
+                  // JSONObject course_info = json.getJSONObject("course_info");
+
+                  Collections.sort(studentList, new Comparator<StudentRow>() {
+                    @Override
+                    public int compare(StudentRow o1, StudentRow o2) {
+                      if(o2.state == o1.state){
+                        return o1.number - o2.number;
+                      }else
+                      {
+                        return o2.state - o1.state;
+                      }
+                    }
+                  });
                   int attended = 0;
                   int absent = 0;
                   int nearly = 0;
@@ -714,7 +729,9 @@ public class ReportFragmentLecturer extends Fragment {
           @Override
           protected Map<String, String> getParams() {
             Map<String, String> params = new HashMap<>();
-            params.put("classroom_id", String.valueOf(classroom_id));
+            for(int i = 0 ; i < classrooms.size(); i++){
+              params.put("classroom_id["+i+"]", String.valueOf(classrooms.get(i)));
+            }
             params.put("operation", "attendance-list");
             return params;
           }

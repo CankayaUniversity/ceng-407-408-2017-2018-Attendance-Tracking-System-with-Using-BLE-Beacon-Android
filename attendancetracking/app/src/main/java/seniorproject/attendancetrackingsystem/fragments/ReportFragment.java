@@ -10,6 +10,7 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -82,7 +83,7 @@ public class ReportFragment extends Fragment {
     course_spinner = view.findViewById(R.id.lecturelist);
     course_adapter =
         new ArrayAdapter<>(getActivity().getApplicationContext(), R.layout.spinner_item2, courses);
-    course_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+    course_adapter.setDropDownViewResource(R.layout.spinner_item2);
     calendar_holder = view.findViewById(R.id.cal_container);
     course_spinner.setOnItemSelectedListener(
         new AdapterView.OnItemSelectedListener() {
@@ -318,7 +319,10 @@ public class ReportFragment extends Fragment {
                     toastWithHandle(jsonObject.getString("message"));
                   }
                 } catch (JSONException e) {
-                  // do nothing
+                  getCalendar();
+                  absent_percentage.setText(" Absent: 0% ");
+                  attended_percentage.setText(" Attended: 0% ");
+                  nearly_percentage.setText(" Nearly: 0% ");
                 }
                 try {
                   JSONArray jsonArray = new JSONArray(response);
@@ -351,6 +355,12 @@ public class ReportFragment extends Fragment {
                     }
                   }
                   try {
+                    if(sizetotal == 0){
+                      absent_percentage.setText(" Absent: 0% ");
+                      attended_percentage.setText(" Attended: 0% ");
+                      nearly_percentage.setText(" Nearly: 0% ");
+                      return;
+                    }
                     absentpercentage = (double) absent / sizetotal;
                     absentpercentage = absentpercentage * 100;
                     attendedpercentage = (double) attended / sizetotal;

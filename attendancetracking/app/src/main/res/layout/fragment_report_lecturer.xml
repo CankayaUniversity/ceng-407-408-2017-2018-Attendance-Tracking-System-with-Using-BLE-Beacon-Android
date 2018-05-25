@@ -136,7 +136,6 @@
                         android:shadowDx="1"
                         android:shadowDy="1"
                         android:shadowRadius="1"
-                        android:text="Total Student: "
                         android:textColor="@color/gradientEnd" />
 
 
@@ -152,7 +151,6 @@
                     android:shadowDx="1"
                     android:shadowDy="1"
                     android:shadowRadius="1"
-                    android:text="Attendance: %"
                     android:textColor="@color/gradientEnd"
                     android:layout_marginBottom="5dp"/>
             </LinearLayout>

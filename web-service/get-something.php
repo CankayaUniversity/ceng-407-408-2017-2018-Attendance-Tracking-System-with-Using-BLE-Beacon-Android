@@ -326,12 +326,14 @@ WHERE Given_Lectures.lecturer_id = '$user_id'";
 		if(empty($_POST["classroom_id"])){
 			empty_field_error();
 		}
-		$classroom_id = $_POST["classroom_id"];
+		$classroom_id = $_POST["classroom_id"][0];
 		$query = "SELECT * FROM Token WHERE classroom_id='$classroom_id'";
 		$result = mysqli_query($con, $query);
 		if(mysqli_num_rows($result) > 0) $type = "secure";
 		else $type = "regular";
-
+		$finalArray = array();
+		for($i = 0; $i < count($_POST["classroom_id"]); $i++){
+			$classroom_id = $_POST["classroom_id"][$i];
 		$query = "SELECT Student.name, Student.surname, Student.student_number, Student.img, Taken_Lectures.student_id, COALESCE(Attended_Students.status,0) as status, COALESCE(Attended_Students.time, 0) as time, COALESCE(Attended_Students.secure_img, '') as secure_img, Classroom.course_id, Classroom.section
 			FROM Taken_Lectures
 			INNER JOIN Classroom ON Classroom.course_id = Taken_Lectures.course_id AND Classroom.section = Taken_Lectures.section
@@ -339,7 +341,7 @@ WHERE Given_Lectures.lecturer_id = '$user_id'";
 			INNER JOIN Student ON Taken_Lectures.student_id = Student.student_id WHERE Classroom.classroom_id = ".$classroom_id."
 			ORDER BY status DESC, Student.student_number ASC";
 		$result = mysqli_query($con, $query);
-
+		
 	if(mysqli_num_rows($result)>0){
 			$json["classroom_info"]["classroom_id"] = $classroom_id;
 			$json["classroom_info"]["type"] = $type;
@@ -387,10 +389,12 @@ WHERE Given_Lectures.lecturer_id = '$user_id'";
 		}
 		$json["course_info"]["course_id"] = $course_id;
 		$json["course_info"]["section"] = $section;
+		$finalArray[] = $json;
 	}else{
 		send_error("There is not any classroom information on the database");
 	}
-	echo json_encode($json);
+		}
+	echo json_encode($finalArray);
 	break;
 	case "last-15-lectures":
 		if(empty($_POST["user_id"])){
@@ -533,7 +537,7 @@ ORDER BY Classroom.hour DESC";
 			$result = mysqli_query($con,$query);
 			$taken = mysqli_num_rows($result);
 
-			$query	= "SELECT * FROM Attended_Students INNER JOIN Classroom ON Attended_Students.classroom_id = Classroom.classroom_id WHERE (Classroom.course_id='$course_id' AND Classroom.active = 1) AND (Attended_Students.status = 3 OR Attended_Students.status = 2)";
+			$query	= "SELECT * FROM Attended_Students INNER JOIN Classroom ON Attended_Students.classroom_id = Classroom.classroom_id WHERE (Classroom.course_id='$course_id' AND Classroom.section='$section' AND Classroom.active = 1) AND (Attended_Students.status = 3 OR Attended_Students.status = 2)";
 			$result = mysqli_query($con, $query);
 			$numberofAttended = mysqli_num_rows($result);
 

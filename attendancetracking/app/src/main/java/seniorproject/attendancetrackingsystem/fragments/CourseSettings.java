@@ -87,7 +87,7 @@ public class CourseSettings extends Fragment {
     courses = new ArrayList<>();
     adapter =
         new ArrayAdapter<>(getActivity().getApplicationContext(), R.layout.spinner_item2, courses);
-    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+    adapter.setDropDownViewResource(R.layout.spinner_item2);
     get_course_list();
 
     middle_seek.setOnSeekBarChangeListener(
