@@ -26,7 +26,7 @@ if(empty($_POST["operation"])) exit(0);
 
 switch($_POST["operation"]){
 	//Login
-	case "login": 
+	case "login":
 		if(empty($_POST["type"]) || empty($_POST["username"]) || empty($_POST["password"])) {
 				empty_field_error();
 			}
@@ -39,9 +39,9 @@ switch($_POST["operation"]){
 			if(empty($android_id)) empty_field_error();
 		}
 		$query = "";
-		if($type == "studentLogin") 
+		if($type == "studentLogin")
 			$query = "SELECT * FROM Student WHERE student_number = '$username' AND password = '$password'";
-		else if($type == "lecturerLogin") 
+		else if($type == "lecturerLogin")
 			$query = "SELECT * FROM Lecturer WHERE mail_address = '$username' AND password = '$password'";
 		$result = mysqli_query($con, $query);
 		if(mysqli_num_rows($result) > 0){
@@ -86,19 +86,19 @@ switch($_POST["operation"]){
 		}
 		echo json_encode($json);
 	break;
-	//Registration 
-	case "register": 
+	//Registration
+	case "register":
 		if(empty($_POST["type"])) exit(0);
-			
+
 			$characters = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 			$charactersLength = strlen($characters);
 			$random = '';
 			for($i = 0; $i < $charactersLength; $i++){
 			$random .= $characters[rand(0,$charactersLength-1)];
 			}
-			
-			$token = md5($random);			
-		
+
+			$token = md5($random);
+
 		if($_POST["type"] == "studentRegister"){
 			if(empty($_POST["schoolID"]) || empty($_POST["password"]) || empty($_POST["mail"]) || empty($_POST["name"]) || empty($_POST["surname"]) || empty($_POST["image"]) || empty($_POST["android_id"])) {
 				empty_field_error();
@@ -126,10 +126,10 @@ switch($_POST["operation"]){
 				$query = "SELECT * FROM Student WHERE mail_address='$email'";
 				$result = mysqli_query($con, $query);
 				if(mysqli_num_rows($result) > 0){
-					send_error("Mail address already exists in database");				
+					send_error("Mail address already exists in database");
 				}
 			}
-			
+
 			if(!$exists){
 				$query = "SELECT * FROM Student WHERE android_id = '$android_id'";
 				$result = mysqli_query($con, $query);
@@ -137,7 +137,7 @@ switch($_POST["operation"]){
 					send_error("There is already an account that is used on this device");
 				}
 			}
-			
+
 			if($exists){
 				$path = "student_images/$student_id.jpg";
 					file_put_contents($path, base64_decode($image));
@@ -159,7 +159,7 @@ switch($_POST["operation"]){
 					send_error("An error has been occurred while doing update operation");
 				}
 			}
-			
+
 			$query = "INSERT INTO Student(student_number, name, surname, android_id, mail_address, password) VALUES('$studentNumber', '$name', '$surname', '$android_id', '$email', '$password')";
 			$result = mysqli_query($con, $query);
 			if($result) {
@@ -187,7 +187,7 @@ switch($_POST["operation"]){
 			else{
 				send_error("An error has occured while doing insert operation");
 			}
-			
+
 			echo json_encode($json);
 		}
 		else if($_POST["type"] == "lecturerRegister"){
@@ -200,16 +200,19 @@ switch($_POST["operation"]){
 			$surname = $_POST["surname"];
 			$password = md5($_POST["password"]);
 			$departmentID = $_POST["departmentID"];
-			
+			$image = "lecturer_images/";
+			$parts = explode("@", $email);
+			$image = $image . $parts[0].".jpg";
+
 			$query = "SELECT * FROM Lecturer WHERE mail_address = '$email'";
 			$result = mysqli_query($con, $query);
 			if(mysqli_num_rows($result) > 0){
 				send_error("The user already exists on the system");
 			}
 
-			$query = "INSERT INTO Lecturer(name, surname, department_id, mail_address, password) VALUES('$name', '$surname', '$departmentID', '$email', '$password')";
+			$query = "INSERT INTO Lecturer(name, surname, department_id, mail_address, password, img) VALUES('$name', '$surname', '$departmentID', '$email', '$password', '$image')";
 			$result = mysqli_query($con, $query);
-			if($result){ 
+			if($result){
 				include 'mail.php';
 				$query = "INSERT INTO Activation_Keys(user_type, mail_address, token, valid) VALUES('1', '$email', '$token', '1')";
 					$result = mysqli_query($con, $query);
@@ -264,23 +267,23 @@ switch($_POST["operation"]){
 		$mail_address = $_POST["mail_address"];
 		if($user_type == "student") $query = "SELECT name, surname FROM Student WHERE mail_address = '$mail_address'";
 		else if($user_type == "lecturer") $query = "SELECT name, surname FROM Lecturer WHERE mail_address = '$mail_address'";
-		
+
 		$result = mysqli_query($con, $query);
 		if(mysqli_num_rows($result)>0){
 			$row = mysqli_fetch_assoc($result);
 			if($user_type == "student") $u_type = 1;
 			else if($user_type == "lecturer") $u_type = 2;
-			
+
 			$characters = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 			$charactersLength = strlen($characters);
 			$random = '';
-			 
+
 			for($i = 0; $i < $charactersLength; $i++){
 			$random .= $characters[rand(0,$charactersLength-1)];
 			}
-			
+
 			$token = md5($random);
-			
+
 			$query = "INSERT INTO Recovery_Keys(user_type, mail_address, token, valid) VALUES('$u_type', '$mail_address', '$token', '1')";
 			$result = mysqli_query($con, $query);
 			if($result){
@@ -299,7 +302,7 @@ switch($_POST["operation"]){
 	if(empty($_POST["android_id"])){
 	empty_field_error();
 	}
-	
+
 	$android_id = $_POST["android_id"];
 	$query = "SELECT * FROM Student WHERE android_id = '$android_id'";
 	$result = mysqli_query($con, $query);

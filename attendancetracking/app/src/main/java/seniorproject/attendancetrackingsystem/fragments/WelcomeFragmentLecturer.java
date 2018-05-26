@@ -139,6 +139,7 @@ public class WelcomeFragmentLecturer extends Fragment {
                 || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY) {
               items.clear();
               items.add("Weekend");
+              secureModeSwitchVisibility(false);
               return;
             }
             try {
