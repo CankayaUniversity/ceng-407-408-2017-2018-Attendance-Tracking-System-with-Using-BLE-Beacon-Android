@@ -195,13 +195,22 @@ public class ReportFragmentLecturer extends Fragment {
               absent.setText("0%");
             }
             // if student is already attended, make invisible mark as attended button
-            if (student.state == 2) mark.setVisibility(View.INVISIBLE);
-            else mark.setVisibility(View.VISIBLE);
+            if (student.state == 2) {
+             mark.setText(R.string.mark_as_absent);
+            }else
+            {
+              mark.setText(R.string.mark_as_attended);
+            }
+
+
             mark.setOnClickListener(
                 new View.OnClickListener() {
                   @Override
                   public void onClick(View v) {
-                    markAsAttended(student.classroom_id, student.student_id);
+                    if(student.state == 2)
+                      markAsAttended(student.classroom_id, student.student_id, false);
+                    else
+                      markAsAttended(student.classroom_id, student.student_id, true);
                     popup.dismiss();
                   }
                 });
@@ -266,7 +275,7 @@ public class ReportFragmentLecturer extends Fragment {
     return result;
   }
 
-  private void markAsAttended(final int classroom_id, final int student_id) {
+  private void markAsAttended(final int classroom_id, final int student_id, final boolean status) {
     final StringRequest request =
         new StringRequest(
             Request.Method.POST,
@@ -298,6 +307,8 @@ public class ReportFragmentLecturer extends Fragment {
             params.put("operation", "mark-as-attended");
             params.put("student_id", String.valueOf(student_id));
             params.put("classroom_id", String.valueOf(classroom_id));
+            if(status) params.put("status", "true");
+            else params.put("status", "false");
             return params;
           }
         };

@@ -33,8 +33,7 @@ public class RegularMode extends Service implements BeaconConsumer {
   private static final Region ALL_BEACONS = new Region("ALL_BEACONS", null, null, null);
   private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.ENGLISH);
   private final SimpleDateFormat dateFormatLog = new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH);
-  SimpleDateFormat currentDateFormatter = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss z", Locale
-          .ENGLISH);
+
   private Schedule.CourseInfo currentCourse = null;
   private BeaconManager beaconManager;
   private String search;
@@ -44,7 +43,7 @@ public class RegularMode extends Service implements BeaconConsumer {
   @Override
   public void onCreate() {
     super.onCreate();
-    currentDateFormatter.setTimeZone(TimeZone.getTimeZone("GMT+3"));
+
     TrueTime.clearCachedInfo(getBaseContext());
     if (!TrueTime.isInitialized()) {
       try {
@@ -107,10 +106,13 @@ public class RegularMode extends Service implements BeaconConsumer {
         new RangeNotifier() {
           @Override
           public void didRangeBeaconsInRegion(Collection<Beacon> collection, Region region) {
+            SimpleDateFormat currentTimeFormatter = new SimpleDateFormat("HH:mm:ss", Locale
+                    .ENGLISH);
+            currentTimeFormatter.setTimeZone(TimeZone.getTimeZone("GMT+3"));
             for (Beacon x : collection) {
               try{
               if (x.getBluetoothAddress().equals(search)) {
-                String value = dateFormatLog.format(dateFormat.parse(currentDateFormatter.format
+                String value = dateFormatLog.format(dateFormat.parse(currentTimeFormatter.format
                         (TrueTime.now())));
                 queue.enqueueDistinct(value);
                 if (queue.size() >= 3) writeLog();
@@ -164,7 +166,9 @@ public class RegularMode extends Service implements BeaconConsumer {
     search = intent.getStringExtra("search");
     currentCourse = (Schedule.CourseInfo) intent.getSerializableExtra("course-info");
     if (search.isEmpty() || currentCourse == null) stopSelf();
-
+    SimpleDateFormat currentDateFormatter = new SimpleDateFormat("dd.MM.yyyy", Locale
+            .ENGLISH);
+    currentDateFormatter.setTimeZone(TimeZone.getTimeZone("GMT+3"));
     filename =
         currentCourse.getCourse_code()
             + "_"

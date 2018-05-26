@@ -234,17 +234,20 @@ switch($_POST["operation"]){
 		}
 	break;
 	case 'mark-as-attended':
-		if(empty($_POST["classroom_id"]) || empty($_POST["student_id"])){
+		if(empty($_POST["classroom_id"]) || empty($_POST["student_id"]) || empty($_POST["status"])){
 			empty_field_error();
 		}
 		$classroom_id = $_POST["classroom_id"];
 		$student_id = $_POST["student_id"];
-		
+		$status = $_POST["status"];
 		$query = "SELECT * FROM Attended_Students WHERE classroom_id = '$classroom_id' AND student_id = '$student_id'";
 		
 		$result = mysqli_query($con, $query);
 		if(mysqli_num_rows($result)>0){
-			$query = "UPDATE Attended_Students SET status = '3' WHERE classroom_id = '$classroom_id' AND student_id = '$student_id'";
+			if($status == "true")
+				$query = "UPDATE Attended_Students SET status = '3' WHERE classroom_id = '$classroom_id' AND student_id = '$student_id'";
+			else
+				$query = "UPDATE Attended_Students SET status = '0'WHERE classroom_id = '$classroom_id' AND student_id = '$student_id'";
 			$result = mysqli_query($con, $query);
 			if($result) send_success();
 			else{
@@ -252,7 +255,10 @@ switch($_POST["operation"]){
 			}
 		}else
 		{
-			$query = "INSERT Attended_Students(classroom_id, student_id, status) VALUES('$classroom_id', '$student_id', '3')";
+			if($status == "true")
+				$query = "INSERT Attended_Students(classroom_id, student_id, status) VALUES('$classroom_id', '$student_id', '3')";
+			else
+				$query = "INSERT Attended_Students(classroom_id, student_id, status) VALUES('$classroom_id', '$student_id', '0')";
 			$result = mysqli_query($con, $query);
 			if($result) {
 				send_success();
@@ -274,10 +280,10 @@ switch($_POST["operation"]){
 		$query = "SELECT * FROM Attended_Students WHERE classroom_id = '$classroom_id' AND student_id='$user_id'";
 		$result = mysqli_query($con, $query);
 		if(mysqli_num_rows($result) > 0){
-			$query = "UPDATE Attended_Students SET status='0', secure_img = '$path' WHERE classroom_id='$classroom_id' AND student_id='$user_id'";
+			$query = "UPDATE Attended_Students SET status='3', secure_img = '$path' WHERE classroom_id='$classroom_id' AND student_id='$user_id'";
 		}else
 		{
-			$query = "INSERT INTO Attended_Students(classroom_id, student_id, status, secure_img) VALUES('$classroom_id', '$user_id', '0', '$path')";
+			$query = "INSERT INTO Attended_Students(classroom_id, student_id, status, secure_img) VALUES('$classroom_id', '$user_id', '3', '$path')";
 		}
 		
 		$result = mysqli_query($con, $query);
