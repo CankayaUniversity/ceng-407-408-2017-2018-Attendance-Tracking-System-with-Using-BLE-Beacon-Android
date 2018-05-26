@@ -36,7 +36,6 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -145,36 +144,41 @@ public class WelcomeFragmentLecturer extends Fragment {
                     .withConnectionTimeout(41328)
                     .withLoggingEnabled(true)
                     .withSharedPreferences(getActivity().getApplicationContext())
+                        .withServerResponseDelayMax(60000)
                     .initialize();
               } catch (IOException e) {
                 e.printStackTrace();
               }
               return;
             }
-
-            Calendar cal = Calendar.getInstance();
-            if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY
-                || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY) {
-              items.clear();
-              items.add("Weekend!");
-              session.turnOffSecure();
-              handler.post(
-                  new Runnable() {
-                    @Override
-                    public void run() {
-                      Parcelable state = listView.onSaveInstanceState();
-                      listView.setAdapter(adapter);
-                      listView.onRestoreInstanceState(state);
-                      currentCourses.clear();
-                    }
-                  });
-              secureModeSwitchVisibility(false);
-              return;
-            }
-            try {
               Date cur = TrueTime.now();
-              SimpleDateFormat currentDateFormatter = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss z", Locale.ENGLISH);
+              SimpleDateFormat currentDateFormatter = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
               currentDateFormatter.setTimeZone(TimeZone.getTimeZone("GMT+3"));
+             SimpleDateFormat dayFormat = new SimpleDateFormat("EEE", Locale.ENGLISH);
+             try{
+                 current = dayFormat.parse(dayFormat.format(cur));
+                 if(dayFormat.format(current).equals("Sat") || dayFormat.format(current).equals("Sun"))
+                 {
+                     items.clear();
+                     items.add("Weekend!");
+                     session.turnOffSecure();
+                     handler.post(
+                             new Runnable() {
+                                 @Override
+                                 public void run() {
+                                     Parcelable state = listView.onSaveInstanceState();
+                                     listView.setAdapter(adapter);
+                                     listView.onRestoreInstanceState(state);
+                                     currentCourses.clear();
+                                 }
+                             });
+                     secureModeSwitchVisibility(false);
+                     return;
+                 }
+             }catch (ParseException e){
+                 e.printStackTrace();
+             }
+            try {
               current = dateFormat.parse(currentDateFormatter.format(cur));
               start = dateFormat.parse("09:20");
               stop = dateFormat.parse("17:10");

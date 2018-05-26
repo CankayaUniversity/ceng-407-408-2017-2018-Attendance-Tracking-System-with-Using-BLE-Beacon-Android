@@ -53,6 +53,7 @@ public class RegularMode extends Service implements BeaconConsumer {
                 .withConnectionTimeout(41328)
                 .withLoggingEnabled(true)
                 .withSharedPreferences(getBaseContext())
+                .withServerResponseDelayMax(60000)
                 .initialize();
       } catch (IOException e) {
         e.printStackTrace();

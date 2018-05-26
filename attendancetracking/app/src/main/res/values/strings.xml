@@ -65,4 +65,7 @@
     <string name="enter_token">Enter Token:</string>
     <string name="show">Show</string>
     <string name="cancel">Cancel</string>
+    <string name="nearly_text">Nearly</string>
+    <string name="attended_text">Attended</string>
+    <string name="absent_text">Absent</string>
 </resources>

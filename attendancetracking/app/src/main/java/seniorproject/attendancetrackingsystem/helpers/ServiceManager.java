@@ -84,25 +84,29 @@ public class ServiceManager extends Service {
                     .withConnectionTimeout(41328)
                     .withLoggingEnabled(true)
                     .withSharedPreferences(getApplicationContext())
+                        .withServerResponseDelayMax(60000)
                     .initialize();
               } catch (IOException e) {
                 e.printStackTrace();
               }
               return;
             }
-
-            Calendar cal = Calendar.getInstance();
-            if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY
-                || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY) {
-              broadcastCourseInfo("weekend");
-              runCollector();
-              return;
+            Date cur = TrueTime.now();
+            SimpleDateFormat currentDateFormatter = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
+            currentDateFormatter.setTimeZone(TimeZone.getTimeZone("GMT+3"));
+            SimpleDateFormat dayFormat = new SimpleDateFormat("EEE", Locale.ENGLISH);
+            try {
+              currentDate = dayFormat.parse(dayFormat.format(cur));
+              if (dayFormat.format(currentDate).equals("Sat") || dayFormat.format(currentDate).equals("Sun")) {
+                broadcastCourseInfo("weekend");
+                runCollector();
+                return;
+              }
+            }catch (ParseException e){
+              e.printStackTrace();
             }
 
             try {
-              Date cur = TrueTime.now();
-              SimpleDateFormat currentDateFormatter = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss z", Locale.ENGLISH);
-              currentDateFormatter.setTimeZone(TimeZone.getTimeZone("GMT+3"));
               currentDate = dateFormat.parse(currentDateFormatter.format(cur));
 
               regularStart = dateFormat.parse(START_REGULAR);

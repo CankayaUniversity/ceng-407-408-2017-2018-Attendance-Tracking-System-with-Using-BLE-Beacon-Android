@@ -223,7 +223,7 @@ public class ReportFragmentLecturer extends Fragment {
               ImageView secure_image = popup.findViewById(R.id.secure_image);
               if (student.secure_img == null || student.secure_img.isEmpty()) {
                 Picasso.with(popup.getContext())
-                    .load(R.drawable.unknown_trainer)
+                    .load(R.drawable.no_image)
                     .fit()
                     .into(secure_image);
               } else {
