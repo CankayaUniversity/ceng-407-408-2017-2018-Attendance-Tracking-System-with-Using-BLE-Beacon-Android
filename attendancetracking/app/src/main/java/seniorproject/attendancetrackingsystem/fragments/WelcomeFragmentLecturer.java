@@ -118,15 +118,14 @@ public class WelcomeFragmentLecturer extends Fragment {
     nameSurnameField.setText(nameText);
     description.setText(mailText);
 
-    secureSwitch.setOnCheckedChangeListener(
-        new CompoundButton.OnCheckedChangeListener() {
-          @Override
-          public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            if (secureSwitch.isChecked()) {
-              infirmUser();
-            }
-          }
-        });
+    secureSwitch.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        if (secureSwitch.isChecked()) {
+          infirmUser();
+        }
+      }
+    });
 
     timer.scheduleAtFixedRate(
         new TimerTask() {
@@ -140,7 +139,18 @@ public class WelcomeFragmentLecturer extends Fragment {
             if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY
                 || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY) {
               items.clear();
-              items.add("Weekend");
+              items.add("Weekend!");
+              session.turnOffSecure();
+              handler.post(
+                  new Runnable() {
+                    @Override
+                    public void run() {
+                      Parcelable state = listView.onSaveInstanceState();
+                      listView.setAdapter(adapter);
+                      listView.onRestoreInstanceState(state);
+                      currentCourses.clear();
+                    }
+                  });
               secureModeSwitchVisibility(false);
               return;
             }

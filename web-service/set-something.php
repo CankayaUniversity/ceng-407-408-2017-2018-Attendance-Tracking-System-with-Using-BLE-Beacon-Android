@@ -246,7 +246,7 @@ switch($_POST["operation"]){
 		if(mysqli_num_rows($result)>0){
 			$query = "UPDATE Attended_Students SET status = '3' WHERE classroom_id = '$classroom_id' AND student_id = '$student_id'";
 			$result = mysqli_query($con, $query);
-			if($result) $json["success"] = true;
+			if($result) send_success();
 			else{
 				send_error("Error while updating database");
 			}
@@ -254,7 +254,9 @@ switch($_POST["operation"]){
 		{
 			$query = "INSERT Attended_Students(classroom_id, student_id, status) VALUES('$classroom_id', '$student_id', '3')";
 			$result = mysqli_query($con, $query);
-			if($result) send_success();
+			if($result) {
+				send_success();
+			}
 			else {
 				send_error("Error while inserting database");
 			}
@@ -275,7 +277,7 @@ switch($_POST["operation"]){
 			$query = "UPDATE Attended_Students SET status='0', secure_img = '$path' WHERE classroom_id='$classroom_id' AND student_id='$user_id'";
 		}else
 		{
-			$query = "INSERT INTO Attended_Students(classroom_id, student_id, status, secure_img) VALUES('$classroom_id', '$user_id', '0', '$path'";
+			$query = "INSERT INTO Attended_Students(classroom_id, student_id, status, secure_img) VALUES('$classroom_id', '$user_id', '0', '$path')";
 		}
 		
 		$result = mysqli_query($con, $query);
