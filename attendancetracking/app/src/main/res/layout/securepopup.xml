@@ -91,7 +91,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="18sp"
-                android:textColor="@android:color/black"/>
+                android:textColor="@android:color/black"
+                android:text="@string/nearly_text"/>
         </LinearLayout>
         <LinearLayout
             android:background="@color/stateGreen"
@@ -112,7 +113,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/black"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:text="@string/attended_text"/>
         </LinearLayout>
         <LinearLayout
             android:background="@color/stateRed"
@@ -132,7 +134,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="18sp"
-                android:textColor="@android:color/black"/>
+                android:textColor="@android:color/black"
+                android:text="@string/absent_text"/>
         </LinearLayout>
 
     </LinearLayout>
