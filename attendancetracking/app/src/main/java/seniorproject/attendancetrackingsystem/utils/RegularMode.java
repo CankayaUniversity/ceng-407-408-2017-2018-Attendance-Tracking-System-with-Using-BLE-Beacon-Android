@@ -7,6 +7,8 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.support.annotation.Nullable;
 
+import com.instacart.library.truetime.TrueTime;
+
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;
 import org.altbeacon.beacon.BeaconManager;
@@ -17,13 +19,13 @@ import org.altbeacon.beacon.Region;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import seniorproject.attendancetrackingsystem.helpers.Logger;
-import seniorproject.attendancetrackingsystem.helpers.SessionManager;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public class RegularMode extends Service implements BeaconConsumer {
@@ -31,6 +33,8 @@ public class RegularMode extends Service implements BeaconConsumer {
   private static final Region ALL_BEACONS = new Region("ALL_BEACONS", null, null, null);
   private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.ENGLISH);
   private final SimpleDateFormat dateFormatLog = new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH);
+  SimpleDateFormat currentDateFormatter = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss z", Locale
+          .ENGLISH);
   private Schedule.CourseInfo currentCourse = null;
   private BeaconManager beaconManager;
   private String search;
@@ -40,6 +44,21 @@ public class RegularMode extends Service implements BeaconConsumer {
   @Override
   public void onCreate() {
     super.onCreate();
+    currentDateFormatter.setTimeZone(TimeZone.getTimeZone("GMT+3"));
+    TrueTime.clearCachedInfo(getBaseContext());
+    if (!TrueTime.isInitialized()) {
+      try {
+        TrueTime.build()
+                .withNtpHost("time.google.com")
+                .withConnectionTimeout(41328)
+                .withLoggingEnabled(true)
+                .withSharedPreferences(getBaseContext())
+                .initialize();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
+
     beaconManager = BeaconManager.getInstanceForApplication(this);
     beaconManager.getBeaconParsers().clear();
     beaconManager
@@ -88,11 +107,15 @@ public class RegularMode extends Service implements BeaconConsumer {
           @Override
           public void didRangeBeaconsInRegion(Collection<Beacon> collection, Region region) {
             for (Beacon x : collection) {
-
+              try{
               if (x.getBluetoothAddress().equals(search)) {
-                String value = dateFormatLog.format(new Date());
+                String value = dateFormatLog.format(dateFormat.parse(currentDateFormatter.format
+                        (TrueTime.now())));
                 queue.enqueueDistinct(value);
                 if (queue.size() >= 3) writeLog();
+              }
+              }catch (ParseException e){
+                e.printStackTrace();
               }
             }
           }
@@ -146,7 +169,8 @@ public class RegularMode extends Service implements BeaconConsumer {
             + "_"
             + currentCourse.getClassroom_id()
             + "_"
-            + dateFormat.format(new Date())
+            + dateFormat.format(currentDateFormatter.format
+                (TrueTime.now()))
             + ".log";
     return START_NOT_STICKY;
   }

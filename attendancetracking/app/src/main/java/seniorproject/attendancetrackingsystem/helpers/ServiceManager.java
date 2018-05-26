@@ -17,11 +17,13 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.instacart.library.truetime.TrueTime;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -30,6 +32,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -44,11 +47,11 @@ public class ServiceManager extends Service {
   private static final String UPDATE = "08:30"; // updating at 08:30
   private static final String START_REGULAR = "09:20"; // starting regular mode at 09:20
   private static final String STOP_REGULAR = "17:10"; // stoping regular mode at 17:10
+  private final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
   private boolean updatedForToday = false;
   private boolean noCourseForToday = false;
   private Schedule schedule = null;
   private Handler handler;
-  private final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
   private boolean connected = false;
   private Schedule.CourseInfo currentCourse = null;
   private boolean allowNotification = true;
@@ -64,25 +67,44 @@ public class ServiceManager extends Service {
   @Override
   public void onCreate() {
     super.onCreate();
-
+    TrueTime.clearCachedInfo(this);
     final BluetoothChecker bluetoothChecker = new BluetoothChecker();
     handler = new Handler(getMainLooper());
     Timer timer = new Timer();
+
     timer.scheduleAtFixedRate(
         new TimerTask() {
 
           @Override
           public void run() {
+            if (!TrueTime.isInitialized()) {
+              try {
+                TrueTime.build()
+                    .withNtpHost("time.google.com")
+                    .withConnectionTimeout(41328)
+                    .withLoggingEnabled(true)
+                    .withSharedPreferences(getApplicationContext())
+                    .initialize();
+              } catch (IOException e) {
+                e.printStackTrace();
+              }
+              return;
+            }
 
             Calendar cal = Calendar.getInstance();
-            if(cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY
-                    || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY) {
+            if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY
+                || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY) {
               broadcastCourseInfo("weekend");
+              runCollector();
               return;
             }
 
             try {
-              currentDate = dateFormat.parse(dateFormat.format(new Date()));
+              Date cur = TrueTime.now();
+              SimpleDateFormat currentDateFormatter = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss z", Locale.ENGLISH);
+              currentDateFormatter.setTimeZone(TimeZone.getTimeZone("GMT+3"));
+              currentDate = dateFormat.parse(currentDateFormatter.format(cur));
+
               regularStart = dateFormat.parse(START_REGULAR);
               regularEnd = dateFormat.parse(STOP_REGULAR);
               updateDate = dateFormat.parse(UPDATE);
@@ -120,7 +142,7 @@ public class ServiceManager extends Service {
                       // BREAK TIME RUNS ONCE
                       if (breakTime != null && currentDate.compareTo(breakTime) >= 0) {
                         BluetoothAdapter.getDefaultAdapter().disable();
-                        if(isServiceIsRunning(RegularMode.class)) stopRegularMode();
+                        if (isServiceIsRunning(RegularMode.class)) stopRegularMode();
                         allowNotification = true;
                         secure = false;
                         new SessionManager(getApplicationContext()).allowSecure();
@@ -143,7 +165,7 @@ public class ServiceManager extends Service {
                 } else {
                   // IF THERE IS NOT ANY COURSE FOR TODAY
                   broadcastCourseInfo("no_course_for_today");
-                    runCollector();
+                  runCollector();
                 }
               } else {
                 // Log.i("ACTION", "STOP REGULAR MODE");
@@ -364,6 +386,7 @@ public class ServiceManager extends Service {
     File[] list = root.listFiles();
     return list != null && list.length != 0;
   }
+
   private void runCollector() {
     File root = new File(Environment.getExternalStorageDirectory(), LOG_FOLDER);
     if (!root.exists()) return; // no need to push something to database

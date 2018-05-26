@@ -16,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Switch;
@@ -27,11 +26,13 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.instacart.library.truetime.TrueTime;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -43,6 +44,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
+import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -55,6 +57,8 @@ import seniorproject.attendancetrackingsystem.utils.Schedule;
 /* A simple {@link Fragment} subclass. */
 public class WelcomeFragmentLecturer extends Fragment {
 
+  private final ArrayList<Schedule.CourseInfo> currentCourses = new ArrayList<>();
+  private final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
   private String token = "not_initialized";
   private Handler handler;
   private boolean updated = false;
@@ -64,8 +68,6 @@ public class WelcomeFragmentLecturer extends Fragment {
   private ArrayList<String> items;
   private ArrayAdapter<String> adapter;
   private Timer timer;
-  private final ArrayList<Schedule.CourseInfo> currentCourses = new ArrayList<>();
-  private final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
   private Switch secureSwitch;
   private SessionManager session;
 
@@ -75,7 +77,7 @@ public class WelcomeFragmentLecturer extends Fragment {
 
   @Override
   public View onCreateView(
-          @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+      @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     // Inflate the layout for this fragment
     return inflater.inflate(R.layout.fragment_welcome_lecturer, container, false);
   }
@@ -85,7 +87,7 @@ public class WelcomeFragmentLecturer extends Fragment {
     super.onViewCreated(view, savedInstanceState);
     handler = new Handler(Looper.getMainLooper());
     timer = new Timer();
-
+    TrueTime.clearCachedInfo(Objects.requireNonNull(getActivity()).getApplicationContext());
     session = new SessionManager(Objects.requireNonNull(getActivity()).getApplicationContext());
     HashMap<String, String> userInfo = session.getUserDetails();
     ImageView avatar = getActivity().findViewById(R.id.avatar);
@@ -118,14 +120,15 @@ public class WelcomeFragmentLecturer extends Fragment {
     nameSurnameField.setText(nameText);
     description.setText(mailText);
 
-    secureSwitch.setOnClickListener(new View.OnClickListener() {
-      @Override
-      public void onClick(View v) {
-        if (secureSwitch.isChecked()) {
-          infirmUser();
-        }
-      }
-    });
+    secureSwitch.setOnClickListener(
+        new View.OnClickListener() {
+          @Override
+          public void onClick(View v) {
+            if (secureSwitch.isChecked()) {
+              infirmUser();
+            }
+          }
+        });
 
     timer.scheduleAtFixedRate(
         new TimerTask() {
@@ -135,6 +138,20 @@ public class WelcomeFragmentLecturer extends Fragment {
 
           @Override
           public void run() {
+            if (!TrueTime.isInitialized()) {
+              try {
+                TrueTime.build()
+                    .withNtpHost("time.google.com")
+                    .withConnectionTimeout(41328)
+                    .withLoggingEnabled(true)
+                    .withSharedPreferences(getActivity().getApplicationContext())
+                    .initialize();
+              } catch (IOException e) {
+                e.printStackTrace();
+              }
+              return;
+            }
+
             Calendar cal = Calendar.getInstance();
             if (cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY
                 || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY) {
@@ -155,7 +172,10 @@ public class WelcomeFragmentLecturer extends Fragment {
               return;
             }
             try {
-              current = dateFormat.parse(dateFormat.format(new Date()));
+              Date cur = TrueTime.now();
+              SimpleDateFormat currentDateFormatter = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss z", Locale.ENGLISH);
+              currentDateFormatter.setTimeZone(TimeZone.getTimeZone("GMT+3"));
+              current = dateFormat.parse(currentDateFormatter.format(cur));
               start = dateFormat.parse("09:20");
               stop = dateFormat.parse("17:10");
             } catch (ParseException e) {
@@ -253,7 +273,8 @@ public class WelcomeFragmentLecturer extends Fragment {
             }
           };
 
-      DatabaseManager.getInstance(Objects.requireNonNull(getActivity()).getApplicationContext()).execute(request);
+      DatabaseManager.getInstance(Objects.requireNonNull(getActivity()).getApplicationContext())
+          .execute(request);
     }
   }
 
@@ -263,7 +284,9 @@ public class WelcomeFragmentLecturer extends Fragment {
 
   private void generateToken() {
     Toast.makeText(
-            Objects.requireNonNull(getActivity()).getApplicationContext(), "Secure mode is activated", Toast.LENGTH_SHORT)
+            Objects.requireNonNull(getActivity()).getApplicationContext(),
+            "Secure mode is activated",
+            Toast.LENGTH_SHORT)
         .show();
 
     Random r = new Random(System.currentTimeMillis());
@@ -388,7 +411,8 @@ public class WelcomeFragmentLecturer extends Fragment {
                         }
                         if (!noCourseForToday) {
                           schedule =
-                              JsonHelper.getInstance(Objects.requireNonNull(getActivity()).getApplicationContext())
+                              JsonHelper.getInstance(
+                                      Objects.requireNonNull(getActivity()).getApplicationContext())
                                   .parseSchedule(response);
                           if (schedule.getCourses().size() > 0) updated = true;
                         }
@@ -407,7 +431,9 @@ public class WelcomeFragmentLecturer extends Fragment {
                   }
                 };
             try {
-              DatabaseManager.getInstance(Objects.requireNonNull(getActivity()).getApplicationContext()).execute(request);
+              DatabaseManager.getInstance(
+                      Objects.requireNonNull(getActivity()).getApplicationContext())
+                  .execute(request);
             } catch (NullPointerException e) {
               // do nothing
             }
@@ -429,10 +455,14 @@ public class WelcomeFragmentLecturer extends Fragment {
                 }
                 args.putIntegerArrayList("classrooms", courses);
                 ReportFragmentLecturer f = new ReportFragmentLecturer();
-                BottomNavigationView mainNav = Objects.requireNonNull(getActivity()).findViewById(R.id.main_nav);
+                BottomNavigationView mainNav =
+                    Objects.requireNonNull(getActivity()).findViewById(R.id.main_nav);
                 mainNav.setSelectedItemId(R.id.nav_report);
                 f.setArguments(args);
-                Objects.requireNonNull(getFragmentManager()).beginTransaction().replace(R.id.main_frame, f).commit();
+                Objects.requireNonNull(getFragmentManager())
+                    .beginTransaction()
+                    .replace(R.id.main_frame, f)
+                    .commit();
               } else if (position == 1) {
                 if (session.isSecureMode()) showAlertDialog(session.getToken());
               }
