@@ -69,4 +69,5 @@
     <string name="attended_text">Attended</string>
     <string name="absent_text">Absent</string>
     <string name="mark_as_absent">Mark as Absent</string>
+    <string name="select_the_course_that_you_want_to_attend_from_below">Select the course that you want to attend from below</string>
 </resources>

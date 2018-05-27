@@ -34,8 +34,8 @@ public class Schedule implements Serializable {
     private final String hour;
     private final String beacon_mac;
     private final String course_code;
-    private String end_hour;
     private final int classroom_id;
+    private String end_hour;
 
     CourseInfo(
         int course_id,
@@ -78,6 +78,14 @@ public class Schedule implements Serializable {
 
     public int getClassroom_id() {
       return classroom_id;
+    }
+
+    public int getCourse_id() {
+      return course_id;
+    }
+
+    public String getWeek_day() {
+      return week_day;
     }
   }
 }

@@ -9,6 +9,7 @@ import java.util.HashMap;
 
 import seniorproject.attendancetrackingsystem.activities.MainActivity;
 import seniorproject.attendancetrackingsystem.utils.RegularMode;
+import seniorproject.attendancetrackingsystem.utils.Schedule;
 
 public class SessionManager {
   public static final String KEY_USER_TYPE = "userType";
@@ -23,6 +24,9 @@ public class SessionManager {
   private static final String KEY_SECURE_MODE = "SecureMode";
   private static final String KEY_SECURE_TOKEN = "SecureToken";
   private static final String KEY_ALLOW_SECURE = "AllowSecure";
+  private static final String KEY_CONFLICT = "Conflict";
+  private static final String IS_COURSE_SELECTED = "IsCourseSelected";
+  private static final String KEY_SELECTED_COURSE = "SelectedCourse";
   private static final int PRIVATE_MODE = 0;
   private final Context context;
   private SharedPreferences pref;
@@ -160,5 +164,64 @@ public class SessionManager {
     return pref.getBoolean(KEY_ALLOW_SECURE, false);
   }
 
+  public void setConflict(boolean conflict){
+    pref = context.getSharedPreferences("conflict", PRIVATE_MODE);
+    editor = pref.edit();
+    editor.putBoolean(KEY_CONFLICT, conflict);
+    editor.apply();
+  }
+
+  public boolean getConflict(){
+    pref = context.getSharedPreferences("conflict", PRIVATE_MODE);
+    return pref.getBoolean(KEY_CONFLICT, false);
+  }
+public void setIsCourseSelected(boolean selected){
+    pref = context.getSharedPreferences("conflict", PRIVATE_MODE);
+    editor = pref.edit();
+    editor.putBoolean(IS_COURSE_SELECTED, selected);
+    editor.apply();
+}
+
+public boolean getIsCourseSelected(){
+    pref = context.getSharedPreferences("conflict", PRIVATE_MODE);
+    return pref.getBoolean(IS_COURSE_SELECTED, false);
+}
+
+public void setSelectedCourse(Schedule.CourseInfo selected){
+    pref = context.getSharedPreferences("conflict", PRIVATE_MODE);
+    editor = pref.edit();
+    editor.putInt("course_id", selected.getCourse_id());
+    editor.putInt("section", selected.getSection());
+    editor.putString("week_day", selected.getWeek_day());
+    editor.putString("hour", selected.getHour());
+    editor.putString("end_hour", selected.getEnd_hour());
+    editor.putString("beacon_mac", selected.getBeacon_mac());
+    editor.putString("course_code", selected.getCourse_code());
+    editor.putInt("classroom_id", selected.getClassroom_id());
+    editor.apply();
+}
+
+public Schedule.CourseInfo getSelectedCourse(){
+
+    pref = context.getSharedPreferences("conflict", PRIVATE_MODE);
+  Schedule newSchedule = new Schedule();
+  newSchedule.add(
+          pref.getInt("course_id",0),
+          pref.getInt("section", 0),
+          pref.getString("week_day", null),
+          pref.getString("hour", null),
+          pref.getString("beacon_mac",null),
+          pref.getString("course_code",null),
+          pref.getInt("classroom_id", 0)
+  );
+ return newSchedule.getCourses().get(0);
+}
+
+public void resetConflict(){
+    pref = context.getSharedPreferences("conflict", PRIVATE_MODE);
+    editor = pref.edit();
+    editor.clear();
+    editor.apply();
+}
 
 }

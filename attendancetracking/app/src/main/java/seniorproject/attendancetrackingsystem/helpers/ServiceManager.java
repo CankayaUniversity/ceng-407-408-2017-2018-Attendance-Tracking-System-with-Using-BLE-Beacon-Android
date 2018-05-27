@@ -26,7 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -39,6 +39,7 @@ import java.util.TimerTask;
 import br.com.goncalves.pugnotification.notification.PugNotification;
 import seniorproject.attendancetrackingsystem.R;
 import seniorproject.attendancetrackingsystem.activities.MainActivity;
+import seniorproject.attendancetrackingsystem.activities.SelectCurrentCourse;
 import seniorproject.attendancetrackingsystem.utils.RegularMode;
 import seniorproject.attendancetrackingsystem.utils.Schedule;
 
@@ -48,6 +49,7 @@ public class ServiceManager extends Service {
   private static final String START_REGULAR = "09:20"; // starting regular mode at 09:20
   private static final String STOP_REGULAR = "17:10"; // stoping regular mode at 17:10
   private final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
+  private final ArrayList<Schedule.CourseInfo> currentCourses = new ArrayList<>();
   private boolean updatedForToday = false;
   private boolean noCourseForToday = false;
   private Schedule schedule = null;
@@ -57,20 +59,21 @@ public class ServiceManager extends Service {
   private boolean allowNotification = true;
   private boolean secure = false;
   private boolean expired = false;
-
   private Date currentDate = null;
   private Date regularStart = null;
   private Date regularEnd = null;
   private Date updateDate = null;
   private Date breakTime = null;
+  private SessionManager sessionManager;
 
   @Override
   public void onCreate() {
     super.onCreate();
     TrueTime.clearCachedInfo(this);
     final BluetoothChecker bluetoothChecker = new BluetoothChecker();
+    sessionManager = new SessionManager(getBaseContext());
     handler = new Handler(getMainLooper());
-    Timer timer = new Timer();
+    final Timer timer = new Timer();
 
     timer.scheduleAtFixedRate(
         new TimerTask() {
@@ -84,7 +87,7 @@ public class ServiceManager extends Service {
                     .withConnectionTimeout(41328)
                     .withLoggingEnabled(true)
                     .withSharedPreferences(getApplicationContext())
-                        .withServerResponseDelayMax(60000)
+                    .withServerResponseDelayMax(60000)
                     .initialize();
               } catch (IOException e) {
                 e.printStackTrace();
@@ -95,14 +98,15 @@ public class ServiceManager extends Service {
             SimpleDateFormat currentDateFormatter = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
             currentDateFormatter.setTimeZone(TimeZone.getTimeZone("GMT+3"));
             SimpleDateFormat dayFormat = new SimpleDateFormat("EEE", Locale.ENGLISH);
-            try {
+           try {
               currentDate = dayFormat.parse(dayFormat.format(cur));
-              if (dayFormat.format(currentDate).equals("Sat") || dayFormat.format(currentDate).equals("Sun")) {
+              if (dayFormat.format(currentDate).equals("Sat")
+                  || dayFormat.format(currentDate).equals("Sun")) {
                 broadcastCourseInfo("weekend");
                 runCollector();
                 return;
               }
-            }catch (ParseException e){
+            } catch (ParseException e) {
               e.printStackTrace();
             }
 
@@ -112,6 +116,7 @@ public class ServiceManager extends Service {
               regularStart = dateFormat.parse(START_REGULAR);
               regularEnd = dateFormat.parse(STOP_REGULAR);
               updateDate = dateFormat.parse(UPDATE);
+
               if (currentDate.compareTo(updateDate) >= 0
                   && currentDate.compareTo(regularStart) < 0) {
                 // Log.i("ACTION", "UPDATE");
@@ -122,8 +127,10 @@ public class ServiceManager extends Service {
                 if (!noCourseForToday) {
                   if (updatedForToday) {
                     if (!isServiceIsRunning(RegularMode.class)) {
-                      currentCourse = currentCourse(currentDate);
-                      if (currentCourse != null) {
+                      getCurrentCourses(currentDate);
+                      // currentCourse = currentCourse(currentDate);
+                      if (currentCourses.size() == 1) {
+                        currentCourse = currentCourses.get(0);
                         broadcastCourseInfo(currentCourse);
                         breakTime = dateFormat.parse(currentCourse.getEnd_hour());
                         // CHECK BLUETOOTH
@@ -137,6 +144,29 @@ public class ServiceManager extends Service {
                         } catch (InterruptedException e) {
                           e.printStackTrace();
                         }
+                      } else if (currentCourses.size() > 1) {
+                        if (!sessionManager.getConflict()) {
+                          sessionManager.setConflict(true);
+                          simpleNotification("Conflict", "Please select course that you want to" +
+                                  " attend", SelectCurrentCourse.class);
+                        }
+                        if (!sessionManager.getIsCourseSelected()) broadcastCourseInfo("conflict");
+                        else{
+                          currentCourse = sessionManager.getSelectedCourse();
+                          broadcastCourseInfo(currentCourse);
+                          breakTime = dateFormat.parse(currentCourse.getEnd_hour());
+                          if (!BluetoothAdapter.getDefaultAdapter().isEnabled())
+                            bluetoothChecker.start();
+                          try {
+                            bluetoothChecker.join();
+                            // IF SERVICE IS NOT RUNNING START REGULAR
+                            if (!isServiceIsRunning(RegularMode.class))
+                              startRegularMode(currentCourse);
+                          } catch (InterruptedException e) {
+                            e.printStackTrace();
+                          }
+                        }
+
                       } else {
                         // IF THERE IS NOT ACTIVE COURSE
                         broadcastCourseInfo("null");
@@ -149,7 +179,8 @@ public class ServiceManager extends Service {
                         if (isServiceIsRunning(RegularMode.class)) stopRegularMode();
                         allowNotification = true;
                         secure = false;
-                        new SessionManager(getApplicationContext()).allowSecure();
+                        sessionManager.allowSecure();
+                        sessionManager.resetConflict();
                         runCollector();
                       } else if (currentCourse != null && !secure) {
                         // REGULAR MODE LECTURE
@@ -169,6 +200,7 @@ public class ServiceManager extends Service {
                 } else {
                   // IF THERE IS NOT ANY COURSE FOR TODAY
                   broadcastCourseInfo("no_course_for_today");
+                  sessionManager.resetConflict();
                   runCollector();
                 }
               } else {
@@ -179,8 +211,9 @@ public class ServiceManager extends Service {
                 updatedForToday = false;
                 noCourseForToday = false;
                 secure = false;
-                if (!new SessionManager(getBaseContext()).dailyNotificationState())
-                  new SessionManager(getBaseContext()).changeDailyNotificationState(true);
+                if (!sessionManager.dailyNotificationState())
+                  sessionManager.changeDailyNotificationState(true);
+                sessionManager.resetConflict();
                 runCollector();
               }
             } catch (ParseException e) {
@@ -328,11 +361,10 @@ public class ServiceManager extends Service {
                               JsonHelper.getInstance(getBaseContext()).parseSchedule(response);
                           if (schedule.getCourses().size() > 0) {
                             updatedForToday = true;
-                            if (new SessionManager(getBaseContext()).dailyNotificationState()) {
+                            if (sessionManager.dailyNotificationState()) {
                               simpleNotification(
                                   "Update", "Your daily schedule is updated", MainActivity.class);
-                              new SessionManager(getBaseContext())
-                                  .changeDailyNotificationState(false);
+                              sessionManager.changeDailyNotificationState(false);
                             }
                           }
                         }
@@ -346,10 +378,7 @@ public class ServiceManager extends Service {
                   protected Map<String, String> getParams() {
                     Map<String, String> params = new HashMap<>();
                     params.put(
-                        "user_id",
-                        new SessionManager(getBaseContext())
-                            .getUserDetails()
-                            .get(SessionManager.KEY_USER_ID));
+                        "user_id", sessionManager.getUserDetails().get(SessionManager.KEY_USER_ID));
                     params.put("operation", "schedule");
                     return params;
                   }
@@ -416,21 +445,22 @@ public class ServiceManager extends Service {
                 == NetworkInfo.State.CONNECTED;
   }
 
-  private Schedule.CourseInfo currentCourse(Date currentTime) {
-    Schedule.CourseInfo current = null;
+  private void getCurrentCourses(Date currentTime) {
+    currentCourses.clear();
+    currentCourse = null;
+    if (schedule == null) return;
     for (Schedule.CourseInfo x : schedule.getCourses()) {
       String start = x.getHour();
       String end = x.getEnd_hour();
       try {
         if (currentTime.compareTo(dateFormat.parse(start)) >= 0
             && currentTime.compareTo(dateFormat.parse(end)) < 0) {
-          current = x;
+          currentCourses.add(x);
         }
       } catch (ParseException e) {
         e.printStackTrace();
       }
     }
-    return current;
   }
 
   @Override

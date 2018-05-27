@@ -66,6 +66,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import seniorproject.attendancetrackingsystem.R;
+import seniorproject.attendancetrackingsystem.activities.SelectCurrentCourse;
+import seniorproject.attendancetrackingsystem.activities.StudentActivity;
 import seniorproject.attendancetrackingsystem.helpers.DatabaseManager;
 import seniorproject.attendancetrackingsystem.helpers.SessionManager;
 import seniorproject.attendancetrackingsystem.utils.RegularMode;
@@ -187,6 +189,10 @@ public class WelcomeFragment extends Fragment {
       secure_mode = false;
       expired = false;
       messages.add("Weekend!");
+    }else if(course_code.equals("conflict")){
+      secure_mode = false;
+      expired = false;
+      messages.add("PLEASE SELECT COURSE YOU WANT TO ATTEND");
     }
     addAllLatestCourses();
     Parcelable state = listView.onSaveInstanceState();
@@ -664,7 +670,15 @@ public class WelcomeFragment extends Fragment {
                 }
               }
             });
-      } else {
+      } else if(course_code.equals("conflict")){
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+          @Override
+          public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            startActivity(new Intent(getContext(), SelectCurrentCourse.class));
+          }
+        });
+      }
+        else{
         listView.setOnItemClickListener(
             new AdapterView.OnItemClickListener() {
               @Override

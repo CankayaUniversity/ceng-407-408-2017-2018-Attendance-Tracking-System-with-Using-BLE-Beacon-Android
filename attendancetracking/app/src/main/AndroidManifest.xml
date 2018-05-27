@@ -12,8 +12,8 @@
     <uses-feature android:name="android.hardware.camera" />
 
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <uses-feature
         android:name="android.hardware.bluetooth_le"
@@ -22,13 +22,13 @@
     <application
         android:name=".utils.Globals"
         android:allowBackup="true"
+        android:fullBackupContent="@xml/my_backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/MyTheme"
-        android:fullBackupContent="@xml/my_backup_rules"
-        android:largeHeap="true">
+        android:theme="@style/MyTheme">
         <activity
             android:name=".activities.MainActivity"
             android:screenOrientation="portrait">
@@ -47,13 +47,16 @@
         <activity
             android:name=".activities.StudentActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".activities.LecturerActivity"
+        <activity
+            android:name=".activities.LecturerActivity"
             android:screenOrientation="portrait" />
-        <service android:name=".helpers.BeaconBuilder"/>
-        <service android:name=".utils.RegularMode"/>
-        <service android:name=".helpers.ServiceManager"/>
-        <service android:name=".helpers.Logger"/>
-        <service android:name=".helpers.Pusher"/>
+
+        <service android:name=".helpers.BeaconBuilder" />
+        <service android:name=".utils.RegularMode" />
+        <service android:name=".helpers.ServiceManager" />
+        <service android:name=".helpers.Logger" />
+        <service android:name=".helpers.Pusher" />
+
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.example.android.fileprovider"
@@ -61,8 +64,12 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths"/>
+                android:resource="@xml/provider_paths" />
         </provider>
+
+        <activity
+            android:name=".activities.SelectCurrentCourse"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>
