@@ -67,6 +67,12 @@ echo '<html>
             <span class="nav-link-text">Add Schedule</span>
           </a>
         </li>
+         <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Dashboard">
+          <a class="nav-link" href="reports.php">
+            <i class="fa fa-fw fa-dashboard"></i>
+            <span class="nav-link-text">Reports</span>
+          </a>
+        </li>
         <li class="nav-item" data-toggle="tooltip" data-placement="right" title="Dashboard">
           <a class="nav-link" href="searchAdmin.php">
             <i class="fa fa-fw fa-dashboard"></i>
