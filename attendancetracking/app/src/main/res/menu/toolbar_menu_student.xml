@@ -3,11 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/change_password"
         android:title="@string/change_password"
         app:showAsAction="never" />
     <item
-        android:id="@+id/report_problem"
         android:title="@string/reportProblem"
         app:showAsAction="never" />
 </menu>

@@ -1,10 +1,12 @@
 package seniorproject.attendancetrackingsystem.utils;
 
+import android.support.annotation.NonNull;
+
 import java.util.Iterator;
 import java.util.LinkedList;
 
 public class Queue<T> implements Iterable<T> {
-  private LinkedList<T> elements = new LinkedList<>();
+  private final LinkedList<T> elements = new LinkedList<>();
 
   public void enqueue(T element){
     elements.add(element);
@@ -26,6 +28,7 @@ public class Queue<T> implements Iterable<T> {
     return elements.size();
   }
 
+  @SuppressWarnings("BooleanMethodIsAlwaysInverted")
   public boolean isEmpty(){
     return elements.isEmpty();
   }
@@ -34,6 +37,7 @@ public class Queue<T> implements Iterable<T> {
     if(!elements.contains(element)) elements.add(element);
   }
 
+  @NonNull
   @Override
   public Iterator<T> iterator(){
     return elements.iterator();

@@ -3,19 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:scrollbars="none">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <EditText
             android:id="@+id/student_schoolID"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_alignParentStart="true"
-            android:layout_below="@+id/student_surname"
             android:layout_marginTop="13dp"
             android:ems="10"
             android:hint="@string/school_id_register_id"
@@ -29,8 +28,6 @@
             android:id="@+id/student_password"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_alignParentStart="true"
-            android:layout_below="@+id/student_e_mail"
             android:layout_marginTop="13dp"
             android:ems="10"
             android:hint="@string/password_student_register"
@@ -44,8 +41,6 @@
             android:id="@+id/student_e_mail"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_alignParentStart="true"
-            android:layout_below="@+id/student_schoolID"
             android:layout_marginTop="13dp"
             android:ems="10"
             android:hint="@string/e_mail_register_student"
@@ -72,8 +67,6 @@
             android:id="@+id/student_surname"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_alignParentStart="true"
-            android:layout_below="@+id/student_name"
             android:layout_marginTop="13dp"
             android:ems="10"
             android:hint="@string/surname_register_student"
@@ -93,23 +86,20 @@
                 style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="150dp"
                 android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/upload_image_view"
-                android:layout_alignParentStart="true"
-                android:layout_marginLeft="5dp"
+                android:layout_marginStart="5dp"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/button_border"
-                android:text="Take Pıcture" />
+                android:text="@string/take_picture" />
 
-            <ImageView
+            <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/upload_image_view"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:layout_above="@+id/register_button"
-                android:layout_alignParentEnd="true"
-                android:layout_marginBottom="50dp"
-                android:layout_marginLeft="25dp"
-                android:layout_marginTop="10dp"
-                app:srcCompat="@android:drawable/btn_star" />
+                android:layout_width="125dp"
+                android:layout_height="133dp"
+                android:layout_marginStart="55dp"
+                android:layout_marginTop="20dp"
+                android:contentDescription="@string/avatar_text"
+                app:civ_border_color="@android:color/white"
+                app:civ_border_width="3dp" />
         </LinearLayout>
 
         <Button
@@ -117,8 +107,6 @@
             style="@style/Widget.AppCompat.Button.Borderless"
             android:layout_width="170dp"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
             android:layout_gravity="center"
             android:layout_marginBottom="45dp"
             android:layout_marginTop="15dp"

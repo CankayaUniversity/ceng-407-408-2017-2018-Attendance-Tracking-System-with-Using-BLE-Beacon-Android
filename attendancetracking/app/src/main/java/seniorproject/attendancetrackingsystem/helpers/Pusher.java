@@ -25,10 +25,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+@SuppressWarnings("ResultOfMethodCallIgnored")
 public class Pusher extends IntentService {
-  private String filename = "pusher.queue";
+  private final String filename = "pusher.queue";
   private boolean connected = false;
-  private int user_id;
 
   public Pusher() {
     super("PusherService");
@@ -39,8 +39,7 @@ public class Pusher extends IntentService {
     assert intent != null;
     int classroom_id = intent.getIntExtra("classroom_id", 0);
     long elapsed = intent.getLongExtra("elapsed", 0);
-    user_id =
-        Integer.parseInt(
+    int user_id = Integer.parseInt(
             new SessionManager(getBaseContext()).getUserDetails().get(SessionManager.KEY_USER_ID));
     zip();
     checkNetworkConnection();
@@ -100,7 +99,7 @@ public class Pusher extends IntentService {
             return params;
           }
         };
-    DatabaseManager.getmInstance(getBaseContext()).execute(request);
+    DatabaseManager.getInstance(getBaseContext()).execute(request);
   }
 
   private void addToPusherFile(final int classroom_id, final int user_id, final long elapsed) {
@@ -125,7 +124,7 @@ public class Pusher extends IntentService {
     }
   }
 
-  void tryPushEverything() {
+  private void tryPushEverything() {
     File root = new File(Environment.getExternalStorageDirectory(), "AttendanceTracking");
 
     if (!root.exists()) return;
@@ -201,11 +200,11 @@ public class Pusher extends IntentService {
   }
 
   private class PusherFormat {
-    String classroom_id;
+    final String classroom_id;
     String elapsed;
-    String user_id;
+    final String user_id;
 
-    public PusherFormat(String classroom_id, String user_id, String elapsed) {
+    PusherFormat(String classroom_id, String user_id, String elapsed) {
       this.classroom_id = classroom_id;
       this.elapsed = elapsed;
       this.user_id = user_id;

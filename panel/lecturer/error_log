@@ -1,0 +1,20 @@
+[16-May-2018 23:38:28 Europe/Istanbul] PHP Warning:  imagecreatefromjpeg(): gd-jpeg: JPEG library reports unrecoverable error:  in /home/rolatten/public_html/cropimage/index.php on line 79
+[16-May-2018 23:38:28 Europe/Istanbul] PHP Warning:  imagecreatefromjpeg(): 'deneme.png' is not a valid JPEG file in /home/rolatten/public_html/cropimage/index.php on line 79
+[16-May-2018 23:38:28 Europe/Istanbul] PHP Warning:  imagesx() expects parameter 1 to be resource, boolean given in /home/rolatten/public_html/cropimage/index.php on line 16
+[16-May-2018 23:38:28 Europe/Istanbul] PHP Warning:  imagesy() expects parameter 1 to be resource, boolean given in /home/rolatten/public_html/cropimage/index.php on line 17
+[16-May-2018 23:38:28 Europe/Istanbul] PHP Warning:  imagesx() expects parameter 1 to be resource, boolean given in /home/rolatten/public_html/cropimage/index.php on line 18
+[16-May-2018 23:38:28 Europe/Istanbul] PHP Warning:  imagesy() expects parameter 1 to be resource, boolean given in /home/rolatten/public_html/cropimage/index.php on line 19
+[16-May-2018 23:38:28 Europe/Istanbul] PHP Warning:  imagecreatetruecolor(): Invalid image dimensions in /home/rolatten/public_html/cropimage/index.php on line 43
+[16-May-2018 23:38:28 Europe/Istanbul] PHP Warning:  imagecopy() expects parameter 1 to be resource, boolean given in /home/rolatten/public_html/cropimage/index.php on line 44
+[16-May-2018 23:38:28 Europe/Istanbul] PHP Warning:  imagecreatetruecolor(): Invalid image dimensions in /home/rolatten/public_html/cropimage/index.php on line 61
+[16-May-2018 23:38:28 Europe/Istanbul] PHP Warning:  imagecolorallocate() expects parameter 1 to be resource, boolean given in /home/rolatten/public_html/cropimage/index.php on line 62
+[16-May-2018 23:38:28 Europe/Istanbul] PHP Warning:  imagecolortransparent() expects parameter 1 to be resource, boolean given in /home/rolatten/public_html/cropimage/index.php on line 63
+[16-May-2018 23:38:28 Europe/Istanbul] PHP Warning:  imagefilledellipse() expects parameter 1 to be resource, boolean given in /home/rolatten/public_html/cropimage/index.php on line 64
+[16-May-2018 23:38:28 Europe/Istanbul] PHP Warning:  imagecopymerge() expects parameter 1 to be resource, boolean given in /home/rolatten/public_html/cropimage/index.php on line 65
+[16-May-2018 23:38:28 Europe/Istanbul] PHP Warning:  imagecolorallocate() expects parameter 1 to be resource, boolean given in /home/rolatten/public_html/cropimage/index.php on line 68
+[16-May-2018 23:38:28 Europe/Istanbul] PHP Warning:  imagefill() expects parameter 1 to be resource, boolean given in /home/rolatten/public_html/cropimage/index.php on line 69
+[16-May-2018 23:38:28 Europe/Istanbul] PHP Warning:  imagefill() expects parameter 1 to be resource, boolean given in /home/rolatten/public_html/cropimage/index.php on line 70
+[16-May-2018 23:38:28 Europe/Istanbul] PHP Warning:  imagefill() expects parameter 1 to be resource, boolean given in /home/rolatten/public_html/cropimage/index.php on line 71
+[16-May-2018 23:38:28 Europe/Istanbul] PHP Warning:  imagefill() expects parameter 1 to be resource, boolean given in /home/rolatten/public_html/cropimage/index.php on line 72
+[16-May-2018 23:38:28 Europe/Istanbul] PHP Warning:  imagecolortransparent() expects parameter 1 to be resource, boolean given in /home/rolatten/public_html/cropimage/index.php on line 73
+[16-May-2018 23:38:28 Europe/Istanbul] PHP Warning:  imagepng() expects parameter 1 to be resource, boolean given in /home/rolatten/public_html/cropimage/index.php on line 33

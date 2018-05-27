@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:scrollbars="none">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
     <EditText
         android:id="@+id/input_school_id"
@@ -35,4 +41,16 @@
         android:text="@string/login_student_button"
         android:textAlignment="center"
         android:textColor="#fff" />
+        <Button
+            android:id="@+id/missing_password"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="170dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/button_border"
+            android:text="@string/forgot_password"
+            android:layout_marginTop="30dp"
+            android:textAlignment="center"
+            android:textColor="#fff" />
 </LinearLayout>
+</ScrollView>

@@ -1,9 +1,9 @@
 package seniorproject.attendancetrackingsystem.utils;
 
 public class Department {
-  private int departmentId;
-  private String departmentName;
-  private String abbreviation;
+  private final int departmentId;
+  private final String departmentName;
+  private final String abbreviation;
 
   /** Creates Department Object. */
 
@@ -17,23 +17,8 @@ public class Department {
     return departmentId;
   }
 
-  public void setDepartmentId(int departmentId) {
-    this.departmentId = departmentId;
-  }
-
   public String getDepartmentName() {
     return departmentName;
   }
 
-  public void setDepartmentName(String departmentName) {
-    this.departmentName = departmentName;
-  }
-
-  public String getAbbreviation() {
-    return abbreviation;
-  }
-
-  public void setAbbreviation(String abbreviation) {
-    this.abbreviation = abbreviation;
-  }
 }

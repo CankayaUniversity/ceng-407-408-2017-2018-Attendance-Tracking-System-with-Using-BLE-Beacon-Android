@@ -7,6 +7,8 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.support.annotation.Nullable;
 
+import com.instacart.library.truetime.TrueTime;
+
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;
 import org.altbeacon.beacon.BeaconManager;
@@ -17,29 +19,48 @@ import org.altbeacon.beacon.Region;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import seniorproject.attendancetrackingsystem.helpers.Logger;
-import seniorproject.attendancetrackingsystem.helpers.SessionManager;
 
+@SuppressWarnings("ResultOfMethodCallIgnored")
 public class RegularMode extends Service implements BeaconConsumer {
   public static final String ACTION = "REGULAR_MODE";
   private static final Region ALL_BEACONS = new Region("ALL_BEACONS", null, null, null);
   private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.ENGLISH);
   private final SimpleDateFormat dateFormatLog = new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH);
+
   private Schedule.CourseInfo currentCourse = null;
   private BeaconManager beaconManager;
   private String search;
   private String filename;
-  private Queue<String> queue = new Queue<>();
+  private final Queue<String> queue = new Queue<>();
 
   @Override
   public void onCreate() {
     super.onCreate();
+
+    TrueTime.clearCachedInfo(getBaseContext());
+    if (!TrueTime.isInitialized()) {
+      try {
+        TrueTime.build()
+                .withNtpHost("time.google.com")
+                .withConnectionTimeout(41328)
+                .withLoggingEnabled(true)
+                .withSharedPreferences(getBaseContext())
+                .withServerResponseDelayMax(60000)
+                .initialize();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
+
     beaconManager = BeaconManager.getInstanceForApplication(this);
+    beaconManager.getBeaconParsers().clear();
     beaconManager
         .getBeaconParsers()
         .add(new BeaconParser().setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24"));
@@ -54,18 +75,11 @@ public class RegularMode extends Service implements BeaconConsumer {
         .add(new BeaconParser().setBeaconLayout(BeaconParser.EDDYSTONE_TLM_LAYOUT));
     beaconManager
         .getBeaconParsers()
-        .add(new BeaconParser().setBeaconLayout(BeaconParser.URI_BEACON_LAYOUT));
-    beaconManager
-        .getBeaconParsers()
         .add(new BeaconParser().setBeaconLayout(BeaconParser.ALTBEACON_LAYOUT));
     beaconManager.setBackgroundMode(true);
-    beaconManager.setBackgroundScanPeriod(30000); // 30 seconds
-    beaconManager.setBackgroundBetweenScanPeriod(60 * 1000 + 30000); // 1 minutes and 30 seconds
-    try {
-      beaconManager.updateScanPeriods();
-    } catch (RemoteException e) {
-    }
-    // new BackgroundPowerSaver(this);
+    beaconManager.setBackgroundScanPeriod(10000); // 10 seconds scans
+    beaconManager.setBackgroundBetweenScanPeriod(90000); // 90 seconds waits
+    BeaconManager.setAndroidLScanningDisabled(true);
     beaconManager.bind(this);
   }
 
@@ -92,22 +106,22 @@ public class RegularMode extends Service implements BeaconConsumer {
         new RangeNotifier() {
           @Override
           public void didRangeBeaconsInRegion(Collection<Beacon> collection, Region region) {
-            boolean flag = false;
+            SimpleDateFormat currentTimeFormatter = new SimpleDateFormat("HH:mm:ss", Locale
+                    .ENGLISH);
+            currentTimeFormatter.setTimeZone(TimeZone.getTimeZone("GMT+3"));
             for (Beacon x : collection) {
 
               if (x.getBluetoothAddress().equals(search)) {
-                String value = dateFormatLog.format(new Date());
+                String value = currentTimeFormatter.format
+                        (TrueTime.now());
                 queue.enqueueDistinct(value);
-                if (queue.size() >= 5) writeLog();
-                flag = true;
+                if (queue.size() >= 3) writeLog();
               }
-            }
 
+            }
           }
         });
   }
-
-
 
   private void writeLog() {
     try {
@@ -150,15 +164,17 @@ public class RegularMode extends Service implements BeaconConsumer {
     search = intent.getStringExtra("search");
     currentCourse = (Schedule.CourseInfo) intent.getSerializableExtra("course-info");
     if (search.isEmpty() || currentCourse == null) stopSelf();
-    int user_id =
-        Integer.parseInt(new SessionManager(getBaseContext()).getUserDetails().get("user_id"));
+    SimpleDateFormat currentDateFormatter = new SimpleDateFormat("dd.MM.yyyy", Locale
+            .ENGLISH);
+    currentDateFormatter.setTimeZone(TimeZone.getTimeZone("GMT+3"));
     filename =
         currentCourse.getCourse_code()
             + "_"
             + currentCourse.getClassroom_id()
             + "_"
-            + dateFormat.format(new Date())
-            + ".txt";
+            + currentDateFormatter.format
+                (TrueTime.now())
+            + ".log";
     return START_NOT_STICKY;
   }
 }

@@ -25,6 +25,7 @@ import java.util.Map;
 
 import seniorproject.attendancetrackingsystem.utils.Queue;
 
+@SuppressWarnings("ResultOfMethodCallIgnored")
 public class Logger extends IntentService {
   private String start;
   private String stop;
@@ -32,7 +33,7 @@ public class Logger extends IntentService {
   private int classroom_id;
 
   private Queue<String> times = new Queue<>();
-  private SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH);
+  private final SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH);
   private long elapsed = 0;
 
   public Logger() {
@@ -72,10 +73,10 @@ public class Logger extends IntentService {
         if (first == null) first = start;
         second = times.dequeue();
 
-        long ftime = format.parse(first).getTime();
-        long stime = format.parse(second).getTime();
+        long firstTime = format.parse(first).getTime();
+        long secondTime = format.parse(second).getTime();
 
-        long diff = stime - ftime;
+        long diff = secondTime - firstTime;
         first = second;
         if (diff < (1000 * 60 * 6)) {
           elapsed = elapsed + diff;
@@ -165,7 +166,7 @@ public class Logger extends IntentService {
         return params;
       }
     };
-    DatabaseManager.getmInstance(getBaseContext()).execute(request);
+    DatabaseManager.getInstance(getBaseContext()).execute(request);
   }
 
   private void delete(String filename){
@@ -180,9 +181,9 @@ public class Logger extends IntentService {
     if(!root.exists()) return;
 
     File[] files = root.listFiles();
-    for(int i = 0; i < files.length; i++){
-      if(!files[i].getName().equals("pusher.queue")){
-        filename = files[i].getName();
+    for (File file : files) {
+      if (!file.getName().equals("pusher.queue")) {
+        filename = file.getName();
         String[] parts = filename.split("_");
         classroom_id = Integer.parseInt(parts[1]);
         getTimeAndDecide();

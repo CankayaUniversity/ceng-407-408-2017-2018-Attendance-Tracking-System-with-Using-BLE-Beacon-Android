@@ -6,23 +6,15 @@ public class Actor {
   private String surname;
   private String password;
   private String mail;
+  private String image;
 
-  Actor() {
-  }
-
-  public String getPassword() {
-    return this.password;
-  }
-
-  public void setPassword(String password) {
-    this.password = password;
-  }
+  Actor() {}
 
   public String getName() {
     return this.name;
   }
 
-  public void setName(String name) {
+  void setName(String name) {
     this.name = name;
   }
 
@@ -30,7 +22,7 @@ public class Actor {
     return this.surname;
   }
 
-  public void setSurname(String surname) {
+  void setSurname(String surname) {
     this.surname = surname;
   }
 
@@ -38,15 +30,23 @@ public class Actor {
     return this.mail;
   }
 
-  public void setMail(String mail) {
+  void setMail(String mail) {
     this.mail = mail;
+  }
+
+  public String getImage() {
+    return this.image;
+  }
+
+  void setImage(String img) {
+    this.image = img;
   }
 
   public int getId() {
     return id;
   }
 
-  public void setId(int id) {
+  void setId(int id) {
     this.id = id;
   }
 }

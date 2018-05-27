@@ -1,14 +1,30 @@
 <?php
 require_once 'db.php';
+
+function send_error($text){
+	$json["success"] = false;
+	$json["message"]= $text;
+	echo json_encode($json);
+	exit(0);
+}
+
+function empty_field_error(){
+	send_error("Empty field error");
+}
+
+function send_success(){
+	$json["success"] = true;
+	echo json_encode($json);
+	exit(0);
+}
+
+
 if($_SERVER["REQUEST_METHOD"]!= "POST") exit(0);
 if(empty($_POST["operation"])) exit(0);
 switch($_POST["operation"]){
 	case "course-assignment":
 		if(empty($_POST["user_type"]) || empty($_POST["user_id"]) || empty($_POST["course_id"]) || empty($_POST["section"])) {
-			$json ["success"] = false;
-			$json["message"] = "Empty field error";
-			echo json_encode($json);
-			exit(0);
+			empty_field_error();
 		}
 		$userType = $_POST["user_type"];
 		$userId = $_POST["user_id"];
@@ -22,19 +38,15 @@ switch($_POST["operation"]){
 		
 		$result = mysqli_query($con, $query);
 		if($result){
-			$json ["success"] = true;
+			send_success();
 		}else{
-			$json ["success"] = false;
-			$json ["message"] = "An error has been occured while doing insert operation";
+			send_error("An error has been occured while doing insert operation");
 		}
 		echo json_encode($json);
 	break;
 	case "beacon-mac":
 		if(empty($_POST["user_id"]) || empty($_POST["beacon_mac"])){
-			$json ["success"] = false;
-			$json ["message"] = "Empty field error";
-			echo json_encode($json);
-			exit(0);
+			empty_field_error();
 		}
 		$user_id = $_POST["user_id"];
 		$beacon = $_POST["beacon_mac"];
@@ -42,19 +54,14 @@ switch($_POST["operation"]){
 		$query = "UPDATE Lecturer SET beacon_mac = '$beacon' WHERE lecturer_id = '$user_id'";
 		$result = mysqli_query($con, $query);
 		if($result){
-			$json ["success"] = true;
+			send_success();
 		}else{
-			$json ["success"] = false;
-			$json ["message"] = "An error has been occured while doing update operation";
+			send_error("An error has been occured while doing update operation");
 		}
-		echo json_encode($json);
 	break;
 	case "attendance":
 	if(empty($_POST["user_id"]) || empty($_POST["classroom_id"]) || empty($_POST["total_time"])){
-			$json ["success"] = false;
-			$json ["message"] = "Empty field error";
-			echo json_encode($json);
-			exit(0);
+			empty_field_error();
 	}
 	
 	$user_id = $_POST["user_id"];
@@ -64,9 +71,7 @@ switch($_POST["operation"]){
 	$query = "SELECT * FROM Token WHERE classroom_id = '$classroom_id'";
 	$result = mysqli_query($con, $query);
 	if(mysqli_num_rows($result) > 0){
-		$json["success"] = true;
-		echo json_encode($json);
-		exit(0);
+		send_success();
 	}
 	$query = "SELECT Preconditions.* FROM Preconditions 
 	INNER JOIN Classroom ON Classroom.course_id = Preconditions.course_id 
@@ -96,20 +101,20 @@ switch($_POST["operation"]){
 			$query = "UPDATE Attended_Students SET status = '$status', time = '$total_time' WHERE classroom_id = '$classroom_id' AND student_id = '$user_id'";
 			$result = mysqli_query($con, $query);
 			if($result){
-				$json["success"] = true;
+				send_success();
 			}else
 			{
-				$json["success"] = false;
+				send_error("error on updating");
 			}
 		}else
 		{
 			$query = "INSERT INTO Attended_Students(classroom_id, student_id, status, time) VALUES('$classroom_id', '$user_id', '$status', '$total_time')";
 			$result = mysqli_query($con, $query);
 			if($result){
-				$json["success"] = true;
+				send_success();
 			}else
 			{
-				$json["success"] = false;
+				send_error("error on inserting");
 			}
 			
 		}
@@ -119,10 +124,7 @@ switch($_POST["operation"]){
 	break;
 	case 'token':
 	if(empty($_POST["classroom_id"]) || empty($_POST["token_value"])){
-		$json ["message"] = "Empty field error";
-		$json ["success"] = false;
-		echo json_encode($json);
-		exit(0);
+		empty_field_error();
 	}
 	$classroom_id = $_POST["classroom_id"];
 	$token_value = md5($_POST["token_value"]);
@@ -130,20 +132,16 @@ switch($_POST["operation"]){
 	$query = "INSERT INTO Token (classroom_id, token_value, time) VALUES('$classroom_id', '$token_value', '$time')";
 	$result = mysqli_query($con, $query);
 	if($result){
-		$json ["success"] = true;
+		send_success();
 	}
 	else
 	{
-		$json["success"] = false;
+		send_error("error on inserting");
 	}
-	echo json_encode($json);
 	break;
 	case 'enter-token':
 	if(empty($_POST["classroom_id"]) || empty($_POST["token_value"])){
-		$json["message"] = "Empty field error";
-		$json ["success"] = false;
-		echo json_encode($json);
-		exit(0);
+		empty_field_error();
 	}
 	$classroom_id = $_POST["classroom_id"];
 	$token_value = md5($_POST["token_value"]);
@@ -175,10 +173,7 @@ switch($_POST["operation"]){
 	break;
 	case "preconditions":
 		if(empty($_POST["course_id"]) || empty($_POST["middle"]) || empty($_POST["attended"])){
-			$json["message"] = "Empty field error";
-			$json["success"] = false;
-			echo json_encode($json);
-			exit(0);
+			empty_field_error();
 		}
 		$course_id = $_POST["course_id"];
 		$middle = $_POST["middle"];
@@ -191,13 +186,10 @@ switch($_POST["operation"]){
 				$query = "UPDATE Preconditions SET middle_condition = '$middle', attended_condition = '$attended' WHERE course_id='$course_id'";
 				$result = mysqli_query($con, $query);
 				if(!$result){
-					$json["success"] = false;
-					$json["message"] = "Update error";
-					echo json_encode($json);
-					exit(0);
+					send_error("Update error");
 				}else
 				{
-					$json["success"] = true;
+					send_success();
 				}
 		}
 		else
@@ -205,23 +197,16 @@ switch($_POST["operation"]){
 			$query = "INSERT INTO Preconditions (course_id, middle_condition, attended_condition) VALUES('$course_id', '$middle', '$attended')";
 			$result = mysqli_query($con, $query);
 			if(!$result){
-				$json["success"] = false;
-				$json["message"] = "Insert error";
-				echo json_encode($json);
-				exit(0);
+				send_error("Insert error");
 			}else
 			{
-				$json["success"] = true;
+				send_success();
 		}
 		}
-		echo json_encode($json);
 	break;
 	case 'issue':
 		if(empty($_POST["subject"]) || empty($_POST["message"]) || empty($_POST["sender_mail"])){
-			$json["message"] = "Empty field error";
-			$json["success"] = false;
-			echo json_encode($json);
-			exit(0);
+			empty_field_error();
 		}
 		$subject = $_POST["subject"];
 		$message = $_POST["message"];
@@ -229,13 +214,86 @@ switch($_POST["operation"]){
 		$query = "INSERT INTO Issues(subject, message, sender_mail) VALUES('$subject', '$message', '$sender_mail')";
 		$result = mysqli_query($con, $query);
 		if($result){
-			$json["success"] = true;
+			send_success();
 		}else
 		{
-			$json["success"] = false;
-			$json["message"] = "Error while inserting database";
+			send_error("Error while inserting database");
 		}
-		echo json_encode($json);
+	break;
+	case 'cancel-classroom':
+		if(empty($_POST["classroom_id"])){
+			empty_field_error();
+		}
+		$classroom_id = $_POST["classroom_id"];
+		$query = "UPDATE Classroom SET active = 0 WHERE classroom_id='$classroom_id'";
+		$result = mysqli_query($con, $query);
+		if($result)
+			send_success();
+		else{
+			send_error("Error while updating database");
+		}
+	break;
+	case 'mark-as-attended':
+		if(empty($_POST["classroom_id"]) || empty($_POST["student_id"]) || empty($_POST["status"])){
+			empty_field_error();
+		}
+		$classroom_id = $_POST["classroom_id"];
+		$student_id = $_POST["student_id"];
+		$status = $_POST["status"];
+		$query = "SELECT * FROM Attended_Students WHERE classroom_id = '$classroom_id' AND student_id = '$student_id'";
+		
+		$result = mysqli_query($con, $query);
+		if(mysqli_num_rows($result)>0){
+			if($status == "true")
+				$query = "UPDATE Attended_Students SET status = '3' WHERE classroom_id = '$classroom_id' AND student_id = '$student_id'";
+			else
+				$query = "UPDATE Attended_Students SET status = '0'WHERE classroom_id = '$classroom_id' AND student_id = '$student_id'";
+			$result = mysqli_query($con, $query);
+			if($result) send_success();
+			else{
+				send_error("Error while updating database");
+			}
+		}else
+		{
+			if($status == "true")
+				$query = "INSERT Attended_Students(classroom_id, student_id, status) VALUES('$classroom_id', '$student_id', '3')";
+			else
+				$query = "INSERT Attended_Students(classroom_id, student_id, status) VALUES('$classroom_id', '$student_id', '0')";
+			$result = mysqli_query($con, $query);
+			if($result) {
+				send_success();
+			}
+			else {
+				send_error("Error while inserting database");
+			}
+		}
+	break;
+	case 'secure-image':
+		if(empty($_POST["user_id"]) || empty($_POST["classroom_id"]) || empty($_POST["image"])){
+			empty_field_error();
+		}
+		$classroom_id = $_POST["classroom_id"];
+		$user_id = $_POST["user_id"];
+		$image = $_POST["image"];
+		$path = "secure_images/".$classroom_id."_".$user_id.".jpg";
+		
+		$query = "SELECT * FROM Attended_Students WHERE classroom_id = '$classroom_id' AND student_id='$user_id'";
+		$result = mysqli_query($con, $query);
+		if(mysqli_num_rows($result) > 0){
+			$query = "UPDATE Attended_Students SET status='3', secure_img = '$path' WHERE classroom_id='$classroom_id' AND student_id='$user_id'";
+		}else
+		{
+			$query = "INSERT INTO Attended_Students(classroom_id, student_id, status, secure_img) VALUES('$classroom_id', '$user_id', '3', '$path')";
+		}
+		
+		$result = mysqli_query($con, $query);
+		if($result){
+			file_put_contents($path, base64_decode($image));
+			send_success();
+		}else
+		{
+			send_error("Error while saving your photo. Please try again.");
+		}
 	break;
 }
 

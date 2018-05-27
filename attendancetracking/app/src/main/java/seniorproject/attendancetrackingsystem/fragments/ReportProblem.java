@@ -3,6 +3,7 @@ package seniorproject.attendancetrackingsystem.fragments;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -22,6 +23,7 @@ import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import seniorproject.attendancetrackingsystem.R;
 import seniorproject.attendancetrackingsystem.helpers.DatabaseManager;
@@ -37,12 +39,12 @@ public class ReportProblem extends Fragment {
 
   @Override
   public View onCreateView(
-      LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+          @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     return inflater.inflate(R.layout.report_problem, container, false);
   }
 
   @Override
-  public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+  public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
     handler = new Handler(Looper.getMainLooper());
     issue = view.findViewById(R.id.issue);
@@ -70,7 +72,7 @@ public class ReportProblem extends Fragment {
         new Runnable() {
           @Override
           public void run() {
-            Toast.makeText(getActivity().getApplicationContext(), text, Toast.LENGTH_SHORT).show();
+            Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), text, Toast.LENGTH_SHORT).show();
           }
         });
   }
@@ -110,7 +112,7 @@ public class ReportProblem extends Fragment {
             params.put("message", message);
             params.put(
                 "sender_mail",
-                new SessionManager(getActivity().getApplicationContext())
+                new SessionManager(Objects.requireNonNull(getActivity()).getApplicationContext())
                     .getUserDetails()
                     .get(SessionManager.KEY_USER_MAIL));
             params.put("operation","issue");
@@ -118,7 +120,7 @@ public class ReportProblem extends Fragment {
           }
         };
     try {
-      DatabaseManager.getmInstance(getActivity().getApplicationContext()).execute(request);
+      DatabaseManager.getInstance(Objects.requireNonNull(getActivity()).getApplicationContext()).execute(request);
     } catch (NullPointerException e) {
       // do nothing
     }

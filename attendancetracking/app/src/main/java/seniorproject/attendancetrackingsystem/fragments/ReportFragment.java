@@ -17,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -30,6 +31,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -37,6 +40,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 import seniorproject.attendancetrackingsystem.R;
 import seniorproject.attendancetrackingsystem.helpers.DatabaseManager;
@@ -46,13 +50,16 @@ import seniorproject.attendancetrackingsystem.helpers.SessionManager;
 public class ReportFragment extends Fragment {
   private final SimpleDateFormat simpleDateFormat =
       new SimpleDateFormat("dd.MM.yyyy", Locale.ENGLISH);
+  private final ArrayList<Taken_Lecture_Row> takenLectures = new ArrayList<>();
+  private final ArrayList<String> courses = new ArrayList<>();
+  private final ArrayList<CalendarColumn> columnList = new ArrayList<>();
   private Handler handler;
-  private ArrayList<Taken_Lecture_Row> takenLectures = new ArrayList<>();
-  private ArrayList<String> courses = new ArrayList<>();
   private Spinner course_spinner;
   private ArrayAdapter<String> course_adapter;
   private FrameLayout calendar_holder;
-  private ArrayList<CalendarColumn> columnList = new ArrayList<>();
+  private TextView attended_percentage;
+  private TextView absent_percentage;
+  private TextView nearly_percentage;
 
   public ReportFragment() {
     // Required empty public constructor
@@ -60,20 +67,25 @@ public class ReportFragment extends Fragment {
 
   @Override
   public View onCreateView(
-      LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+      @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     // Inflate the layout for this fragment
-    View root = inflater.inflate(R.layout.fragment_report, container, false);
-    return root;
+    return inflater.inflate(R.layout.fragment_report, container, false);
   }
 
   @Override
   public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
     super.onViewCreated(view, savedInstanceState);
+    attended_percentage = view.findViewById(R.id.attended_percentage);
+    nearly_percentage = view.findViewById(R.id.nearly_percentage);
+    absent_percentage = view.findViewById(R.id.absent_percentage);
     handler = new Handler(Looper.getMainLooper());
-    course_spinner = view.findViewById(R.id.lecturelist);
+    course_spinner = view.findViewById(R.id.lecture_list);
     course_adapter =
-        new ArrayAdapter<>(getActivity().getApplicationContext(), R.layout.spinner_item2, courses);
-    course_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        new ArrayAdapter<>(
+            Objects.requireNonNull(getActivity()).getApplicationContext(),
+            R.layout.spinner_item2,
+            courses);
+    course_adapter.setDropDownViewResource(R.layout.spinner_item2);
     calendar_holder = view.findViewById(R.id.cal_container);
     course_spinner.setOnItemSelectedListener(
         new AdapterView.OnItemSelectedListener() {
@@ -106,13 +118,16 @@ public class ReportFragment extends Fragment {
         new Runnable() {
           @Override
           public void run() {
-            Toast.makeText(getActivity().getApplicationContext(), message, Toast.LENGTH_SHORT)
+            Toast.makeText(
+                    Objects.requireNonNull(getActivity()).getApplicationContext(),
+                    message,
+                    Toast.LENGTH_SHORT)
                 .show();
           }
         });
   }
 
-  private int isExistsInDisctinctList(ArrayList<CalendarColumn> arr, CalendarColumn x) {
+  private int isExistsInDistinctList(ArrayList<CalendarColumn> arr, CalendarColumn x) {
     int index = -1;
     for (CalendarColumn y : arr) {
       index++;
@@ -139,7 +154,7 @@ public class ReportFragment extends Fragment {
     ArrayList<CalendarColumn> distinctList = new ArrayList<>();
 
     for (CalendarColumn x : columnList) {
-      int index = isExistsInDisctinctList(distinctList, x);
+      int index = isExistsInDistinctList(distinctList, x);
       if (index == -1) addClone(distinctList, x);
       else {
         if (distinctList.get(index).status != x.status) {
@@ -151,12 +166,17 @@ public class ReportFragment extends Fragment {
 
     for (CalendarColumn x : distinctList) {
       try {
-        if (x.status == 0)
-          caldroidFragment.setBackgroundDrawableForDate(red, (simpleDateFormat).parse(x.date));
-        else if (x.status == 1)
-          caldroidFragment.setBackgroundDrawableForDate(yellow, simpleDateFormat.parse(x.date));
-        else if (x.status == 2)
-          caldroidFragment.setBackgroundDrawableForDate(green, simpleDateFormat.parse(x.date));
+        switch (x.status) {
+          case 0:
+            caldroidFragment.setBackgroundDrawableForDate(red, (simpleDateFormat).parse(x.date));
+            break;
+          case 1:
+            caldroidFragment.setBackgroundDrawableForDate(yellow, simpleDateFormat.parse(x.date));
+            break;
+          case 2:
+            caldroidFragment.setBackgroundDrawableForDate(green, simpleDateFormat.parse(x.date));
+            break;
+        }
       } catch (ParseException e) {
         // do nothing
       }
@@ -181,7 +201,7 @@ public class ReportFragment extends Fragment {
         };
     caldroidFragment.setCaldroidListener(listener);
     caldroidFragment.setArguments(args);
-    getActivity()
+    Objects.requireNonNull(getActivity())
         .getSupportFragmentManager()
         .beginTransaction()
         .replace(R.id.cal_container, caldroidFragment)
@@ -193,7 +213,8 @@ public class ReportFragment extends Fragment {
         new Runnable() {
           @Override
           public void run() {
-            final AlertDialog alertDialog = new AlertDialog.Builder(getActivity(),AlertDialog.THEME_HOLO_LIGHT).create();
+            final AlertDialog alertDialog =
+                new AlertDialog.Builder(getActivity(), AlertDialog.THEME_HOLO_LIGHT).create();
             String title = course.course_code + " Information";
             alertDialog.setTitle(title);
             StringBuilder message = new StringBuilder();
@@ -202,9 +223,17 @@ public class ReportFragment extends Fragment {
                 Date d = simpleDateFormat.parse(x.date);
                 if (d.compareTo(date) == 0) {
                   String info = x.date + " " + x.hour + " ";
-                  if (x.status == 2) info = info + "Attended";
-                  else if (x.status == 1) info = info + "Nearly Attended";
-                  else if (x.status == 0) info = info + "Absent";
+                  switch (x.status) {
+                    case 2:
+                      info = info + "Attended";
+                      break;
+                    case 1:
+                      info = info + "Nearly Attended";
+                      break;
+                    case 0:
+                      info = info + "Absent";
+                      break;
+                  }
                   message.append(info).append("\n");
                 }
               }
@@ -279,7 +308,7 @@ public class ReportFragment extends Fragment {
             Map<String, String> params = new HashMap<>();
             params.put(
                 "user_id",
-                new SessionManager(getActivity().getApplicationContext())
+                new SessionManager(Objects.requireNonNull(getActivity()).getApplicationContext())
                     .getUserDetails()
                     .get(SessionManager.KEY_USER_ID));
             params.put("operation", "taken-lectures");
@@ -287,7 +316,8 @@ public class ReportFragment extends Fragment {
           }
         };
     try {
-      DatabaseManager.getmInstance(getActivity().getApplicationContext()).execute(request);
+      DatabaseManager.getInstance(Objects.requireNonNull(getActivity()).getApplicationContext())
+          .execute(request);
     } catch (NullPointerException e) {
       // do nothing
     }
@@ -308,7 +338,13 @@ public class ReportFragment extends Fragment {
                     toastWithHandle(jsonObject.getString("message"));
                   }
                 } catch (JSONException e) {
-                  // do nothing
+                  getCalendar();
+                  String info = "Absent: 0%";
+                  absent_percentage.setText(info);
+                  info = "Attended: 0%";
+                  attended_percentage.setText(info);
+                  info = "Nearly: 0%";
+                  nearly_percentage.setText(info);
                 }
                 try {
                   JSONArray jsonArray = new JSONArray(response);
@@ -324,6 +360,57 @@ public class ReportFragment extends Fragment {
                     columnList.add(column);
                   }
                   getCalendar();
+                  int totalSize = columnList.size();
+                  int absent = 0;
+                  int attended = 0;
+                  int nearly = 0;
+                  double absent_percentage;
+                  double attended_percentage;
+                  double nearly_percentage;
+                  for (CalendarColumn x : columnList) {
+                    switch (x.status) {
+                      case 0:
+                        absent++;
+                        break;
+                      case 1:
+                        nearly++;
+                        break;
+                      default:
+                        attended++;
+                        break;
+                    }
+                  }
+                  try {
+                    if (totalSize == 0) {
+                      String info = "Absent: 0%";
+                      ReportFragment.this.absent_percentage.setText(info);
+                      info = "Attended: 0%";
+                      ReportFragment.this.attended_percentage.setText(info);
+                      info = "Nearly: 0%";
+                      ReportFragment.this.nearly_percentage.setText(info);
+                      return;
+                    }
+                    absent_percentage = (double) absent / totalSize;
+                    absent_percentage = absent_percentage * 100;
+                    attended_percentage = (double) attended / totalSize;
+                    attended_percentage = attended_percentage * 100;
+                    nearly_percentage = (double) nearly / totalSize;
+                    nearly_percentage = nearly_percentage * 100;
+
+                    String info = "Absent: " + createPercent(absent_percentage);
+                    ReportFragment.this.absent_percentage.setText(info);
+                    info = "Attended: " + createPercent(attended_percentage);
+                    ReportFragment.this.attended_percentage.setText(info);
+                    info = "Nearly: " + createPercent(nearly_percentage);
+                    ReportFragment.this.nearly_percentage.setText(info);
+                  } catch (ArithmeticException e) {
+                    String info = "Absent: 0%";
+                    ReportFragment.this.absent_percentage.setText(info);
+                    info = "Attended: 0%";
+                    ReportFragment.this.attended_percentage.setText(info);
+                    info = "Nearly: 0%";
+                    ReportFragment.this.nearly_percentage.setText(info);
+                  }
                 } catch (JSONException e) {
                   e.printStackTrace();
                 }
@@ -341,23 +428,36 @@ public class ReportFragment extends Fragment {
             params.put("section", String.valueOf(takenLectureRow.section));
             params.put(
                 "user_id",
-                new SessionManager(getActivity().getApplicationContext())
+                new SessionManager(Objects.requireNonNull(getActivity()).getApplicationContext())
                     .getUserDetails()
                     .get(SessionManager.KEY_USER_ID));
             return params;
           }
         };
     try {
-      DatabaseManager.getmInstance(getActivity().getApplicationContext()).execute(request);
+      DatabaseManager.getInstance(Objects.requireNonNull(getActivity()).getApplicationContext())
+          .execute(request);
     } catch (NullPointerException e) {
       // do nothing
     }
   }
 
+  private String createPercent(double number) {
+    NumberFormat formatter = new DecimalFormat("#0.0");
+    String result;
+    String parts[] = formatter.format(number).split("[.,]");
+    if (parts[1].equals("0")) result = String.valueOf((int) number) + "%";
+    else {
+      result = formatter.format(number) + "%";
+      result = result.replace(',', '.');
+    }
+    return result;
+  }
+
   class Taken_Lecture_Row {
-    int course_id;
-    String course_code;
-    int section;
+    final int course_id;
+    final String course_code;
+    final int section;
 
     Taken_Lecture_Row(int course_id, String course_code, int section) {
       this.course_code = course_code;
@@ -367,10 +467,10 @@ public class ReportFragment extends Fragment {
   }
 
   class CalendarColumn {
-    String date;
-    String hour;
+    final String date;
+    final String hour;
+    final String course_code;
     int status;
-    String course_code;
 
     CalendarColumn(String date, String hour, int status, String course_code) {
       this.date = date;

@@ -34,7 +34,7 @@ import seniorproject.attendancetrackingsystem.utils.TakenCourses;
 
 public class DatabaseManager {
 
-  public static final String Domain = "http://attendancesystem.xyz/attendancetracking/";
+  private static final String Domain = "http://attendancesystem.xyz/attendancetracking/";
   public static final String AccountOperations = Domain + "account-operations.php";
   public static final String GetOperations = Domain + "get-something.php";
   public static final String SetOperations = Domain + "set-something.php";
@@ -46,11 +46,11 @@ public class DatabaseManager {
   private DatabaseManager(Context context) {
     this.context = context;
     requestQueue = getRequestQueue();
-    jsonHelper = JsonHelper.getmInstance(context);
+    jsonHelper = JsonHelper.getInstance(context);
   }
 
   /** synchronize the DatabaseManager to make common for whole activity. */
-  public static synchronized DatabaseManager getmInstance(Context context) {
+  public static synchronized DatabaseManager getInstance(Context context) {
     if (mInstance == null) {
       mInstance = new DatabaseManager(context);
     }
@@ -83,6 +83,15 @@ public class DatabaseManager {
                       JSONObject jsonObject = new JSONObject(response);
                       boolean result = jsonObject.getBoolean("success");
                       if (result) {
+                        try {
+                          boolean update = jsonObject.getBoolean("update_android_id");
+                          if (update) {
+                            new SessionManager(context.getApplicationContext())
+                                .setAndroidId(params.get("android_id"));
+                          }
+                        } catch (JSONException e) {
+                          // do nothing
+                        }
                         Actor actor = jsonHelper.parseUser(response);
                         ((Globals) context.getApplicationContext()).setLoggedUser(actor);
                         SessionManager sessionManager = new SessionManager(context);
@@ -91,7 +100,8 @@ public class DatabaseManager {
                             actor.getName(),
                             actor.getSurname(),
                             actor.getMail(),
-                            actor.getId());
+                            actor.getId(),
+                            actor.getImage());
                         Intent intent;
                         if (jsonObject.getString("user_type").equals("student"))
                           intent = new Intent(context, StudentActivity.class);
@@ -142,6 +152,8 @@ public class DatabaseManager {
                                 "Registration is " + "successful",
                                 Toast.LENGTH_LONG)
                             .show();
+                        new SessionManager(context.getApplicationContext())
+                            .setAndroidId(params.get("android_id"));
                         Intent intent = new Intent(context, MainActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -328,7 +340,7 @@ public class DatabaseManager {
                     public void onResponse(String response) {
                       ((Globals) context.getApplicationContext())
                           .setDepartments(
-                              JsonHelper.getmInstance(context).parseDepartmentList(response));
+                              JsonHelper.getInstance(context).parseDepartmentList(response));
                       for (Department department :
                           ((Globals) context.getApplicationContext()).getDepartments()) {
                         array.add(department.getDepartmentName());
@@ -389,66 +401,18 @@ public class DatabaseManager {
     return request;
   }
 
-  private StringRequest createStringRequest(String action, String param) {
-    StringRequest request = null;
-    switch (action) {
-      case "get":
-        if (param.equals("user-info")) {
-          request =
-              new StringRequest(
-                  Request.Method.POST,
-                  GetOperations,
-                  new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                      Actor actor = jsonHelper.parseUser(response);
-                      ((Globals) context.getApplicationContext()).setLoggedUser(actor);
-                    }
-                  },
-                  new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                      Toast.makeText(context, "Error: " + error.getMessage(), Toast.LENGTH_LONG)
-                          .show();
-                    }
-                  }) {
-                @Override
-                protected Map<String, String> getParams() {
-                  Map<String, String> userInfo = new SessionManager(context).getUserDetails();
-                  Map<String, String> postParameters = new HashMap<>();
-                  postParameters.put("user_id", userInfo.get(SessionManager.KEY_USER_ID));
-                  postParameters.put("user_type", userInfo.get(SessionManager.KEY_USER_TYPE));
-                  postParameters.put("operation", "user-info");
-                  return postParameters;
-                }
-              };
-        }
-
-        break;
-      default:
-    }
-    return request;
-  }
-
-  private void showDialog(final String message) {}
-
   public void execute(String action, Map<String, String> params) {
     if (connectionChecker())
-      getmInstance(context).addToRequestQueue(createStringRequest(action, params));
+      getInstance(context).addToRequestQueue(createStringRequest(action, params));
   }
 
   public void execute(String action, String param, ArrayList<String> array) {
     if (connectionChecker())
-      getmInstance(context).addToRequestQueue(createStringRequest(action, param, array));
-  }
-
-  public void execute(String action, String param) {
-    if (connectionChecker())
-      getmInstance(context).addToRequestQueue(createStringRequest(action, param));
+      getInstance(context).addToRequestQueue(createStringRequest(action, param, array));
   }
 
   public void execute(StringRequest stringRequest) {
-    if (connectionChecker()) getmInstance(context).addToRequestQueue(stringRequest);
+    if (connectionChecker()) getInstance(context).addToRequestQueue(stringRequest);
   }
 
   private boolean connectionChecker() {

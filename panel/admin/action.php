@@ -66,6 +66,8 @@ switch ($page) {
 		$result=mysqli_query($connection,$query);
 		$query = "DELETE FROM ".$prefix."Taken_Lectures WHERE course_id='$course_id'";
 		$result=mysqli_query($connection,$query);
+		$query = "DELETE FROM ".$prefix."Taken_Lectures WHERE course_id='$course_id'";
+		$result=mysqli_query($connection,$query);
 			if($result)
 			{
 				header("location:searchCourse.php");

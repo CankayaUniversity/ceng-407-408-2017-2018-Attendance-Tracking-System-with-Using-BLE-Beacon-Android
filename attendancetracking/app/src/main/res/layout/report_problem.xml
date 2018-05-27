@@ -1,65 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_gravity="bottom"
+    android:layout_marginBottom="60dp"
+    android:layout_marginTop="56dp"
+    android:orientation="vertical"
+    android:scrollbars="none"
+    tools:context="seniorproject.attendancetrackingsystem.fragments.ReportProblem">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="70dp"
-        android:text="Issue : "
-        android:textColor="@color/colorWhite"
-        android:textSize="16sp" />
+        android:orientation="vertical">
 
-    <EditText
-        android:id="@+id/issue"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:ems="10"
-        android:inputType="text"
-        android:hint="Enter a subject"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="70dp"
+            android:text="@string/issue"
+            android:textColor="@color/colorWhite"
+            android:textSize="16sp" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="20dp"
-        android:text="Message : "
-        android:textColor="@color/colorWhite"
-        android:textSize="16sp" />
+        <EditText
+            android:id="@+id/issue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:ems="10"
+            android:hint="@string/enter_a_subject"
+            android:inputType="text" />
 
-    <EditText
-        android:id="@+id/messages"
-        android:layout_width="match_parent"
-        android:layout_height="250dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:background="@drawable/message"
-        android:ems="10"
-        android:gravity="top|start"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"
-        android:inputType="textMultiLine"
-        android:paddingTop="10dp"
-        android:layout_marginBottom="10dp"
-        android:hint="Enter detailed information about your problem"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="20dp"
+            android:text="@string/message"
+            android:textColor="@color/colorWhite"
+            android:textSize="16sp" />
 
-    <Button
-        android:id="@+id/sendMessage"
-        style="@style/Widget.AppCompat.Button.Borderless"
-        android:layout_width="170dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="20dp"
-        android:background="@drawable/button_border"
-        android:text="Send"
-        android:layout_marginBottom="30dp"/>
+        <EditText
+            android:id="@+id/messages"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/message"
+            android:ems="10"
+            android:gravity="top|start"
+            android:hint="@string/enter_detailed_information_about_your_problem"
+            android:inputType="textMultiLine"
+            android:paddingEnd="20dp"
+            android:paddingStart="20dp"
+            android:paddingTop="10dp" />
+
+        <Button
+            android:id="@+id/sendMessage"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="170dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginBottom="30dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/button_border"
+            android:text="@string/send" />
 
 
-</LinearLayout>
+    </LinearLayout>
+</ScrollView>
