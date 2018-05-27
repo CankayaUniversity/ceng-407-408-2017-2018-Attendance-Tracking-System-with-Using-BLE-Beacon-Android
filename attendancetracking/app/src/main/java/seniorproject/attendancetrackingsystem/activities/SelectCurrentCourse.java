@@ -51,6 +51,11 @@ private ArrayAdapter<String> adapter;
             getApplicationContext(), R.layout.spinner_item, courses);
 
     sessionManager = new SessionManager(getApplicationContext());
+    if(sessionManager.getIsCourseSelected()){
+      startActivity(new Intent(SelectCurrentCourse.this, StudentActivity.class));
+      return;
+    }
+
     updateSchedule();
     listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
       @Override
