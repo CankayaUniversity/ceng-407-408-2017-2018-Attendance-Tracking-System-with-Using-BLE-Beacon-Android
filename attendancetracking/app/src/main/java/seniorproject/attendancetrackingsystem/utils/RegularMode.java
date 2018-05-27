@@ -110,16 +110,14 @@ public class RegularMode extends Service implements BeaconConsumer {
                     .ENGLISH);
             currentTimeFormatter.setTimeZone(TimeZone.getTimeZone("GMT+3"));
             for (Beacon x : collection) {
-              try{
+
               if (x.getBluetoothAddress().equals(search)) {
-                String value = dateFormatLog.format(dateFormat.parse(currentTimeFormatter.format
-                        (TrueTime.now())));
+                String value = currentTimeFormatter.format
+                        (TrueTime.now());
                 queue.enqueueDistinct(value);
                 if (queue.size() >= 3) writeLog();
               }
-              }catch (ParseException e){
-                e.printStackTrace();
-              }
+
             }
           }
         });
@@ -174,8 +172,8 @@ public class RegularMode extends Service implements BeaconConsumer {
             + "_"
             + currentCourse.getClassroom_id()
             + "_"
-            + dateFormat.format(currentDateFormatter.format
-                (TrueTime.now()))
+            + currentDateFormatter.format
+                (TrueTime.now())
             + ".log";
     return START_NOT_STICKY;
   }
