@@ -44,24 +44,32 @@
                         ?>
                         <div id="envelope">
                               <form action="index.php?page=upload_student_list&submit=true" method="post" enctype="multipart/form-data">
-            
+
                               <center><input type="file" name="student_list"/></center>
                               <center><input type="submit" name="submit" value="Save"/></center>
                               </form>
                         </div>
-                        
+
                         <?php
                   }
             break;
+
             case 'report_interface':
             @$classroom = $_GET["classroom"];
 
             if(!isset($classroom)){
+            if(empty($_GET["course_id"]) && empty($_GET["section"]))
+           		 call_items_dropdown();
+            else
+            {
 
-
-            
                   //course_list();
+                  $course_id	=	$_GET["course_id"];
+                  $section		=	$_GET["section"];
+				  print_course_info($course_id, $section);
                   ?>
+
+
                   <div id="calendar">
                        <script type="text/javascript">
                               $(document).ready(function() {
@@ -78,25 +86,31 @@
                                           events: [
 
                                                 <?php lecture_calendar(); ?>
-                                              
+
 
                                           ]
                                     });
                               });
 
-                        </script> 
-                       
+                        </script>
+
                   </div>
 
             <?
+
             }
-            else
+        }
+         else
             {
                   @$action = $_GET["action"];
                   switch ($action) {
                         case 'update':
                               if(isset($action)){
-                                    set_attended($classroom, $_POST["student_id"]);
+                                if($_GET["state"] == "true")
+                                    set_attended($classroom, $_POST["student_id"], true);
+                                else
+                                    set_attended($classroom, $_POST["student_id"], false);
+
                                     get_attended_student_list($classroom);
                               }
                               break;
@@ -106,16 +120,16 @@
                                     header("location:index.php?page=report_interface");
                               }
                               break;
-                        
+
                         default:
                         get_attended_student_list($classroom);
                   }
-                  
+
             }
             break;
             default:
             echo "<center>Welcome to the Attendance Tracking System</center>";
-                        
+
       }
 ?>
             </div>
